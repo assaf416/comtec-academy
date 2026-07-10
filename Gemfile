@@ -55,7 +55,7 @@ gem "rails-i18n", "~> 8.0"
 gem "reverse_markdown", "~> 3.0"
 
 # Read .xlsx spreadsheets (the seed user import).
-gem "roo", "~> 2.10"
+gem "roo", "~> 3.0"
 gem "csv" # roo dependency; no longer a default gem on Ruby 3.4+
 
 # Server-side syntax highlighting for presentation code slides.
