@@ -1,0 +1,5 @@
+<% content_for :title, t("admin.courses.edit_title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.courses.edit_title") %></h1>
+<%= render "form", course: @course %>
+<hr>
+<%= link_to t("admin.courses.episodes"), admin_course_path(@course), class: ui_class(:button, :secondary) %>

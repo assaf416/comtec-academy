@@ -1,0 +1,41 @@
+<% content_for :title, t("admin.brand_theme.title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.brand_theme.title") %></h1>
+
+<div class="<%= ui_class(:grid) %>">
+  <div class="<%= ui_class(:grid_item) %>" style="flex: 1 1 320px;">
+    <%= form_with model: @theme, url: admin_brand_theme_path, method: :patch do |f| %>
+      <% if @theme.errors.any? %>
+        <div class="<%= ui_class(:alert, :alert) %>"><%= @theme.errors.full_messages.to_sentence %></div>
+      <% end %>
+
+      <% %i[primary_color accent_color text_color background_color].each do |attr| %>
+        <div class="<%= ui_class(:field) %>">
+          <%= f.label attr, t("admin.brand_theme.#{attr}"), class: ui_class(:label) %>
+          <%= f.color_field attr, value: @theme.public_send(attr) %>
+        </div>
+      <% end %>
+
+      <% %i[heading_font body_font].each do |attr| %>
+        <div class="<%= ui_class(:field) %>">
+          <%= f.label attr, t("admin.brand_theme.#{attr}"), class: ui_class(:label) %>
+          <%= f.text_field attr, class: ui_class(:input), dir: "ltr" %>
+        </div>
+      <% end %>
+
+      <div class="<%= ui_class(:field) %>">
+        <%= f.label :logo, t("admin.brand_theme.logo"), class: ui_class(:label) %>
+        <%= f.file_field :logo, accept: "image/*", class: ui_class(:input) %>
+        <% if @theme.logo.attached? %><%= image_tag @theme.logo, style: "max-height:48px;margin-top:.5rem;" %><% end %>
+      </div>
+
+      <%= f.submit t("admin.brand_theme.save"), class: ui_class(:button, :primary) %>
+    <% end %>
+  </div>
+
+  <div class="<%= ui_class(:grid_item) %>" style="flex: 2 1 420px;">
+    <h2 class="<%= ui_class(:subtitle) %>"><%= t("admin.brand_theme.preview") %></h2>
+    <% preview = Document.new(doc_type: :design, title: "מסמך לדוגמה",
+         content: "# כותרת ראשית\n\nפסקה עם טקסט **מודגש** וקישור [לדוגמה](#).\n\n## תת-כותרת\n\n| עמודה | ערך |\n|---|---|\n| א | 1 |\n| ב | 2 |\n\n> ציטוט לדוגמה\n\n`inline code`") %>
+    <%= render "documents/branded", document: preview %>
+  </div>
+</div>

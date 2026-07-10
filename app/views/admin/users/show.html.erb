@@ -1,0 +1,8 @@
+<% content_for :title, @user.display_name %>
+<h1 class="<%= ui_class(:title) %>"><%= @user.display_name %></h1>
+<dl>
+  <dt><%= t("admin.users.email_address") %></dt><dd><%= @user.email_address %></dd>
+  <dt><%= t("admin.users.role") %></dt><dd><%= t("admin.users.roles.#{@user.role}") %></dd>
+  <dt><%= t("admin.users.status") %></dt><dd><%= t("admin.users.statuses.#{@user.status}") %></dd>
+</dl>
+<%= link_to t("admin.users.edit"), edit_admin_user_path(@user), class: ui_class(:button, :secondary) %>

@@ -1,0 +1,65 @@
+<% content_for :title, t("admin.studio.title") %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.studio.title") %> — <%= @episode.display_title %></h1>
+  <%= link_to t("admin.courses.edit"), edit_admin_course_episode_path(@course, @episode), class: ui_class(:button, :secondary, :small) %>
+</div>
+
+<div class="<%= ui_class(:grid) %>">
+  <%# Thumbnail %>
+  <div class="<%= ui_class(:grid_item) %>">
+    <div class="<%= ui_class(:card) %>"><div class="<%= ui_class(:card_body) %>">
+      <h2 class="<%= ui_class(:card_title) %>"><%= t("admin.studio.thumbnail") %></h2>
+      <% if @episode.thumbnail.attached? %>
+        <%= image_tag @episode.thumbnail, class: "episode-thumb mb-2" %>
+      <% end %>
+      <%= button_to t("admin.studio.generate_thumbnail"), generate_thumbnail_admin_course_episode_path(@course, @episode), class: ui_class(:button, :secondary, :block) %>
+    </div></div>
+  </div>
+
+  <%# Audio %>
+  <div class="<%= ui_class(:grid_item) %>">
+    <div class="<%= ui_class(:card) %>"><div class="<%= ui_class(:card_body) %>">
+      <h2 class="<%= ui_class(:card_title) %>"><%= t("admin.episodes.generate_audio") %></h2>
+      <% if @episode.audio.attached? %>
+        <audio controls class="w-100 mb-2"><source src="<%= url_for(@episode.audio) %>"></audio>
+      <% end %>
+      <%= button_to t("admin.episodes.generate_audio"), generate_audio_admin_course_episode_path(@course, @episode), class: ui_class(:button, :secondary, :block) %>
+    </div></div>
+  </div>
+</div>
+
+<hr>
+
+<%# Assemble %>
+<div class="<%= ui_class(:card) %>"><div class="<%= ui_class(:card_body) %>">
+  <h2 class="<%= ui_class(:card_title) %>"><%= t("admin.studio.assemble") %></h2>
+  <p class="text-muted"><%= t("admin.studio.pizzazz") %></p>
+
+  <%= form_with url: assemble_movie_admin_course_episode_path(@course, @episode), method: :post do %>
+    <div class="<%= ui_class(:field) %>">
+      <label class="<%= ui_class(:label) %>">
+        <%= hidden_field_tag "captions", "0" %>
+        <%= check_box_tag "captions", "1", true %> <%= t("admin.studio.captions") %>
+      </label>
+    </div>
+    <div class="<%= ui_class(:field) %>">
+      <label class="<%= ui_class(:label) %>">
+        <%= hidden_field_tag "background_music", "0" %>
+        <%= check_box_tag "background_music", "1" %> <%= t("admin.studio.background_music") %>
+      </label>
+    </div>
+    <div class="<%= ui_class(:field) %>">
+      <%= label_tag "music_volume", t("admin.studio.music_volume"), class: ui_class(:label) %>
+      <%= range_field_tag "music_volume", 0.15, in: 0.0..0.6, step: 0.05 %>
+    </div>
+    <%= submit_tag t("admin.studio.assemble"), class: ui_class(:button, :primary) %>
+  <% end %>
+</div></div>
+
+<% if @episode.movie.attached? %>
+  <hr>
+  <h2 class="<%= ui_class(:subtitle) %>"><%= t("admin.studio.preview") %></h2>
+  <video controls playsinline class="w-100" style="max-height:480px;border-radius:.5rem;">
+    <source src="<%= url_for(@episode.movie) %>" type="video/mp4">
+  </video>
+<% end %>

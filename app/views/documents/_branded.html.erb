@@ -1,0 +1,29 @@
+<% theme = BrandTheme.instance %>
+<% families = theme.font_families.map { |f| "family=#{f.strip.tr(' ', '+')}:wght@400;600;700" }.join("&") %>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?<%= families %>&display=swap">
+<style>
+  .branded-doc {
+    --brand-primary: <%= theme.primary_color %>;
+    --brand-accent: <%= theme.accent_color %>;
+    --brand-text: <%= theme.text_color %>;
+    --brand-bg: <%= theme.background_color %>;
+    --brand-heading-font: "<%= theme.heading_font %>", system-ui, sans-serif;
+    --brand-body-font: "<%= theme.body_font %>", system-ui, sans-serif;
+  }
+</style>
+
+<article class="branded-doc">
+  <header class="branded-doc__header">
+    <% if theme.logo.attached? %>
+      <%= image_tag theme.logo, class: "branded-doc__logo" %>
+    <% end %>
+    <h1 class="branded-doc__title"><%= document.display_title %></h1>
+  </header>
+  <div class="branded-doc__body">
+    <% if document.content.blank? %>
+      <p class="text-muted"><%= t("admin.documents.empty") %></p>
+    <% else %>
+      <%= document.to_html %>
+    <% end %>
+  </div>
+</article>

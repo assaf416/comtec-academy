@@ -1,0 +1,20 @@
+<% content_for :title, t("invitation.title") %>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6">
+    <h1 class="<%= ui_class(:title) %>"><%= t("invitation.title") %></h1>
+    <p class="<%= ui_class(:subtitle) %>"><%= @user.email_address %></p>
+
+    <%= form_with url: accept_invitation_path(token: params[:token]), method: :patch do |f| %>
+      <div class="<%= ui_class(:field) %>">
+        <%= f.label :password, t("invitation.password"), class: ui_class(:label) %>
+        <%= f.password_field :password, required: true, autocomplete: "new-password", class: ui_class(:input) %>
+      </div>
+      <div class="<%= ui_class(:field) %>">
+        <%= f.label :password_confirmation, t("invitation.password_confirmation"), class: ui_class(:label) %>
+        <%= f.password_field :password_confirmation, required: true, autocomplete: "new-password", class: ui_class(:input) %>
+      </div>
+      <%= f.submit t("invitation.activate"), class: ui_class(:button, :primary) %>
+    <% end %>
+  </div>
+</div>

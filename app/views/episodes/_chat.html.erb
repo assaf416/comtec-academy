@@ -1,0 +1,24 @@
+<section class="mt-4">
+  <h2 class="<%= ui_class(:subtitle) %>"><%= t("chat.title") %></h2>
+
+  <div class="<%= ui_class(:card) %>">
+    <div class="<%= ui_class(:card_body) %>">
+      <div id="chat-thread" class="chat-thread">
+        <% if messages.empty? %>
+          <p id="chat-empty" class="text-muted"><%= t("chat.empty") %></p>
+        <% end %>
+        <%= render partial: "chat_messages/message", collection: messages, as: :message %>
+      </div>
+
+      <%= form_with url: course_episode_chat_messages_path(course, episode),
+                    id: "chat-form", class: "mt-3",
+                    data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |f| %>
+        <div class="<%= ui_class(:field) %>">
+          <%= text_area_tag "body", nil, required: true, rows: 2,
+                class: ui_class(:textarea), placeholder: t("chat.placeholder") %>
+        </div>
+        <%= f.submit t("chat.send"), class: ui_class(:button, :primary) %>
+      <% end %>
+    </div>
+  </div>
+</section>

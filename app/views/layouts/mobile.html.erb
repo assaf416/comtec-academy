@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+  <head>
+    <%= render "layouts/head" %>
+    <%= stylesheet_link_tag "bulma.min", "data-turbo-track": "reload" %>
+    <meta name="css-framework" content="bulma">
+  </head>
+
+  <body>
+    <%= render "layouts/nav_bulma" %>
+    <main class="<%= ui_class(:container) %>">
+      <%= render "layouts/flash" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

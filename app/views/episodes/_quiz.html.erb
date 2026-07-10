@@ -1,0 +1,27 @@
+<% if question.nil? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("episodes.kind.quiz") %></div>
+<% else %>
+  <h2 class="<%= ui_class(:subtitle) %>"><%= t("quiz.question") %></h2>
+  <p class="transcript"><%= question.prompt %></p>
+
+  <% if existing_answer %>
+    <div class="<%= ui_class(:alert, :notice) %>"><%= t("quiz.already_answered") %></div>
+  <% end %>
+
+  <%= form_with url: quiz_question_quiz_answers_path(question), method: :post do |f| %>
+    <div class="<%= ui_class(:field) %>">
+      <% if question.choices.present? %>
+        <% question.choices.each do |choice| %>
+          <label class="d-block">
+            <%= radio_button_tag "answer", choice, existing_answer&.answer == choice %>
+            <%= choice %>
+          </label>
+        <% end %>
+      <% else %>
+        <%= label_tag "answer", t("quiz.your_answer"), class: ui_class(:label) %>
+        <%= text_area_tag "answer", existing_answer&.answer, class: ui_class(:textarea), rows: 3 %>
+      <% end %>
+    </div>
+    <%= f.submit t("quiz.submit"), class: ui_class(:button, :primary) %>
+  <% end %>
+<% end %>

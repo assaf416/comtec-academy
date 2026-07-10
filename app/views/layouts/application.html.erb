@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+  <head>
+    <%= render "layouts/head" %>
+    <%= stylesheet_link_tag "bootstrap.rtl.min", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "bootstrap.bundle.min", "data-turbo-track": "reload" %>
+    <meta name="css-framework" content="bootstrap">
+  </head>
+
+  <body class="bg-body-tertiary">
+    <%= render "layouts/nav_bootstrap" %>
+    <main class="<%= ui_class(:container) %>">
+      <%= render "layouts/flash" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

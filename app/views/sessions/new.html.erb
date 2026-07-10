@@ -1,0 +1,20 @@
+<% content_for :title, t("auth.sign_in") %>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-5">
+    <h1 class="<%= ui_class(:title) %>"><%= t("auth.sign_in") %></h1>
+
+    <%= form_with url: session_path do |f| %>
+      <div class="<%= ui_class(:field) %>">
+        <%= f.label :email_address, t("auth.email_address"), class: ui_class(:label) %>
+        <%= f.email_field :email_address, required: true, autofocus: true, autocomplete: "username",
+              value: params[:email_address], class: ui_class(:input) %>
+      </div>
+      <div class="<%= ui_class(:field) %>">
+        <%= f.label :password, t("auth.password"), class: ui_class(:label) %>
+        <%= f.password_field :password, required: true, autocomplete: "current-password", maxlength: 72, class: ui_class(:input) %>
+      </div>
+      <%= f.submit t("auth.sign_in"), class: ui_class(:button, :primary) %>
+    <% end %>
+  </div>
+</div>

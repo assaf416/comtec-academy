@@ -1,0 +1,37 @@
+<% content_for :title, t("admin.projects.title") %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.projects.title") %></h1>
+  <div class="actions">
+    <%= link_to t("admin.brand_theme.manage"), edit_admin_brand_theme_path, class: ui_class(:button, :secondary) %>
+    <%= link_to t("admin.projects.new"), new_admin_project_path, class: ui_class(:button, :primary) %>
+  </div>
+</div>
+
+<% if @projects.empty? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("admin.projects.empty") %></div>
+<% else %>
+  <table class="<%= ui_class(:table) %>">
+    <thead>
+      <tr>
+        <th><%= t("admin.projects.name") %></th>
+        <th><%= t("admin.projects.slug") %></th>
+        <th><%= t("admin.projects.completeness") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @projects.each do |project| %>
+        <tr>
+          <td><%= link_to project.name, admin_project_path(project) %></td>
+          <td><code dir="ltr"><%= project.slug %></code></td>
+          <td><%= project.documents.count %> / <%= Document.doc_types.size %></td>
+          <td>
+            <%= link_to t("admin.projects.open"), admin_project_path(project), class: ui_class(:button, :secondary, :small) %>
+            <%= button_to t("admin.projects.delete"), admin_project_path(project), method: :delete,
+                  data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

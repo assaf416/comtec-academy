@@ -1,0 +1,27 @@
+<% content_for :title, t("admin.activities.title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.activities.title") %></h1>
+
+<% if @activities.empty? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("admin.activities.empty") %></div>
+<% else %>
+  <table class="<%= ui_class(:table) %>">
+    <thead>
+      <tr>
+        <th><%= t("admin.activities.when") %></th>
+        <th><%= t("admin.activities.who") %></th>
+        <th><%= t("admin.activities.what") %></th>
+        <th><%= t("admin.activities.details") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @activities.each do |activity| %>
+        <tr>
+          <td><%= activity.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td><%= activity.user.display_name %></td>
+          <td><%= t("admin.activities.actions.#{activity.action}", default: activity.action) %></td>
+          <td><small class="text-muted"><%= activity.metadata.map { |k, v| "#{k}: #{v}" }.join(" · ") %></small></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

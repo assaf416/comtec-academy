@@ -1,0 +1,11 @@
+<% content_for :title, @document.display_title %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <%= link_to "→ #{t('admin.documents.back')}", admin_project_path(@project), class: ui_class(:button, :link, :small) %>
+  <div class="actions">
+    <%= link_to t("admin.documents.edit"), edit_admin_project_document_path(@project, @document), class: ui_class(:button, :secondary, :small) %>
+    <%= button_to t("admin.documents.delete"), admin_project_document_path(@project, @document), method: :delete,
+          data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+  </div>
+</div>
+
+<%= render "documents/branded", document: @document %>

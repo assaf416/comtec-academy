@@ -1,0 +1,24 @@
+<% content_for :title, t("courses.title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("courses.title") %></h1>
+
+<% if @courses.empty? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("courses.empty") %></div>
+<% else %>
+  <div class="<%= ui_class(:grid) %>">
+    <% @courses.each do |course| %>
+      <div class="<%= ui_class(:grid_item) %>">
+        <div class="<%= ui_class(:card) %>">
+          <% if course.image.attached? %>
+            <%= image_tag course.image, class: "course-image" %>
+          <% end %>
+          <div class="<%= ui_class(:card_body) %>">
+            <h2 class="<%= ui_class(:card_title) %>"><%= course.name %></h2>
+            <p><%= truncate(course.details.to_s, length: 120) %></p>
+            <p><span class="<%= ui_class(:badge, :muted) %>"><%= t("courses.episodes_count", count: course.episodes.size) %></span></p>
+            <%= link_to t("courses.open"), course_path(course), class: ui_class(:button, :primary) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

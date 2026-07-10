@@ -1,0 +1,20 @@
+<% content_for :title, @episode.display_title %>
+
+<%= link_to "→ #{t('episodes.back_to_course')}", course_path(@course), class: ui_class(:button, :link, :small) %>
+
+<h1 class="<%= ui_class(:title) %>"><%= @episode.display_title %></h1>
+<span class="<%= ui_class(:badge, @episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{@episode.kind}") %></span>
+
+<div class="mt-3">
+  <% if @episode.quiz? %>
+    <%= render "episodes/quiz", episode: @episode, question: @quiz_question, existing_answer: @existing_answer %>
+  <% else %>
+    <%= render "episodes/movie", episode: @episode %>
+  <% end %>
+</div>
+
+<% if @markdown_docs.any? %>
+  <%= render "episodes/markdown_docs", docs: @markdown_docs %>
+<% end %>
+
+<%= render "episodes/chat", course: @course, episode: @episode, messages: @chat_messages %>

@@ -1,0 +1,14 @@
+<% if episode.movie.attached? %>
+  <video controls playsinline class="w-100" style="max-height:480px; border-radius:.5rem;">
+    <source src="<%= url_for(episode.movie) %>" type="<%= episode.movie.content_type %>">
+  </video>
+<% elsif episode.movie_url.present? %>
+  <video controls playsinline class="w-100" style="max-height:480px; border-radius:.5rem;" src="<%= episode.movie_url %>"></video>
+<% else %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("episodes.no_movie") %></div>
+<% end %>
+
+<% if episode.transcript.present? %>
+  <h2 class="<%= ui_class(:subtitle) %> mt-4"><%= t("episodes.transcript") %></h2>
+  <div class="transcript"><%= episode.transcript %></div>
+<% end %>

@@ -1,0 +1,4 @@
+<% content_for :title, t("admin.users.edit_title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.users.edit_title") %></h1>
+<p class="<%= ui_class(:subtitle) %>"><%= @user.email_address %></p>
+<%= render "form", user: @user %>

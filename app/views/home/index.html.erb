@@ -1,0 +1,11 @@
+<section class="hero">
+  <h1><%= t("home.title") %></h1>
+  <p><%= t("home.subtitle") %></p>
+
+  <div class="actions">
+    <%= link_to t("home.browse_courses"), root_path, class: ui_class(:button, :primary) %>
+    <% if current_user&.admin? %>
+      <%= link_to t("home.open_admin"), admin_root_path, class: ui_class(:button, :secondary) %>
+    <% end %>
+  </div>
+</section>

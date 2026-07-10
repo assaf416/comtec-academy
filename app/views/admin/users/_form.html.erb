@@ -1,0 +1,31 @@
+<%= form_with model: [:admin, user] do |f| %>
+  <% if user.errors.any? %>
+    <div class="<%= ui_class(:alert, :alert) %>">
+      <%= user.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <% if user.new_record? %>
+    <div class="<%= ui_class(:field) %>">
+      <%= f.label :email_address, t("admin.users.email_address"), class: ui_class(:label) %>
+      <%= f.email_field :email_address, required: true, class: ui_class(:input) %>
+    </div>
+  <% end %>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :name, t("admin.users.name"), class: ui_class(:label) %>
+    <%= f.text_field :name, class: ui_class(:input) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :role, t("admin.users.role"), class: ui_class(:label) %>
+    <% roles = User.roles.keys.map { |r| [t("admin.users.roles.#{r}"), r] } %>
+    <% if css_framework == :bulma %>
+      <div class="select is-fullwidth"><%= f.select :role, roles %></div>
+    <% else %>
+      <%= f.select :role, roles, {}, class: ui_class(:select) %>
+    <% end %>
+  </div>
+
+  <%= f.submit t("admin.users.save"), class: ui_class(:button, :primary) %>
+<% end %>

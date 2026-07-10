@@ -1,0 +1,28 @@
+<%= form_with model: [:admin, course] do |f| %>
+  <% if course.errors.any? %>
+    <div class="<%= ui_class(:alert, :alert) %>"><%= course.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :name, t("admin.courses.name"), class: ui_class(:label) %>
+    <%= f.text_field :name, class: ui_class(:input) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :details, t("admin.courses.details"), class: ui_class(:label) %>
+    <%= f.text_area :details, rows: 5, class: ui_class(:textarea) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :image, t("admin.courses.image"), class: ui_class(:label) %>
+    <%= f.file_field :image, accept: "image/*", class: ui_class(:input) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <label class="<%= ui_class(:label) %>">
+      <%= f.check_box :published %> <%= t("admin.courses.published") %>
+    </label>
+  </div>
+
+  <%= f.submit t("admin.courses.save"), class: ui_class(:button, :primary) %>
+<% end %>

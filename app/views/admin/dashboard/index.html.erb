@@ -1,0 +1,24 @@
+<% content_for :title, t("admin.dashboard.title") %>
+
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.dashboard.title") %></h1>
+
+<div class="<%= ui_class(:grid) %>">
+  <% [[:total_users, @users_count], [:active_users, @active_count], [:invited_users, @invited_count]].each do |key, value| %>
+    <div class="<%= ui_class(:grid_item) %>">
+      <div class="<%= ui_class(:card) %>">
+        <div class="<%= ui_class(:card_body) %>">
+          <p class="<%= ui_class(:subtitle) %>"><%= t("admin.dashboard.#{key}") %></p>
+          <p class="<%= ui_class(:title) %>"><%= value %></p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="actions">
+  <%= link_to t("admin.users.title"), admin_users_path, class: ui_class(:button, :primary) %>
+  <%= link_to t("admin.dashboard.manage_courses"), admin_courses_path, class: ui_class(:button, :secondary) %>
+  <%= link_to t("admin.dashboard.view_activity"), admin_activities_path, class: ui_class(:button, :secondary) %>
+  <%= link_to t("admin.projects.manage_projects"), admin_projects_path, class: ui_class(:button, :secondary) %>
+  <%= link_to t("admin.brand_theme.manage"), edit_admin_brand_theme_path, class: ui_class(:button, :secondary) %>
+</div>

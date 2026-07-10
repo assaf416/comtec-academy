@@ -1,0 +1,39 @@
+<% content_for :title, @project.name %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="<%= ui_class(:title) %> mb-0"><%= @project.name %></h1>
+    <code dir="ltr" class="text-muted"><%= @project.slug %></code>
+  </div>
+  <%= link_to t("admin.projects.edit"), edit_admin_project_path(@project), class: ui_class(:button, :secondary, :small) %>
+</div>
+
+<% if @project.description.present? %>
+  <p class="transcript"><%= @project.description %></p>
+<% end %>
+
+<h2 class="<%= ui_class(:subtitle) %>"><%= t("admin.projects.documents") %></h2>
+<table class="<%= ui_class(:table) %>">
+  <tbody>
+    <% Document.doc_types.keys.each do |type| %>
+      <% doc = @project.document(type) %>
+      <tr>
+        <td><%= t("documents.types.#{type}") %></td>
+        <td>
+          <% if doc %>
+            <span class="<%= ui_class(:badge, :success) %>"><%= t("admin.projects.present") %></span>
+          <% else %>
+            <span class="<%= ui_class(:badge, :muted) %>"><%= t("admin.projects.missing") %></span>
+          <% end %>
+        </td>
+        <td>
+          <% if doc %>
+            <%= link_to t("admin.projects.view"), admin_project_document_path(@project, doc), class: ui_class(:button, :primary, :small) %>
+            <%= link_to t("admin.projects.edit"), edit_admin_project_document_path(@project, doc), class: ui_class(:button, :secondary, :small) %>
+          <% else %>
+            <%= link_to t("admin.projects.new"), new_admin_project_document_path(@project, doc_type: type), class: ui_class(:button, :secondary, :small) %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

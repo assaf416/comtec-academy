@@ -1,0 +1,9 @@
+#!/bin/sh
+bin/rails db:environment:set RAILS_ENV=development
+bundle exec rake db:drop
+bundle exec rake db:create
+bundle exec rake db:migrate
+#bundle exec rake app:xls_menora
+#bundle exec rake app:xls_ayalon
+bundle exec rake db:seed
+rails s

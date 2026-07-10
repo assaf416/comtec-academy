@@ -1,0 +1,36 @@
+<% content_for :title, t("admin.users.title") %>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.users.title") %></h1>
+  <%= link_to t("admin.users.invite"), new_admin_user_path, class: ui_class(:button, :primary) %>
+</div>
+
+<table class="<%= ui_class(:table) %>">
+  <thead>
+    <tr>
+      <th><%= t("admin.users.email_address") %></th>
+      <th><%= t("admin.users.name") %></th>
+      <th><%= t("admin.users.role") %></th>
+      <th><%= t("admin.users.status") %></th>
+      <th><%= t("admin.users.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.email_address %></td>
+        <td><%= user.name %></td>
+        <td><span class="<%= ui_class(:badge, user.admin? ? :info : :muted) %>"><%= t("admin.users.roles.#{user.role}") %></span></td>
+        <td><span class="<%= ui_class(:badge, user.active? ? :success : :warning) %>"><%= t("admin.users.statuses.#{user.status}") %></span></td>
+        <td>
+          <%= link_to t("admin.users.edit"), edit_admin_user_path(user), class: ui_class(:button, :secondary, :small) %>
+          <% if user.invited? %>
+            <%= button_to t("admin.users.resend"), resend_invitation_admin_user_path(user), class: ui_class(:button, :link, :small) %>
+          <% end %>
+          <%= button_to t("admin.users.delete"), admin_user_path(user), method: :delete,
+                data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

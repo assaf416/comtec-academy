@@ -1,0 +1,20 @@
+<% content_for :title, @course.name %>
+
+<%= link_to "→ #{t('courses.back_to_courses')}", courses_path, class: ui_class(:button, :link, :small) %>
+
+<h1 class="<%= ui_class(:title) %>"><%= @course.name %></h1>
+<% if @course.image.attached? %>
+  <%= image_tag @course.image, class: "course-image mb-3", style: "max-height:260px" %>
+<% end %>
+<p class="transcript"><%= @course.details %></p>
+
+<div class="mt-4">
+  <% @episodes.each do |episode| %>
+    <div class="<%= ui_class(:card) %> mb-2">
+      <div class="<%= ui_class(:card_body) %>">
+        <span class="<%= ui_class(:badge, episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{episode.kind}") %></span>
+        <%= link_to episode.display_title, course_episode_path(@course, episode) %>
+      </div>
+    </div>
+  <% end %>
+</div>

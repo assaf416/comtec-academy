@@ -1,0 +1,32 @@
+<% content_for :title, @course.name %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= @course.name %></h1>
+  <div class="actions">
+    <%= link_to t("admin.courses.edit"), edit_admin_course_path(@course), class: ui_class(:button, :secondary, :small) %>
+    <%= link_to t("admin.courses.add_episode"), new_admin_course_episode_path(@course), class: ui_class(:button, :primary, :small) %>
+  </div>
+</div>
+
+<table class="<%= ui_class(:table) %>">
+  <thead>
+    <tr>
+      <th><%= t("admin.episodes.position") %></th>
+      <th><%= t("admin.episodes.episode_title") %></th>
+      <th><%= t("admin.episodes.kind") %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @episodes.each do |episode| %>
+      <tr>
+        <td><%= episode.position %></td>
+        <td><%= episode.display_title %></td>
+        <td><span class="<%= ui_class(:badge, episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{episode.kind}") %></span></td>
+        <td>
+          <%= link_to t("admin.courses.edit"), edit_admin_course_episode_path(@course, episode), class: ui_class(:button, :secondary, :small) %>
+          <%= link_to t("admin.studio.open"), admin_course_episode_studio_path(@course, episode), class: ui_class(:button, :primary, :small) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
