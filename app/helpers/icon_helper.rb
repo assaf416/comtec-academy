@@ -19,6 +19,9 @@ module IconHelper
     # sections / actions
     dashboard: "gauge-high", build: "clapperboard", settings: "gear",
     signin: "right-to-bracket", signout: "right-from-bracket",
+    edit: "pen-to-square", delete: "trash", resend: "paper-plane",
+    view: "eye", open: "up-right-from-square", studio: "clapperboard",
+    add: "plus", menu: "ellipsis-vertical",
     hash: "hashtag"
   }.freeze
 

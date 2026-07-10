@@ -39,6 +39,26 @@ body { font-family: "Assistant", "Lato", system-ui, -apple-system, sans-serif; b
 .app-title .icon, h1 .icon, h2 .icon { opacity: .7; margin-inline-end: .35rem; }
 .icon { display: inline-block; }
 
+/* Kebab row-action menu */
+.row-actions { position: relative; display: inline-block; }
+.row-actions__toggle { background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: 6px; color: #555; }
+.row-actions__toggle:hover { background: rgba(0,0,0,.06); }
+.row-actions__menu { position: absolute; inset-inline-end: 0; top: 100%; z-index: 50; min-width: 180px;
+  list-style: none; margin: 4px 0 0; padding: 4px; background: #fff; border: 1px solid #ddd;
+  border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.15); display: none; }
+.row-actions__menu.is-open { display: block; }
+.row-actions__menu li { margin: 0; }
+.row-actions__menu form { margin: 0; }
+.row-actions__item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: start;
+  background: none; border: none; padding: 7px 10px; border-radius: 6px; color: #222; text-decoration: none; font-size: .92rem; cursor: pointer; }
+.row-actions__item:hover { background: #f0f0f4; }
+.row-actions__item .icon { width: 16px; text-align: center; opacity: .7; }
+
+/* DataTables RTL spacing tweaks */
+.dt-container { margin-top: 4px; }
+.dt-search { margin-bottom: 10px; }
+.dt-search input { margin-inline-start: 6px; }
+
 .side-user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-top: 1px solid rgba(0,0,0,.25); }
 .side-user .avatar-wrap { position: relative; flex: none; }
 .side-user .avatar { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; display: block; }

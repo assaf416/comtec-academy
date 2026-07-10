@@ -419,6 +419,21 @@
       "last_tested_at": "2026-07-10T10:42:22Z",
       "code_generation_seconds": null,
       "test_generation_seconds": null
+    },
+    {
+      "id": "S29",
+      "type": "story",
+      "name": "DataTables + kebab row menus",
+      "description": "Admin index tables become DataTables (search/sort/paging, Hebrew/RTL) via a Stimulus controller; row actions move into an end-aligned kebab menu with FA icons + Hebrew captions.",
+      "cucumber_test": "see features/datatables.feature",
+      "feature_file": "features/datatables.feature",
+      "github_issue": 19,
+      "status": "completed",
+      "started_at": "2026-07-10T15:23:57Z",
+      "completed_at": "2026-07-10T15:23:57Z",
+      "last_tested_at": "2026-07-10T15:23:57Z",
+      "code_generation_seconds": null,
+      "test_generation_seconds": null
     }
   ]
 }

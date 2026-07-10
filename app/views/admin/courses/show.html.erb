@@ -7,13 +7,13 @@
   </div>
 </div>
 
-<table class="<%= ui_class(:table) %>">
+<table class="<%= ui_class(:table) %>" data-controller="datatable">
   <thead>
     <tr>
       <th><%= t("admin.episodes.position") %></th>
       <th><%= t("admin.episodes.episode_title") %></th>
       <th><%= t("admin.episodes.kind") %></th>
-      <th></th>
+      <th class="no-sort"><%= t("shared.actions") %></th>
     </tr>
   </thead>
   <tbody>
@@ -22,9 +22,11 @@
         <td><%= episode.position %></td>
         <td><%= episode.display_title %></td>
         <td><span class="<%= ui_class(:badge, episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{episode.kind}") %></span></td>
-        <td>
-          <%= link_to t("admin.courses.edit"), edit_admin_course_episode_path(@course, episode), class: ui_class(:button, :secondary, :small) %>
-          <%= link_to t("admin.studio.open"), admin_course_episode_studio_path(@course, episode), class: ui_class(:button, :primary, :small) %>
+        <td class="no-sort">
+          <%= render "shared/row_actions", actions: [
+            { label: t("admin.courses.edit"), icon: :edit, path: edit_admin_course_episode_path(@course, episode) },
+            { label: t("admin.studio.open"), icon: :studio, path: admin_course_episode_studio_path(@course, episode) }
+          ] %>
         </td>
       </tr>
     <% end %>

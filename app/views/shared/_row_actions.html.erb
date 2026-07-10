@@ -1,0 +1,21 @@
+<%# actions: [{ label:, icon:, path:, method: (nil=link / :delete/:post), confirm: }] %>
+<div class="row-actions" data-controller="menu">
+  <button type="button" class="row-actions__toggle" data-action="menu#toggle"
+          aria-label="<%= t('shared.actions') %>"><%= icon(:menu) %></button>
+  <ul class="row-actions__menu" data-menu-target="menu">
+    <% actions.each do |a| %>
+      <li>
+        <% if a[:method] %>
+          <%= button_to a[:path], method: a[:method], class: "row-actions__item",
+                data: (a[:confirm] ? { turbo_confirm: a[:confirm] } : {}) do %>
+            <%= icon(a[:icon]) %> <span><%= a[:label] %></span>
+          <% end %>
+        <% else %>
+          <%= link_to a[:path], class: "row-actions__item" do %>
+            <%= icon(a[:icon]) %> <span><%= a[:label] %></span>
+          <% end %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

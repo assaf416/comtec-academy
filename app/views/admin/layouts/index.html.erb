@@ -4,14 +4,14 @@
   <%= link_to t("admin.layouts.new"), new_admin_layout_path, class: ui_class(:button, :primary) %>
 </div>
 
-<table class="<%= ui_class(:table) %>">
+<table class="<%= ui_class(:table) %>" data-controller="datatable">
   <thead>
     <tr>
       <th><%= t("admin.layouts.key") %></th>
       <th><%= t("admin.layouts.name") %></th>
       <th><%= t("admin.layouts.direction") %></th>
       <th><%= t("admin.layouts.kind") %></th>
-      <th></th>
+      <th class="no-sort"><%= t("shared.actions") %></th>
     </tr>
   </thead>
   <tbody>
@@ -21,10 +21,11 @@
         <td><%= layout.name %></td>
         <td><%= layout.direction %></td>
         <td><span class="<%= ui_class(:badge, :info) %>"><%= layout.kind %></span></td>
-        <td>
-          <%= link_to t("admin.layouts.edit"), edit_admin_layout_path(layout), class: ui_class(:button, :secondary, :small) %>
-          <%= button_to t("admin.layouts.delete"), admin_layout_path(layout), method: :delete,
-                data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+        <td class="no-sort">
+          <%= render "shared/row_actions", actions: [
+            { label: t("admin.layouts.edit"), icon: :edit, path: edit_admin_layout_path(layout) },
+            { label: t("admin.layouts.delete"), icon: :delete, path: admin_layout_path(layout), method: :delete, confirm: "?" }
+          ] %>
         </td>
       </tr>
     <% end %>

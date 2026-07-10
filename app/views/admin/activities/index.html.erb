@@ -4,7 +4,7 @@
 <% if @activities.empty? %>
   <div class="<%= ui_class(:alert, :notice) %>"><%= t("admin.activities.empty") %></div>
 <% else %>
-  <table class="<%= ui_class(:table) %>">
+  <table class="<%= ui_class(:table) %>" data-controller="datatable">
     <thead>
       <tr>
         <th><%= t("admin.activities.when") %></th>

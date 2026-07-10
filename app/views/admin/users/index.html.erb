@@ -5,14 +5,14 @@
   <%= link_to t("admin.users.invite"), new_admin_user_path, class: ui_class(:button, :primary) %>
 </div>
 
-<table class="<%= ui_class(:table) %>">
+<table class="<%= ui_class(:table) %>" data-controller="datatable">
   <thead>
     <tr>
       <th><%= t("admin.users.email_address") %></th>
       <th><%= t("admin.users.name") %></th>
       <th><%= t("admin.users.role") %></th>
       <th><%= t("admin.users.status") %></th>
-      <th><%= t("admin.users.actions") %></th>
+      <th class="no-sort"><%= t("admin.users.actions") %></th>
     </tr>
   </thead>
   <tbody>
@@ -22,13 +22,11 @@
         <td><%= user.name %></td>
         <td><span class="<%= ui_class(:badge, user.admin? ? :info : :muted) %>"><%= t("admin.users.roles.#{user.role}") %></span></td>
         <td><span class="<%= ui_class(:badge, user.active? ? :success : :warning) %>"><%= t("admin.users.statuses.#{user.status}") %></span></td>
-        <td>
-          <%= link_to t("admin.users.edit"), edit_admin_user_path(user), class: ui_class(:button, :secondary, :small) %>
-          <% if user.invited? %>
-            <%= button_to t("admin.users.resend"), resend_invitation_admin_user_path(user), class: ui_class(:button, :link, :small) %>
-          <% end %>
-          <%= button_to t("admin.users.delete"), admin_user_path(user), method: :delete,
-                data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+        <td class="no-sort">
+          <% acts = [ { label: t("admin.users.edit"), icon: :edit, path: edit_admin_user_path(user) } ] %>
+          <% acts << { label: t("admin.users.resend"), icon: :resend, path: resend_invitation_admin_user_path(user), method: :post } if user.invited? %>
+          <% acts << { label: t("admin.users.delete"), icon: :delete, path: admin_user_path(user), method: :delete, confirm: "?" } %>
+          <%= render "shared/row_actions", actions: acts %>
         </td>
       </tr>
     <% end %>

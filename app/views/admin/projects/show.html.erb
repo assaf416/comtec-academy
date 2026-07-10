@@ -34,12 +34,16 @@
             <span class="<%= ui_class(:badge, :muted) %>"><%= t("admin.projects.missing") %></span>
           <% end %>
         </td>
-        <td>
+        <td class="no-sort">
           <% if doc %>
-            <%= link_to t("admin.projects.view"), admin_project_document_path(@project, doc), class: ui_class(:button, :primary, :small) %>
-            <%= link_to t("admin.projects.edit"), edit_admin_project_document_path(@project, doc), class: ui_class(:button, :secondary, :small) %>
+            <%= render "shared/row_actions", actions: [
+              { label: t("admin.projects.view"), icon: :view, path: admin_project_document_path(@project, doc) },
+              { label: t("admin.projects.edit"), icon: :edit, path: edit_admin_project_document_path(@project, doc) }
+            ] %>
           <% else %>
-            <%= link_to t("admin.projects.new"), new_admin_project_document_path(@project, doc_type: type), class: ui_class(:button, :secondary, :small) %>
+            <%= render "shared/row_actions", actions: [
+              { label: t("admin.projects.new"), icon: :add, path: new_admin_project_document_path(@project, doc_type: type) }
+            ] %>
           <% end %>
         </td>
       </tr>

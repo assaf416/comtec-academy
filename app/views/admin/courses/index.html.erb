@@ -4,13 +4,13 @@
   <%= link_to t("admin.courses.new"), new_admin_course_path, class: ui_class(:button, :primary) %>
 </div>
 
-<table class="<%= ui_class(:table) %>">
+<table class="<%= ui_class(:table) %>" data-controller="datatable">
   <thead>
     <tr>
       <th><%= t("admin.courses.name") %></th>
       <th><%= t("admin.courses.published") %></th>
       <th><%= t("admin.courses.episodes") %></th>
-      <th></th>
+      <th class="no-sort"><%= t("shared.actions") %></th>
     </tr>
   </thead>
   <tbody>
@@ -19,10 +19,11 @@
         <td><%= link_to course.name, admin_course_path(course) %></td>
         <td><span class="<%= ui_class(:badge, course.published? ? :success : :muted) %>"><%= course.published? ? "✓" : "—" %></span></td>
         <td><%= course.episodes.size %></td>
-        <td>
-          <%= link_to t("admin.courses.edit"), edit_admin_course_path(course), class: ui_class(:button, :secondary, :small) %>
-          <%= button_to t("admin.courses.delete"), admin_course_path(course), method: :delete,
-                data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+        <td class="no-sort">
+          <%= render "shared/row_actions", actions: [
+            { label: t("admin.courses.edit"), icon: :edit, path: edit_admin_course_path(course) },
+            { label: t("admin.courses.delete"), icon: :delete, path: admin_course_path(course), method: :delete, confirm: "?" }
+          ] %>
         </td>
       </tr>
     <% end %>
