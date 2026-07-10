@@ -33,7 +33,10 @@ body { font-family: "Assistant", "Lato", system-ui, -apple-system, sans-serif; b
 .side-link { display: flex; align-items: center; gap: 8px; color: var(--slack-idle); text-decoration: none; padding: 6px 16px; margin: 1px 8px; border-radius: 6px; font-size: .95rem; }
 .side-link:hover { background: rgba(255,255,255,.08); color: #fff; }
 .side-link.is-active { background: var(--slack-active); color: #fff; }
-.side-link .glyph { opacity: .6; font-weight: 700; }
+.side-link .icon { flex: none; width: 18px; height: 18px; opacity: .85; }
+.side-link.is-active .icon { opacity: 1; }
+.side-section-title .icon { width: 14px; height: 14px; vertical-align: -2px; opacity: .7; }
+.icon { display: inline-block; vertical-align: middle; }
 
 .side-user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-top: 1px solid rgba(0,0,0,.25); }
 .side-user .avatar-wrap { position: relative; flex: none; }

@@ -50,11 +50,11 @@ module UiHelper
   end
 
   # Slack-style sidebar link (<li> + channel-style link with active highlight).
-  def sidebar_link(label, path, glyph = "#")
+  def sidebar_link(label, path, icon_name = "hash")
     active = nav_active?(path)
     content_tag(:li) do
       link_to(path, class: "side-link #{'is-active' if active}".strip) do
-        safe_join([ content_tag(:span, glyph, class: "glyph"), label ], " ")
+        safe_join([ icon(icon_name), content_tag(:span, label) ], " ")
       end
     end
   end

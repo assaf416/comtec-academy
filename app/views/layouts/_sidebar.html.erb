@@ -4,22 +4,22 @@
   <% if authenticated? %>
     <nav class="side-section">
       <ul class="side-nav">
-        <%= sidebar_link t("nav.courses"), root_path %>
-        <%= sidebar_link t("nav.library"), library_path %>
-        <%= sidebar_link t("nav.presentations"), presentations_path %>
+        <%= sidebar_link t("nav.courses"), root_path, "courses" %>
+        <%= sidebar_link t("nav.library"), library_path, "library" %>
+        <%= sidebar_link t("nav.presentations"), presentations_path, "presentations" %>
       </ul>
     </nav>
 
     <% if current_user&.admin? %>
-      <div class="side-section-title"><%= t("nav.admin") %></div>
+      <div class="side-section-title"><%= icon("settings") %> <%= t("nav.admin") %></div>
       <nav class="side-section">
         <ul class="side-nav">
-          <%= sidebar_link t("admin.dashboard.title"), admin_root_path %>
-          <%= sidebar_link t("nav.projects"), admin_projects_path %>
-          <%= sidebar_link t("nav.build_presentations"), admin_presentations_path %>
-          <%= sidebar_link t("admin.layouts.title"), admin_layouts_path %>
-          <%= sidebar_link t("admin.users.title"), admin_users_path %>
-          <%= sidebar_link t("admin.activities.title"), admin_activities_path %>
+          <%= sidebar_link t("admin.dashboard.title"), admin_root_path, "dashboard" %>
+          <%= sidebar_link t("nav.projects"), admin_projects_path, "projects" %>
+          <%= sidebar_link t("nav.build_presentations"), admin_presentations_path, "build" %>
+          <%= sidebar_link t("admin.layouts.title"), admin_layouts_path, "layouts" %>
+          <%= sidebar_link t("admin.users.title"), admin_users_path, "users" %>
+          <%= sidebar_link t("admin.activities.title"), admin_activities_path, "activity" %>
         </ul>
       </nav>
     <% end %>
@@ -34,7 +34,7 @@
     </div>
   <% else %>
     <nav class="side-section">
-      <ul class="side-nav"><%= sidebar_link t("nav.sign_in"), new_session_path %></ul>
+      <ul class="side-nav"><%= sidebar_link t("nav.sign_in"), new_session_path, "signin" %></ul>
     </nav>
   <% end %>
 </aside>
