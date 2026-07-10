@@ -359,6 +359,21 @@
       "last_tested_at": "2026-07-10T08:33:51Z",
       "code_generation_seconds": null,
       "test_generation_seconds": null
+    },
+    {
+      "id": "S25",
+      "type": "story",
+      "name": "Presentation/movie builder",
+      "description": "DAW-style builder: markdown screenplay -> slides (text/code, Hebrew+English) with per-slide TTS voice-over, background music and captions; export PDF (Chrome) and narrated MP4 (ffmpeg); 4-track timeline + preview.",
+      "cucumber_test": "see features/presentations.feature",
+      "feature_file": "features/presentations.feature",
+      "github_issue": null,
+      "status": "completed",
+      "started_at": "2026-07-10T09:06:28Z",
+      "completed_at": "2026-07-10T09:06:28Z",
+      "last_tested_at": "2026-07-10T09:06:28Z",
+      "code_generation_seconds": null,
+      "test_generation_seconds": null
     }
   ]
 }

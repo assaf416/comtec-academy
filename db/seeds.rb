@@ -75,3 +75,37 @@ project.documents.order(:doc_type).each_with_index do |doc, i|
 end
 
 puts "Project ready: #{project.name} (#{project.documents.count} docs)"
+
+# --- Sample presentation (screenplay -> slides) ---
+presentation = Presentation.find_or_create_by!(title: "מבוא ל-Git") do |pr|
+  pr.description = "מצגת הדגמה"
+  pr.source_md = <<~MD
+    # מבוא ל-Git
+
+    שליטה בגרסאות קוד לצוות הפיתוח.
+
+    <!-- note: בשקופית הזו נסביר מהו Git וכיצד הוא עוזר לנו לנהל קוד -->
+    ---
+    ## פקודות בסיסיות
+
+    ```bash
+    git init
+    git add .
+    git commit -m "first commit"
+    ```
+
+    <!-- note: נעבור על שלוש הפקודות הנפוצות ביותר בעבודה היומיומית -->
+    ---
+    ## בדיקת Cucumber
+
+    ```gherkin
+    Feature: התחברות
+      Scenario: משתמש מתחבר
+        Given משתמש פעיל
+    ```
+
+    <!-- note: כך נראית בדיקת קבלה בעברית עם Cucumber -->
+  MD
+end
+presentation.sync_slides!
+puts "Presentation ready: #{presentation.title} (#{presentation.slides.count} slides)"

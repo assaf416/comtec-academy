@@ -46,6 +46,13 @@ Rails.application.routes.draw do
     end
     resource :brand_theme, only: %i[edit update]
     resources :uploads, only: %i[new create]
+    resources :presentations do
+      member do
+        post :generate_audio
+        post :export_pdf
+        post :export_movie
+      end
+    end
     resources :courses do
       resources :episodes do
         resources :markdown_docs, only: %i[create destroy]

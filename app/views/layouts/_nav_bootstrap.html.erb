@@ -12,6 +12,7 @@
           <% if current_user&.admin? %>
             <li class="nav-item"><%= link_to t("nav.admin"), admin_root_path, class: "nav-link" %></li>
             <li class="nav-item"><%= link_to t("nav.projects"), admin_projects_path, class: "nav-link" %></li>
+            <li class="nav-item"><%= link_to t("nav.presentations"), admin_presentations_path, class: "nav-link" %></li>
           <% end %>
         <% end %>
       </ul>

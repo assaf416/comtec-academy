@@ -14,6 +14,7 @@
         <% if current_user&.admin? %>
           <%= link_to t("nav.admin"), admin_root_path, class: "navbar-item" %>
           <%= link_to t("nav.projects"), admin_projects_path, class: "navbar-item" %>
+          <%= link_to t("nav.presentations"), admin_presentations_path, class: "navbar-item" %>
         <% end %>
       <% end %>
     </div>

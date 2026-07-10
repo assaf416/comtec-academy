@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_082418) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_084734) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -127,6 +127,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_082418) do
     t.index ["episode_id"], name: "index_markdown_docs_on_episode_id"
   end
 
+  create_table "presentations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.text "source_md"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "project_memberships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "project_id", null: false
@@ -175,6 +184,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_082418) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "slides", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.float "duration"
+    t.text "notes"
+    t.integer "position", default: 0, null: false
+    t.integer "presentation_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["presentation_id"], name: "index_slides_on_presentation_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "activated_at"
     t.string "avatar_url"
@@ -206,4 +226,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_082418) do
   add_foreign_key "quiz_answers", "users"
   add_foreign_key "quiz_questions", "episodes"
   add_foreign_key "sessions", "users"
+  add_foreign_key "slides", "presentations"
 end

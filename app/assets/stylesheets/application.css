@@ -69,3 +69,32 @@ body { text-align: start; }
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--brand-primary, #1f3a93); color: #fff; font-size: .8rem; font-weight: 700;
 }
+
+/* DAW-style presentation builder */
+.daw { display: flex; flex-direction: column; gap: 12px; }
+.daw-main { display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }
+.daw-preview { flex: 3 1 480px; min-width: 0; }
+.daw-side { flex: 1 1 240px; border: 1px solid #ddd; border-radius: 8px; padding: 8px; background: #fff; }
+.daw-transport { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.daw-stage { position: relative; aspect-ratio: 16 / 9; background: #fff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+.daw-slide { display: none; position: absolute; inset: 0; padding: 32px; overflow: auto; }
+.daw-slide.is-active { display: block; }
+.daw-slide pre.code { direction: ltr; text-align: left; background: #f6f8fa; border: 1px solid #e1e4e8;
+  border-radius: 8px; padding: 16px; overflow: auto; }
+.daw-caption { min-height: 2.2em; text-align: center; padding: 8px; color: #333; }
+.daw-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.daw-tab { flex: 1; padding: 6px; border: 1px solid #ddd; background: #f5f5f5; border-radius: 6px; cursor: pointer; }
+.daw-tab.is-active { background: var(--brand-primary, #1f3a93); color: #fff; }
+.daw-panel { display: none; }
+.daw-panel.is-active { display: block; }
+.daw-audio-item { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.daw-audio-item audio { width: 100%; }
+.daw-timeline { border: 1px solid #ddd; border-radius: 8px; padding: 8px; background: #fafafa; }
+.daw-track { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.daw-track-label { width: 84px; flex: none; font-size: .8rem; color: #555; }
+.daw-track-lane { display: flex; gap: 3px; flex: 1; min-height: 28px; }
+.daw-clip { min-width: 22px; padding: 2px 6px; border-radius: 4px; font-size: .72rem; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; }
+.daw-clip-slides { background: #1f3a93; } .daw-clip-voice { background: #2e8b57; }
+.daw-clip-music { background: #b8860b; } .daw-clip-captions { background: #6a5acd; }
+.daw-clip.is-playing { outline: 2px solid #ff5722; filter: brightness(1.15); }

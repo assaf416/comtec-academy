@@ -1,0 +1,34 @@
+<% content_for :title, t("admin.presentations.title") %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.presentations.title") %></h1>
+  <%= link_to t("admin.presentations.new"), new_admin_presentation_path, class: ui_class(:button, :primary) %>
+</div>
+
+<% if @presentations.empty? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("admin.presentations.empty") %></div>
+<% else %>
+  <table class="<%= ui_class(:table) %>">
+    <thead>
+      <tr>
+        <th><%= t("admin.presentations.title_label") %></th>
+        <th><%= t("admin.presentations.slides") %></th>
+        <th><%= t("admin.presentations.status") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @presentations.each do |presentation| %>
+        <tr>
+          <td><%= link_to presentation.title, admin_presentation_path(presentation) %></td>
+          <td><%= presentation.slides.size %></td>
+          <td><span class="<%= ui_class(:badge, presentation.ready? ? :success : :muted) %>"><%= presentation.status %></span></td>
+          <td>
+            <%= link_to t("admin.presentations.open"), admin_presentation_path(presentation), class: ui_class(:button, :secondary, :small) %>
+            <%= button_to t("admin.presentations.delete"), admin_presentation_path(presentation), method: :delete,
+                  data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

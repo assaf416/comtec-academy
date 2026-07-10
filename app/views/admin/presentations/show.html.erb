@@ -1,0 +1,90 @@
+<% content_for :title, @presentation.title %>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= @presentation.title %></h1>
+  <%= link_to t("admin.presentations.edit"), edit_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
+</div>
+
+<div class="daw" data-controller="presentation-player">
+  <div class="daw-main">
+    <%# Center: preview + transport + exports %>
+    <section class="daw-preview">
+      <div class="daw-transport">
+        <button type="button" class="<%= ui_class(:button, :primary, :small) %>" data-action="presentation-player#play"><%= t("admin.presentations.play") %> ▶</button>
+        <button type="button" class="<%= ui_class(:button, :secondary, :small) %>" data-action="presentation-player#stop"><%= t("admin.presentations.stop") %> ■</button>
+        <%= button_to t("admin.presentations.generate_audio"), generate_audio_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
+        <%= button_to t("admin.presentations.export_pdf"), export_pdf_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
+        <%= button_to t("admin.presentations.export_movie"), export_movie_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
+        <% if @presentation.pdf.attached? %><%= link_to t("admin.presentations.download_pdf"), rails_blob_path(@presentation.pdf, disposition: "attachment"), class: ui_class(:button, :link, :small) %><% end %>
+        <% if @presentation.movie.attached? %><%= link_to t("admin.presentations.download_movie"), rails_blob_path(@presentation.movie, disposition: "attachment"), class: ui_class(:button, :link, :small) %><% end %>
+      </div>
+
+      <div class="daw-stage">
+        <% @slides.each_with_index do |slide, i| %>
+          <div class="daw-slide<%= ' is-active' if i.zero? %>"
+               data-presentation-player-target="slide"
+               data-audio="<%= slide.audio.attached? ? url_for(slide.audio) : '' %>"
+               data-duration="<%= slide.effective_duration %>"
+               data-caption="<%= slide.notes %>">
+            <%= slide.rendered_html %>
+          </div>
+        <% end %>
+        <% if @slides.empty? %><p class="text-muted"><%= t("admin.presentations.empty") %></p><% end %>
+      </div>
+      <div class="daw-caption" data-presentation-player-target="caption"></div>
+      <audio data-presentation-player-target="audio" data-action="ended->presentation-player#next"></audio>
+    </section>
+
+    <%# Side: tabs %>
+    <aside class="daw-side" data-controller="tabs">
+      <div class="daw-tabs">
+        <button type="button" class="daw-tab is-active" data-action="tabs#select" data-tabs-target="tab" data-panel="audio"><%= t("admin.presentations.tab_audio") %></button>
+        <button type="button" class="daw-tab" data-action="tabs#select" data-tabs-target="tab" data-panel="screenplay"><%= t("admin.presentations.tab_screenplay") %></button>
+      </div>
+      <div class="daw-panel is-active" data-tabs-target="panel" data-panel="audio">
+        <% @slides.each do |slide| %>
+          <div class="daw-audio-item">
+            <strong><%= t("admin.presentations.slide") %> <%= slide.position %></strong>
+            <% if slide.audio.attached? %>
+              <audio controls src="<%= url_for(slide.audio) %>"></audio>
+            <% else %>
+              <span class="text-muted"><%= t("admin.presentations.no_audio") %></span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="daw-panel" data-tabs-target="panel" data-panel="screenplay">
+        <%= form_with model: [:admin, @presentation] do |f| %>
+          <%= f.text_area :source_md, rows: 18, class: "w-100", dir: "auto", style: "font-family:monospace" %>
+          <%= f.submit t("admin.presentations.save"), class: ui_class(:button, :primary, :small) %>
+        <% end %>
+      </div>
+    </aside>
+  </div>
+
+  <%# Bottom: 4-track timeline %>
+  <div class="daw-timeline">
+    <% tracks = { slides: :track_slides, voice: :track_voice, music: :track_music, captions: :track_captions } %>
+    <% tracks.each do |key, label| %>
+      <div class="daw-track">
+        <div class="daw-track-label"><%= t("admin.presentations.#{label}") %></div>
+        <div class="daw-track-lane">
+          <% if key == :music %>
+            <% if @presentation.background_music.attached? %>
+              <div class="daw-clip daw-clip-music" style="flex: 1 1 0">♪</div>
+            <% end %>
+          <% else %>
+            <% @slides.each_with_index do |slide, i| %>
+              <div class="daw-clip daw-clip-<%= key %>" data-slide-index="<%= i %>"
+                   style="flex: <%= slide.effective_duration %> 1 0">
+                <% if key == :slides %><%= t("admin.presentations.slide") %> <%= slide.position %>
+                <% elsif key == :voice %><%= slide.audio.attached? ? "▮" : "" %>
+                <% elsif key == :captions %><%= truncate(slide.notes.to_s, length: 24) %><% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
