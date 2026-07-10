@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "feedback-#{@slide.id}" do %>
+  <div id="feedback-<%= @slide.id %>"><%= render "slide_answers/feedback", answer: @answer %></div>
+<% end %>

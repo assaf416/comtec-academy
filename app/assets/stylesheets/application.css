@@ -98,3 +98,13 @@ body { text-align: start; }
 .daw-clip-slides { background: #1f3a93; } .daw-clip-voice { background: #2e8b57; }
 .daw-clip-music { background: #b8860b; } .daw-clip-captions { background: #6a5acd; }
 .daw-clip.is-playing { outline: 2px solid #ff5722; filter: brightness(1.15); }
+
+/* Presentation viewer (end-user player) */
+.viewer-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+.viewer-stage { position: relative; aspect-ratio: 16 / 9; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: #fff; }
+.viewer-slide { display: none; position: absolute; inset: 0; overflow: auto; }
+.viewer-slide.is-active { display: block; }
+.viewer-slide .slide { width: 100%; min-height: 100%; padding: 32px; }
+.viewer-slide pre.code { direction: ltr; text-align: left; background: #f6f8fa; border-radius: 8px; padding: 16px; overflow: auto; }
+.viewer-quiz { position: absolute; inset-inline: 0; bottom: 0; background: rgba(255,255,255,.94); padding: 12px 16px; border-top: 1px solid #ddd; }
+.viewer-quiz label { margin: .2rem 0; }

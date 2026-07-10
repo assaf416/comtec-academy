@@ -1,0 +1,32 @@
+<% content_for :title, t("admin.layouts.title") %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.layouts.title") %></h1>
+  <%= link_to t("admin.layouts.new"), new_admin_layout_path, class: ui_class(:button, :primary) %>
+</div>
+
+<table class="<%= ui_class(:table) %>">
+  <thead>
+    <tr>
+      <th><%= t("admin.layouts.key") %></th>
+      <th><%= t("admin.layouts.name") %></th>
+      <th><%= t("admin.layouts.direction") %></th>
+      <th><%= t("admin.layouts.kind") %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @layouts.each do |layout| %>
+      <tr>
+        <td><code dir="ltr"><%= layout.key %></code></td>
+        <td><%= layout.name %></td>
+        <td><%= layout.direction %></td>
+        <td><span class="<%= ui_class(:badge, :info) %>"><%= layout.kind %></span></td>
+        <td>
+          <%= link_to t("admin.layouts.edit"), edit_admin_layout_path(layout), class: ui_class(:button, :secondary, :small) %>
+          <%= button_to t("admin.layouts.delete"), admin_layout_path(layout), method: :delete,
+                data: { turbo_confirm: "?" }, class: ui_class(:button, :danger, :small) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

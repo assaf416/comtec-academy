@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :favorite_documents, through: :favorites, source: :document
   has_many :project_memberships, dependent: :destroy
   has_many :projects, through: :project_memberships
+  has_many :slide_answers, dependent: :destroy
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

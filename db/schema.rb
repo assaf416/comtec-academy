@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_084734) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_102106) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -118,6 +118,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_084734) do
     t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
+  create_table "layouts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "css"
+    t.string "description"
+    t.string "direction"
+    t.string "key"
+    t.integer "kind"
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_layouts_on_key", unique: true
+  end
+
   create_table "markdown_docs", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
@@ -184,14 +196,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_084734) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "slide_answers", force: :cascade do |t|
+    t.text "answer"
+    t.datetime "created_at", null: false
+    t.integer "slide_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["slide_id"], name: "index_slide_answers_on_slide_id"
+    t.index ["user_id", "slide_id"], name: "index_slide_answers_on_user_id_and_slide_id", unique: true
+    t.index ["user_id"], name: "index_slide_answers_on_user_id"
+  end
+
   create_table "slides", force: :cascade do |t|
+    t.text "choices"
     t.text "content"
+    t.string "correct_choice"
     t.datetime "created_at", null: false
     t.float "duration"
+    t.integer "layout_id"
     t.text "notes"
     t.integer "position", default: 0, null: false
     t.integer "presentation_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["layout_id"], name: "index_slides_on_layout_id"
     t.index ["presentation_id"], name: "index_slides_on_presentation_id"
   end
 
@@ -226,5 +253,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_084734) do
   add_foreign_key "quiz_answers", "users"
   add_foreign_key "quiz_questions", "episodes"
   add_foreign_key "sessions", "users"
+  add_foreign_key "slide_answers", "slides"
+  add_foreign_key "slide_answers", "users"
+  add_foreign_key "slides", "layouts"
   add_foreign_key "slides", "presentations"
 end

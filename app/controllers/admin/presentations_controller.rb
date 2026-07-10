@@ -1,7 +1,7 @@
 module Admin
   class PresentationsController < BaseController
     before_action :set_presentation,
-                  only: %i[show edit update destroy generate_audio export_pdf export_movie]
+                  only: %i[show edit update destroy generate_audio export_pdf export_movie publish]
 
     def index
       @presentations = Presentation.order(updated_at: :desc)
@@ -55,6 +55,12 @@ module Admin
     def export_movie
       ExportPresentationMovieJob.perform_later(@presentation)
       back t("admin.presentations.exporting_movie")
+    end
+
+    # Toggle between draft and ready (ready presentations show in the viewer).
+    def publish
+      @presentation.update!(status: @presentation.ready? ? :draft : :ready)
+      back t("admin.presentations.#{@presentation.ready? ? 'published' : 'unpublished'}")
     end
 
     private

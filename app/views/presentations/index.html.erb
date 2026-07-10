@@ -1,0 +1,21 @@
+<% content_for :title, t("presentations.title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("presentations.title") %></h1>
+
+<% if @presentations.empty? %>
+  <div class="<%= ui_class(:alert, :notice) %>"><%= t("presentations.empty") %></div>
+<% else %>
+  <div class="<%= ui_class(:grid) %>">
+    <% @presentations.each do |presentation| %>
+      <div class="<%= ui_class(:grid_item) %>">
+        <div class="<%= ui_class(:card) %>">
+          <div class="<%= ui_class(:card_body) %>">
+            <h3 class="<%= ui_class(:card_title) %>"><%= link_to presentation.title, presentation_path(presentation) %></h3>
+            <% if presentation.description.present? %><p><%= presentation.description %></p><% end %>
+            <p><span class="<%= ui_class(:badge, :muted) %>"><%= t("presentations.slides_count", count: presentation.slides.size) %></span></p>
+            <%= link_to t("presentations.watch"), presentation_path(presentation), class: ui_class(:button, :primary) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

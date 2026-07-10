@@ -1,0 +1,41 @@
+<% content_for :title, @presentation.title %>
+<%= link_to "→ #{t('presentations.back')}", presentations_path, class: ui_class(:button, :link, :small) %>
+<h1 class="<%= ui_class(:title) %>"><%= @presentation.title %></h1>
+
+<div class="viewer" data-controller="presentation-viewer">
+  <div class="viewer-toolbar">
+    <button type="button" class="<%= ui_class(:button, :secondary, :small) %>" data-action="presentation-viewer#prev"><%= t("presentations.prev") %></button>
+    <button type="button" class="<%= ui_class(:button, :secondary, :small) %>" data-action="presentation-viewer#next"><%= t("presentations.next") %></button>
+    <button type="button" class="<%= ui_class(:button, :primary, :small) %>" data-action="presentation-viewer#toggle"><%= t("presentations.play") %> ▶</button>
+    <label class="d-flex align-items-center gap-1"><%= t("presentations.volume") %>
+      <input type="range" min="0" max="1" step="0.05" value="1"
+             data-presentation-viewer-target="volume" data-action="input->presentation-viewer#setVolume">
+    </label>
+    <span class="<%= ui_class(:badge, :muted) %>" data-presentation-viewer-target="position"></span>
+  </div>
+
+  <div class="viewer-stage">
+    <% @slides.each_with_index do |slide, i| %>
+      <div class="viewer-slide<%= ' is-active' if i.zero? %>" data-presentation-viewer-target="slide"
+           data-audio="<%= slide.audio.attached? ? url_for(slide.audio) : '' %>">
+        <%= Presentations::SlideRenderer.new.slide_body(slide, include_quiz: false) %>
+        <% if slide.quiz? %>
+          <div class="viewer-quiz">
+            <%= form_with url: slide_answer_path(slide) do %>
+              <% existing = slide.answer_for(current_user) %>
+              <% slide.choices.each do |choice| %>
+                <label class="d-block"><%= radio_button_tag "answer", choice, existing&.answer == choice %> <%= choice %></label>
+              <% end %>
+              <%= submit_tag t("presentations.submit_answer"), class: ui_class(:button, :primary, :small) %>
+            <% end %>
+            <div id="feedback-<%= slide.id %>">
+              <% if (a = slide.answer_for(current_user)) %><%= render "slide_answers/feedback", answer: a %><% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <audio data-presentation-viewer-target="audio"></audio>
+</div>

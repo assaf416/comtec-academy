@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     resources :quiz_answers, only: %i[create]
   end
 
+  # --- Presentations viewer (all signed-in users; ready presentations only) ---
+  resources :presentations, only: %i[index show]
+  resources :slides, only: [] do
+    resource :answer, only: %i[create], controller: "slide_answers"
+  end
+
   # --- Library (all signed-in users; read-only document viewing + favorites) ---
   get "library", to: "library#index"
   resources :documents, only: %i[show] do
@@ -47,11 +53,13 @@ Rails.application.routes.draw do
     end
     resource :brand_theme, only: %i[edit update]
     resources :uploads, only: %i[new create]
+    resources :layouts
     resources :presentations do
       member do
         post :generate_audio
         post :export_pdf
         post :export_movie
+        post :publish
       end
     end
     resources :courses do

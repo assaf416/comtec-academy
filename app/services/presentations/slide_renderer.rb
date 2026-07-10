@@ -25,11 +25,27 @@ module Presentations
       markdown.render(content.to_s).html_safe
     end
 
+    # A slide wrapped in its layout (direction + CSS backdrop). `include_quiz`
+    # renders a static choices list (for the deck/PDF); the viewer passes false
+    # and renders its own interactive quiz form.
+    def slide_body(slide, include_quiz: true)
+      layout = slide.layout
+      key = layout&.key || "plain-he"
+      dir = layout&.direction || "rtl"
+      quiz = include_quiz && slide.quiz? ? quiz_list(slide) : ""
+      %(<section class="slide layout-#{key}" dir="#{dir}"><style>#{layout&.css}</style>#{slide_html(slide.content)}#{quiz}</section>).html_safe
+    end
+
+    def quiz_list(slide)
+      return "" if slide.choices.blank?
+
+      items = slide.choices.map { |c| "<li>#{ERB::Util.html_escape(c)}</li>" }.join
+      %(<ul class="choices">#{items}</ul>)
+    end
+
     # A full standalone HTML deck (one page per slide) for Chrome -> PDF.
     def deck_html(presentation)
-      body = presentation.slides.ordered.map do |slide|
-        %(<section class="slide">#{slide_html(slide.content)}</section>)
-      end.join("\n")
+      body = presentation.slides.ordered.map { |slide| slide_body(slide) }.join("\n")
 
       <<~HTML
         <!DOCTYPE html>

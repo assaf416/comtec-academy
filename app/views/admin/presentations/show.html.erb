@@ -15,6 +15,8 @@
         <%= button_to t("admin.presentations.generate_audio"), generate_audio_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
         <%= button_to t("admin.presentations.export_pdf"), export_pdf_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
         <%= button_to t("admin.presentations.export_movie"), export_movie_admin_presentation_path(@presentation), class: ui_class(:button, :secondary, :small) %>
+        <%= button_to t("admin.presentations.#{@presentation.ready? ? 'unpublish' : 'publish'}"), publish_admin_presentation_path(@presentation), class: ui_class(:button, @presentation.ready? ? :secondary : :primary, :small) %>
+        <span class="<%= ui_class(:badge, @presentation.ready? ? :success : :muted) %>"><%= @presentation.status %></span>
         <% if @presentation.pdf.attached? %><%= link_to t("admin.presentations.download_pdf"), rails_blob_path(@presentation.pdf, disposition: "attachment"), class: ui_class(:button, :link, :small) %><% end %>
         <% if @presentation.movie.attached? %><%= link_to t("admin.presentations.download_movie"), rails_blob_path(@presentation.movie, disposition: "attachment"), class: ui_class(:button, :link, :small) %><% end %>
       </div>
@@ -77,7 +79,7 @@
             <% @slides.each_with_index do |slide, i| %>
               <div class="daw-clip daw-clip-<%= key %>" data-slide-index="<%= i %>"
                    style="flex: <%= slide.effective_duration %> 1 0">
-                <% if key == :slides %><%= t("admin.presentations.slide") %> <%= slide.position %>
+                <% if key == :slides %><%= t("admin.presentations.slide") %> <%= slide.position %> · <%= slide.layout&.key %>
                 <% elsif key == :voice %><%= slide.audio.attached? ? "▮" : "" %>
                 <% elsif key == :captions %><%= truncate(slide.notes.to_s, length: 24) %><% end %>
               </div>

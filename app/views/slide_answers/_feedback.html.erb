@@ -1,0 +1,3 @@
+<div class="<%= answer.correct? ? ui_class(:alert, :notice) : ui_class(:alert, :alert) %>">
+  <%= answer.correct? ? t("presentations.correct") : t("presentations.incorrect") %>
+</div>

@@ -82,6 +82,26 @@ if Dir.exist?(Rails.root.join("documents"))
   puts "Imported #{result[:imported]} example documents into the Library"
 end
 
+# --- Presentation layouts (templates) ---
+[
+  { key: "plain-he", name: "טקסט (עברית)", direction: "rtl", kind: :text,
+    description: "שקופית טקסט בעברית",
+    css: ".layout-plain-he{background:#fff;color:#1f2937}.layout-plain-he h1,.layout-plain-he h2{color:#1f3a93}" },
+  { key: "code-he", name: "קוד (עברית)", direction: "rtl", kind: :code,
+    description: "רקע להצגת קוד עם הסבר בעברית",
+    css: ".layout-code-he{background:#0f172a;color:#e2e8f0}.layout-code-he h1,.layout-code-he h2{color:#7dd3fc}.layout-code-he pre.code{direction:ltr;text-align:left}" },
+  { key: "code-en", name: "קוד (אנגלית)", direction: "ltr", kind: :code,
+    description: "Code backdrop, English/LTR",
+    css: ".layout-code-en{background:#0f172a;color:#e2e8f0}.layout-code-en h1,.layout-code-en h2{color:#7dd3fc}.layout-code-en pre.code{direction:ltr;text-align:left}" },
+  { key: "quiz", name: "בוחן", direction: "rtl", kind: :quiz,
+    description: "שקופית שאלה עם אפשרויות בחירה",
+    css: ".layout-quiz{background:#fef3c7;color:#78350f}.layout-quiz h1,.layout-quiz h2{color:#b45309}.layout-quiz .choices{list-style:none;padding:0}.layout-quiz .choices li{margin:.4em 0}" }
+].each do |attrs|
+  layout = Layout.find_or_initialize_by(key: attrs[:key])
+  layout.update!(attrs)
+end
+puts "Layouts ready: #{Layout.count}"
+
 # --- Sample presentation (screenplay -> slides) ---
 presentation = Presentation.find_or_create_by!(title: "מבוא ל-Git") do |pr|
   pr.description = "מצגת הדגמה"
@@ -114,4 +134,5 @@ presentation = Presentation.find_or_create_by!(title: "מבוא ל-Git") do |pr|
   MD
 end
 presentation.sync_slides!
+presentation.update!(status: :ready) # published so it shows in the viewer
 puts "Presentation ready: #{presentation.title} (#{presentation.slides.count} slides)"
