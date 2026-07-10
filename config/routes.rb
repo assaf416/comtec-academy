@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   # --- Library (all signed-in users; read-only document viewing + favorites) ---
   get "library", to: "library#index"
   resources :documents, only: %i[show] do
+    member { get :raw }
     resource :favorite, only: %i[create destroy]
   end
 

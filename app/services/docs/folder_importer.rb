@@ -1,5 +1,4 @@
 require "nokogiri"
-require "reverse_markdown"
 
 module Docs
   # Imports every supported document in a folder into the Library as standalone
@@ -29,7 +28,7 @@ module Docs
         ext = File.extname(path).downcase
         next unless File.file?(path) && SUPPORTED.include?(ext)
 
-        content = to_markdown(path, ext)
+        content = content_for(path, ext)
         next if content.blank?
 
         title = unique_title(title_for(path), ext, used)
@@ -51,15 +50,17 @@ module Docs
         doc.original.attach(io: File.open(path), filename: File.basename(path), content_type: content_type(ext))
       end
 
-      def to_markdown(path, ext)
+      # Text stored on the Document for search/preview. HTML documents are
+      # displayed from their original file (see DocumentsController#raw), so we
+      # only keep their plain text here; markdown/office produce markdown.
+      def content_for(path, ext)
         raw = File.read(path).scrub("") # drop invalid UTF-8 bytes
         if MD_EXT.include?(ext)
           raw
         elsif HTML_EXT.include?(ext)
           html = Nokogiri::HTML(raw)
           html.css("head, style, script").remove
-          body = html.at_css("body") || html
-          ReverseMarkdown.convert(body.inner_html, github_flavored: true).gsub(/\n{3,}/, "\n\n").strip
+          (html.at_css("body") || html).text.gsub(/[ \t]+/, " ").gsub(/\n{3,}/, "\n\n").strip
         else
           Docs::OfficeConverter.new.convert(path, File.basename(path))
         end

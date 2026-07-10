@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SAATCG / SAATCGSL — Data Structures</title><style>:root{--brand:#1f3a93;--accent:#e67e22}
+*{box-sizing:border-box}
+body{max-width:900px;margin:0 auto;padding:40px 24px;font-family:"Segoe UI",Arial,sans-serif;color:#1f2937;line-height:1.7}
+h1,h2,h3{color:var(--brand);margin-top:1.6em}
+h1{border-bottom:3px solid var(--brand);padding-bottom:.3em}
+h2{border-bottom:1px solid #eee;padding-bottom:.2em}
+code{background:#f5f5f5;padding:.1em .35em;border-radius:4px;font-family:"DejaVu Sans Mono",monospace}
+pre{background:#1e1e2e;color:#f8f8f2;padding:16px;border-radius:8px;overflow:auto}
+pre code{background:none;color:inherit}
+table{border-collapse:collapse;width:100%;margin:1em 0}
+th,td{border:1px solid #ddd;padding:.5em .75em;text-align:left}
+th{background:var(--brand);color:#fff}
+tr:nth-child(even) td{background:#fafafa}
+blockquote{border-left:4px solid var(--accent);margin-left:0;padding-left:1em;color:#555}
+</style></head><body><h1>SAATCG / SAATCGSL — Data Structure Reference</h1>
+
+<p>Field-level reference for every data structure used by the two programs.
+See <code>DOCUMENTATION.md</code> for the functional overview.</p>
+
+<ul>
+<li><strong>Encoding:</strong> source is EBCDIC Hebrew (IBM-424).</li>
+<li><strong>COBOL numeric notes:</strong> <code>9(n)</code> = zoned decimal (n digits), <code>S</code> = signed,
+<code>V</code> = implied decimal point, <code>COMP-3</code> = packed decimal (BCD),
+<code>BINARY</code> = 2/4-byte integer, <code>X(n)</code> = character.</li>
+<li><strong>RPGLE type notes:</strong> <code>a</code> = character, <code>s</code> = zoned, <code>p</code> = packed, <code>i</code> = integer,
+<code>n</code> = indicator, <code>d</code>/<code>t</code> = date/time, trailing <code>0</code>/<code>2</code> = decimal positions,
+<code>varying</code> = length-prefixed.</li>
+</ul>
+
+<hr>
+
+<h2>1. Shared transaction record (the central structure)</h2>
+
+<p>The same 703-byte record is passed through both programs. It carries the request
+in and the authorization result out.</p>
+
+<table><thead>
+<tr>
+<th>In program</th>
+<th>Name</th>
+<th>Layout prefix</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>COBOL <code>SAATCGSL</code></td>
+<td><code>DCCGTRNE-REC</code> → <code>DCCGE-REC</code></td>
+<td><code>DCCGE-xxx</code></td>
+</tr>
+<tr>
+<td>RPGLE <code>SAATCG</code></td>
+<td><code>ECPTRNS</code> data structure (external) + <code>ecptrnsv</code> (703a varying)</td>
+<td><code>PTxxx</code></td>
+</tr>
+</tbody></table>
+
+<p>The two layouts describe the same bytes. The last 4 letters of the field name
+match across languages: <code>DCCGE-CARN</code> = <code>PTCARN</code>, <code>DCCGE-RQSC</code> = <code>PTRQSC</code>, etc.</p>
+
+<h3>1.1 Full field list (<code>DCCGE-*</code> / <code>PTxxx</code>)</h3>
+
+<table><thead>
+<tr>
+<th>COBOL field</th>
+<th>PIC</th>
+<th>RPGLE</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>DCCGE-TERN</code></td>
+<td><code>9(10)</code></td>
+<td><code>PTTERN</code></td>
+<td>Terminal number (masof)</td>
+</tr>
+<tr>
+<td><code>DCCGE-PTID</code></td>
+<td><code>9(06)</code></td>
+<td><code>PTPTID</code></td>
+<td>Point id</td>
+</tr>
+<tr>
+<td><code>DCCGE-RQSC</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTRQSC</code></td>
+<td>Request code — <code>01</code>=ishur ragil, <code>11</code>=itchul kupa; also drives transaction type (see §1.2)</td>
+</tr>
+<tr>
+<td><code>DCCGE-PCSC</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTPCSC</code></td>
+<td>Process code</td>
+</tr>
+<tr>
+<td><code>DCCGE-QUEP</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTQUEP</code></td>
+<td>Queue</td>
+</tr>
+<tr>
+<td><code>DCCGE-WRKS</code></td>
+<td><code>X(10)</code></td>
+<td><code>PTWRKS</code></td>
+<td>Workstation (also gets tranId 1–10 on return)</td>
+</tr>
+<tr>
+<td><code>DCCGE-PRSL</code></td>
+<td><code>X(10)</code></td>
+<td><code>PTPRSL</code></td>
+<td>Personal (also gets tranId 11–20 on return)</td>
+</tr>
+<tr>
+<td><code>DCCGE-USRP</code></td>
+<td><code>X(10)</code></td>
+<td><code>PTUSRP</code></td>
+<td>User profile</td>
+</tr>
+<tr>
+<td><code>DCCGE-USRC</code></td>
+<td><code>X(10)</code></td>
+<td><code>PTUSRC</code></td>
+<td>User code</td>
+</tr>
+<tr>
+<td><code>DCCGE-RPGM</code></td>
+<td><code>X(10)</code></td>
+<td><code>PTRPGM</code></td>
+<td>Program</td>
+</tr>
+<tr>
+<td><code>DCCGE-CMPC</code></td>
+<td><code>X(03)</code></td>
+<td><code>PTCMPC</code></td>
+<td>Company code</td>
+</tr>
+<tr>
+<td><code>DCCGE-SERN</code></td>
+<td><code>9(05) COMP-3</code></td>
+<td><code>PTSERN</code></td>
+<td>Serial number</td>
+</tr>
+<tr>
+<td><code>DCCGE-DOCN</code></td>
+<td><code>9(12) COMP-3</code></td>
+<td><code>PTDOCN</code></td>
+<td>Document number</td>
+</tr>
+<tr>
+<td><code>DCCGE-LINN</code></td>
+<td><code>X(03)</code></td>
+<td><code>PTLINN</code></td>
+<td>Line number</td>
+</tr>
+<tr>
+<td><code>DCCGE-DOCT</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTDOCT</code></td>
+<td>Document type</td>
+</tr>
+<tr>
+<td><code>DCCGE-RQDT</code></td>
+<td><code>9(08) COMP-3</code></td>
+<td><code>PTRQDT</code></td>
+<td>Request/transaction date (CCYYMMDD)</td>
+</tr>
+<tr>
+<td><code>DCCGE-TRNO</code></td>
+<td><code>9(06) COMP-3</code></td>
+<td><code>PTTRNO</code></td>
+<td>Transaction number</td>
+</tr>
+<tr>
+<td><code>DCCGE-RTIM</code></td>
+<td><code>9(06) COMP-3</code></td>
+<td><code>PTRTIM</code></td>
+<td>Transaction time</td>
+</tr>
+<tr>
+<td><code>DCCGE-TRST</code></td>
+<td><code>X(03)</code></td>
+<td><code>PTTRST</code></td>
+<td>Transaction status (<code>000</code>/spaces = OK) — <strong>set on return</strong> from <code>Ostatus</code></td>
+</tr>
+<tr>
+<td><code>DCCGE-STSD</code></td>
+<td><code>X(79)</code></td>
+<td><code>PTSTSD</code></td>
+<td>Status description text — <strong>set on return</strong> (extended status text)</td>
+</tr>
+<tr>
+<td><code>DCCGE-REFN</code></td>
+<td><code>9(10) COMP-3</code></td>
+<td><code>PTREFN</code></td>
+<td>Reference number — <strong>set on return</strong> from tranId</td>
+</tr>
+<tr>
+<td><code>DCCGE-REF1</code></td>
+<td><code>X(30)</code></td>
+<td><code>PTREF1</code></td>
+<td>Reference 1</td>
+</tr>
+<tr>
+<td><code>DCCGE-REF2</code></td>
+<td><code>X(20)</code></td>
+<td><code>PTREF2</code></td>
+<td>Reference 2 — <strong>set on return</strong> to card id / card no</td>
+</tr>
+<tr>
+<td><code>DCCGE-REF3</code></td>
+<td><code>X(08)</code></td>
+<td><code>PTREF3</code></td>
+<td>Reference 3 — non-numeric auth number storage</td>
+</tr>
+<tr>
+<td><code>DCCGE-TRSM</code></td>
+<td><code>S9(6)V9(2) COMP-3</code></td>
+<td><code>PTTRSM</code></td>
+<td>Transaction amount (× 100 → <code>Itotal</code>)</td>
+</tr>
+<tr>
+<td><code>DCCGE-CRET</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCRET</code></td>
+<td>Credit type (see §1.2)</td>
+</tr>
+<tr>
+<td><code>DCCGE-FRSM</code></td>
+<td><code>S9(6)V9(2) COMP-3</code></td>
+<td><code>PTFRSM</code></td>
+<td>First-payment amount</td>
+</tr>
+<tr>
+<td><code>DCCGE-FXSM</code></td>
+<td><code>S9(6)V9(2) COMP-3</code></td>
+<td><code>PTFXSM</code></td>
+<td>Fixed/periodical-payment amount</td>
+</tr>
+<tr>
+<td><code>DCCGE-PAYN</code></td>
+<td><code>9(02) COMP-3</code></td>
+<td><code>PTPAYN</code></td>
+<td>Number of payments</td>
+</tr>
+<tr>
+<td><code>DCCGE-SRSM</code></td>
+<td><code>S9(6)V9(2) COMP-3</code></td>
+<td><code>PTSRSM</code></td>
+<td>Additional amount</td>
+</tr>
+<tr>
+<td><code>DCCGE-DILC</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTDILC</code></td>
+<td>Validation/deal code — <code>2</code>=bdika, <code>4</code>=iska, <code>5</code>=isur; drives <code>iValidation</code> (see §1.2)</td>
+</tr>
+<tr>
+<td><code>DCCGE-VENN</code></td>
+<td><code>9(07) COMP-3</code></td>
+<td><code>PTVENN</code></td>
+<td>Supplier/vendor — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CURT</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCURT</code></td>
+<td>Currency code (see §1.2)</td>
+</tr>
+<tr>
+<td><code>DCCGE-CLBC</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCLBC</code></td>
+<td>Club code</td>
+</tr>
+<tr>
+<td><code>DCCGE-APPN</code></td>
+<td><code>9(07) COMP-3</code></td>
+<td><code>PTAPPN</code></td>
+<td>Approval number — <strong>set on return</strong> (<code>-9999999</code> = non-numeric)</td>
+</tr>
+<tr>
+<td><code>DCCGE-APSR</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTAPSR</code></td>
+<td>Approval source — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CRCO</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCRCO</code></td>
+<td>Credit company — <code>1</code>=Isracard, <code>2</code>=Visa-Cal, <code>3</code>=Diners, <code>4</code>=American Express, <code>5</code>=JCB, <code>6</code>=Leumi-Card — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CANM</code></td>
+<td><code>X(15)</code></td>
+<td><code>PTCANM</code></td>
+<td>Card name — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-FORF</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTFORF</code></td>
+<td>Foreign flag — <strong>set on return</strong> (card type code)</td>
+</tr>
+<tr>
+<td><code>DCCGE-FILN</code></td>
+<td><code>9(02) COMP-3</code></td>
+<td><code>PTFILN</code></td>
+<td>File number — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CHSN</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTCHSN</code></td>
+<td>Kupa code</td>
+</tr>
+<tr>
+<td><code>DCCGE-CSHS</code></td>
+<td><code>9(03)</code></td>
+<td><code>PTCSHS</code></td>
+<td>Cashier</td>
+</tr>
+<tr>
+<td><code>DCCGE-TRTO</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTTRTO</code></td>
+<td>Transaction type — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-DILR</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTDILR</code></td>
+<td>Deal indicator</td>
+</tr>
+<tr>
+<td><code>DCCGE-SRVC</code></td>
+<td><code>9(03) COMP-3</code></td>
+<td><code>PTSRVC</code></td>
+<td>Service code</td>
+</tr>
+<tr>
+<td><code>DCCGE-CRDT</code></td>
+<td><code>9(08) COMP-3</code></td>
+<td><code>PTCRDT</code></td>
+<td>Credit/pay date — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-TRNC</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTTRNC</code></td>
+<td>Transaction code — <code>00</code>=Regular, <code>50</code>=Phone, <code>60</code>=Signature, <code>70</code>=Internet</td>
+</tr>
+<tr>
+<td><code>DCCGE-CARN</code></td>
+<td><code>9(18) COMP-3</code></td>
+<td><code>PTCARN</code></td>
+<td>Card number / card-id token (prefix <code>10</code>/<code>15</code>)</td>
+</tr>
+<tr>
+<td><code>DCCGE-VLDT</code></td>
+<td><code>9(04)</code></td>
+<td><code>PTVLDT</code></td>
+<td>Card expiration (MMYY) — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CIDN</code></td>
+<td><code>9(09) COMP-3</code></td>
+<td><code>PTCIDN</code></td>
+<td>Card-holder id</td>
+</tr>
+<tr>
+<td><code>DCCGE-CUSN</code></td>
+<td><code>9(12) COMP-3</code></td>
+<td><code>PTCUSN</code></td>
+<td>Customer number</td>
+</tr>
+<tr>
+<td><code>DCCGE-CUNM</code></td>
+<td><code>X(30)</code></td>
+<td><code>PTCUNM</code></td>
+<td>Customer name</td>
+</tr>
+<tr>
+<td><code>DCCGE-CUSF</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCUSF</code></td>
+<td>Customer flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-TEL1</code></td>
+<td><code>X(15)</code></td>
+<td><code>PTTEL1</code></td>
+<td>Customer phone</td>
+</tr>
+<tr>
+<td><code>DCCGE-CNTC</code></td>
+<td><code>9(03)</code></td>
+<td><code>PTCNTC</code></td>
+<td>Country code</td>
+</tr>
+<tr>
+<td><code>DCCGE-STTC</code></td>
+<td><code>X(03)</code></td>
+<td><code>PTSTTC</code></td>
+<td>State code</td>
+</tr>
+<tr>
+<td><code>DCCGE-CNCA</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTCNCA</code></td>
+<td>Country abbr.</td>
+</tr>
+<tr>
+<td><code>DCCGE-CTYC</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTCTYC</code></td>
+<td>City code</td>
+</tr>
+<tr>
+<td><code>DCCGE-CTYD</code></td>
+<td><code>X(15)</code></td>
+<td><code>PTCTYD</code></td>
+<td>City description</td>
+</tr>
+<tr>
+<td><code>DCCGE-ADDR</code></td>
+<td><code>X(30)</code></td>
+<td><code>PTADDR</code></td>
+<td>Address</td>
+</tr>
+<tr>
+<td><code>DCCGE-ZIPC</code></td>
+<td><code>9(05) COMP-3</code></td>
+<td><code>PTZIPC</code></td>
+<td>Zip code</td>
+</tr>
+<tr>
+<td><code>DCCGE-T180</code></td>
+<td><code>X(80)</code></td>
+<td><code>PTT180</code></td>
+<td>Track 2 magnetic-stripe data</td>
+</tr>
+<tr>
+<td><code>DCCGE-BRNC</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTBRNC</code></td>
+<td>Branch</td>
+</tr>
+<tr>
+<td><code>DCCGE-BRS1</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTBRS1</code></td>
+<td>Branch sub 1</td>
+</tr>
+<tr>
+<td><code>DCCGE-BRS2</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTBRS2</code></td>
+<td>Branch sub 2</td>
+</tr>
+<tr>
+<td><code>DCCGE-GRUP</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTGRUP</code></td>
+<td>Group</td>
+</tr>
+<tr>
+<td><code>DCCGE-GRS1</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTGRS1</code></td>
+<td>Group sub 1</td>
+</tr>
+<tr>
+<td><code>DCCGE-GRS2</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTGRS2</code></td>
+<td>Group sub 2</td>
+</tr>
+<tr>
+<td><code>DCCGE-BNPS</code></td>
+<td><code>9(03) COMP-3</code></td>
+<td><code>PTBNPS</code></td>
+<td>Payments (bank)</td>
+</tr>
+<tr>
+<td><code>DCCGE-BPYN</code></td>
+<td><code>9(03) COMP-3</code></td>
+<td><code>PTBPYN</code></td>
+<td>Bank payment number</td>
+</tr>
+<tr>
+<td><code>DCCGE-BCRD</code></td>
+<td><code>9(08) COMP-3</code></td>
+<td><code>PTBCRD</code></td>
+<td>Bank credit date</td>
+</tr>
+<tr>
+<td><code>DCCGE-BCLD</code></td>
+<td><code>9(08) COMP-3</code></td>
+<td><code>PTBCLD</code></td>
+<td>Original clearing date (refund key)</td>
+</tr>
+<tr>
+<td><code>DCCGE-BBLD</code></td>
+<td><code>9(08) COMP-3</code></td>
+<td><code>PTBBLD</code></td>
+<td>Original balance date (refund key)</td>
+</tr>
+<tr>
+<td><code>DCCGE-LOCN</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTLOCN</code></td>
+<td>Location</td>
+</tr>
+<tr>
+<td><code>DCCGE-LOS1</code></td>
+<td><code>9(04) COMP-3</code></td>
+<td><code>PTLOS1</code></td>
+<td>Location sub</td>
+</tr>
+<tr>
+<td><code>DCCGE-COID</code></td>
+<td><code>X(06)</code></td>
+<td><code>PTCOID</code></td>
+<td>Company id</td>
+</tr>
+<tr>
+<td><code>DCCGE-MGTF</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTMGTF</code></td>
+<td>Magnetic flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-LFFL</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTLFFL</code></td>
+<td>Life flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-SCRN</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTSCRN</code></td>
+<td>Screen flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-PSLF</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTPSLF</code></td>
+<td>Policy flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-TRCF</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTTRCF</code></td>
+<td>Transaction flag</td>
+</tr>
+<tr>
+<td><code>DCCGE-MSGT</code></td>
+<td><code>9(02)</code></td>
+<td><code>PTMSGT</code></td>
+<td>Message type</td>
+</tr>
+<tr>
+<td><code>DCCGE-MMSR</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTMMSR</code></td>
+<td>Message reason</td>
+</tr>
+<tr>
+<td><code>DCCGE-CA12</code></td>
+<td><code>X(02)</code></td>
+<td><code>PTCA12</code></td>
+<td>Card attr 12 — <strong>set on return</strong> (card brand code)</td>
+</tr>
+<tr>
+<td><code>DCCGE-CA14</code></td>
+<td><code>X(04)</code></td>
+<td><code>PTCA14</code></td>
+<td>Card attr 14</td>
+</tr>
+<tr>
+<td><code>DCCGE-CA16</code></td>
+<td><code>X(06)</code></td>
+<td><code>PTCA16</code></td>
+<td>Card attr 16</td>
+</tr>
+<tr>
+<td><code>DCCGE-CN12</code></td>
+<td><code>9(02)</code></td>
+<td><code>PTCN12</code></td>
+<td>Card num 12</td>
+</tr>
+<tr>
+<td><code>DCCGE-CN14</code></td>
+<td><code>9(04)</code></td>
+<td><code>PTCN14</code></td>
+<td>Card num 14</td>
+</tr>
+<tr>
+<td><code>DCCGE-CN16</code></td>
+<td><code>9(06)</code></td>
+<td><code>PTCN16</code></td>
+<td>Card num 16 — <strong>set on return</strong> (slave terminal × 1000 + sequence)</td>
+</tr>
+<tr>
+<td><code>DCCGE-CVV2</code></td>
+<td><code>X(04)</code></td>
+<td><code>PTCVV2</code></td>
+<td>CVV2</td>
+</tr>
+<tr>
+<td><code>DCCGE-LS4D</code></td>
+<td><code>X(04)</code></td>
+<td><code>PTLS4D</code></td>
+<td>Last 4 digits — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-CL4D</code></td>
+<td><code>X(04)</code></td>
+<td><code>PTCL4D</code></td>
+<td>Clearing last 4</td>
+</tr>
+<tr>
+<td><code>DCCGE-BRCO</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTBRCO</code></td>
+<td>Branch company</td>
+</tr>
+<tr>
+<td><code>DCCGE-CLCO</code></td>
+<td><code>X(01)</code></td>
+<td><code>PTCLCO</code></td>
+<td>Clearing/acquirer company (same codes as <code>CRCO</code>) — <strong>set on return</strong></td>
+</tr>
+<tr>
+<td><code>DCCGE-ISUR-NEW</code></td>
+<td><code>X(07)</code></td>
+<td>—</td>
+<td>New authorization number — set by COBOL <code>B80</code> from API auth number</td>
+</tr>
+<tr>
+<td><code>DCCGE-FILR</code></td>
+<td><code>X(68)</code></td>
+<td><code>PTFILR</code></td>
+<td>Filler / reserved</td>
+</tr>
+</tbody></table>
+
+<h3>1.2 Coded-value cross reference</h3>
+
+<p><strong>Request code <code>RQSC</code> → transaction type (RPGLE <code>ItransactionType</code>)</strong></p>
+
+<table><thead>
+<tr>
+<th><code>RQSC</code></th>
+<th>Type</th>
+<th><code>RQSC</code></th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>01</code></td>
+<td>Debit</td>
+<td><code>55</code></td>
+<td>CashBack</td>
+</tr>
+<tr>
+<td><code>11</code></td>
+<td>RecurringDebit</td>
+<td><code>56</code></td>
+<td>Cash</td>
+</tr>
+<tr>
+<td><code>51</code></td>
+<td>Credit</td>
+<td><code>57</code></td>
+<td>RecurringDebit</td>
+</tr>
+<tr>
+<td><code>52</code></td>
+<td>Refund</td>
+<td><code>59</code></td>
+<td>BalanceInquiry</td>
+</tr>
+<tr>
+<td><code>54</code></td>
+<td>Forced</td>
+<td><code>60</code></td>
+<td>Load</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><code>61</code></td>
+<td>Discharge</td>
+</tr>
+</tbody></table>
+
+<p><strong>Credit type <code>CRET</code></strong>: <code>1</code>=RegularCredit, <code>2</code>=IsraCredit, <code>3</code>=AdHock,
+<code>4</code>=ClubDeal, <code>5</code>=SpecialAlpha, <code>6</code>=SpecialCredit, <code>8</code>=Payments, <code>9</code>=PaymentsClub.</p>
+
+<p><strong>Currency <code>CURT</code></strong>: <code>1</code>=ILS, <code>2</code>=USD, <code>3</code>=GBP, <code>4</code>=HKD, <code>5</code>=JPY, <code>6</code>=EUR.</p>
+
+<p><strong>Transaction code <code>TRNC</code></strong>: <code>00</code>=Regular, <code>50</code>=Phone, <code>60</code>=Signature, <code>70</code>=Internet.</p>
+
+<p><strong>Validation <code>DILC</code> → <code>iValidation</code></strong>: <code>1</code>=NoComm, <code>2</code>=Normal, <code>B</code>=Token,
+<code>3</code>=CreditLimit, <code>4</code>=AutoComm, <code>5</code>=Verify, <code>6</code>=Dealer, <code>9</code>=AutoCommHold,
+<code>R</code>=AutoCommRelease, <code>Q</code>=cardNo.</p>
+
+<p><strong>Credit company <code>CRCO</code> / <code>CLCO</code></strong>: <code>1</code>=Isracard, <code>2</code>=Visa-Cal, <code>3</code>=Diners,
+<code>4</code>=American Express, <code>5</code>=JCB, <code>6</code>=Leumi-Card.</p>
+
+<hr>
+
+<h2>2. COBOL <code>SAATCGSL</code> structures</h2>
+
+<h3>2.1 Program parameters (LINKAGE)</h3>
+
+<table><thead>
+<tr>
+<th>Structure</th>
+<th>Size</th>
+<th>Dir</th>
+<th>Fields</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>DCCGTRNE-REC</code></td>
+<td>703</td>
+<td>in/out</td>
+<td>The transaction record — see §1.</td>
+</tr>
+<tr>
+<td><code>SAATCG-1-PARAM</code></td>
+<td>400</td>
+<td>in</td>
+<td><code>SAATCG-1-LANGUAGE X(1)</code> (88 <code>HEB</code>=1/<code>ENG</code>=2), <code>SAATCG-1-CONFIG-CODE X(1)</code> (88 <code>GVIA-DBT</code>=1/<code>TVIA-CRD</code>=2), <code>SAATCG-1-USER-DATA X(19)</code>, <code>SAATCG-1-FILLER X(379)</code>.</td>
+</tr>
+<tr>
+<td><code>SAATCG-2-PARAM</code></td>
+<td>200</td>
+<td>out</td>
+<td><code>SAATCG-2-AUTH-NUMBER X(7)</code>, <code>SAATCG-2-FILLER X(91)</code>, <code>SAATCG-2-INTERFACE-RET X(5)</code> (88 <code>TAKIN</code>=<code>00000</code>), <code>SAATCG-2-INTERFACE-TEXT X(10)</code>, <code>SAATCG-2-CLCO X(2)</code>, <code>SAATCG-2-RETURN X(5)</code> (88 <code>TAKIN</code>=blanks/<code>00000</code>), <code>SAATCG-2-ERROR-TEXT X(80)</code>.</td>
+</tr>
+</tbody></table>
+
+<h3>2.2 API-call parameter blocks (varying, length-prefixed)</h3>
+
+<p>These pass data to the RPGLE engine. Each field has a <code>-L</code> (<code>9(3) BINARY</code> length)
+and a <code>-V</code> (value) part — matching RPGLE <code>varying</code> fields.</p>
+
+<p><strong><code>SAATCGR-1-PARAM</code></strong> (request → API)</p>
+
+<table><thead>
+<tr>
+<th>Group</th>
+<th>Length fld</th>
+<th>Value fld</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>SAATCGR-1-LANG</code></td>
+<td><code>-LANG-L 9(3)B</code></td>
+<td><code>-LANG-V X(1)</code></td>
+<td>Language</td>
+</tr>
+<tr>
+<td><code>SAATCGR-1-CONFIG-CODE</code></td>
+<td><code>-CONF-L 9(3)B</code></td>
+<td><code>-CONF-V X(1)</code></td>
+<td>Config code</td>
+</tr>
+<tr>
+<td><code>SAATCGR-1-NUMERATOR</code></td>
+<td><code>-NUMR-L 9(3)B</code></td>
+<td><code>-NUMR-V X(16)</code></td>
+<td>Numerator (from <code>SAGETBKR</code>)</td>
+</tr>
+<tr>
+<td><code>SAATCGR-1-USER-DATA</code></td>
+<td><code>-UD-L 9(3)B</code></td>
+<td><code>-UD-V X(19)</code></td>
+<td>User data</td>
+</tr>
+</tbody></table>
+
+<p><strong><code>SAATCGR-2-PARAM</code></strong> (response ← API)</p>
+
+<table><thead>
+<tr>
+<th>Group</th>
+<th>Length fld</th>
+<th>Value fld</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>SAATCGR-2-AUTH-NUMBER</code></td>
+<td><code>-AUTH-NUMBER-L 9(3)B</code></td>
+<td><code>-AUTH-NUMBER-V X(7)</code></td>
+</tr>
+<tr>
+<td><code>SAATCGR-2-RETRN</code></td>
+<td><code>-RETRN-L 9(3)B</code></td>
+<td><code>-RETRN-V X(5)</code></td>
+</tr>
+<tr>
+<td><code>SAATCGR-2-ERROR-TEXT</code></td>
+<td><code>-ERROR-L 9(3)B</code></td>
+<td><code>-ERROR-V X(80)</code></td>
+</tr>
+<tr>
+<td><code>SAATCGR-2-CLCO</code></td>
+<td><code>-CLCO-L 9(3)B</code></td>
+<td><code>-CLCO-V X(2)</code></td>
+</tr>
+<tr>
+<td><code>SAATCGR-2-INTERFACE-RETURN</code></td>
+<td><code>-INT-RTN-L 9(3)B</code></td>
+<td><code>-INT-RTN-V X(5)</code></td>
+</tr>
+<tr>
+<td><code>SAATCGR-2-INTERFACE-ERR-TEXT</code></td>
+<td><code>-INT-TXT-L 9(3)B</code></td>
+<td><code>-INT-TXT-V X(10)</code></td>
+</tr>
+</tbody></table>
+
+<p><strong><code>DCCGTRNE-IO</code></strong> — <code>DCCGTRNE-IO-REC-L 9(3) BINARY</code> + <code>DCCGTRNE-IO-REC-V X(703)</code>
+(the length-prefixed transaction record handed to RPGLE as <code>ecptrnsv</code>).</p>
+
+<h3>2.3 Called-program parameter areas (WORKING-STORAGE)</h3>
+
+<p><strong><code>SAGETBKR-PARAM</code></strong> — numerator fetch:
+<code>SAGETBKR-PEULA X(1)</code> (88 <code>CLOSE</code>=C / <code>UPDATE</code>=U), <code>SAGETBKR-KNUM 9(4)</code>
+(88 <code>HIDRQ</code>=1 / <code>HIDRE</code>=2), <code>SAGETBKR-NUM-RAZ 9(16)</code>,
+<code>SAGETBKR-RETURN X(3)</code> (88 <code>TAKIN</code>=000 / <code>ERROR</code>=002), <code>SAGETBKR-ERROR-TEXT X(76)</code>.</p>
+
+<p><strong><code>DCSTRING-PARAM</code></strong> — string utility:
+<code>DCSTRING-STRING-IN</code> (300 × <code>X</code>), <code>DCSTRING-STRING-OUT X(300)</code>,
+<code>DCSTRING-PEULA X(1)</code> (88 values: <code>C</code>lose, <code>Z</code>imzum/compress, <code>R</code>evers,
+<code>U</code>pper-case, <code>S</code>oundex, <code>X</code>=zimzum-no-space, <code>I</code>=simun-ri, <code>H</code>=revers-char,
+<code>L</code>=revers-char-sl, <code>E</code>=remove-err-val), <code>DCSTRING-IN-LEN 999</code>,
+<code>DCSTRING-OUT-LEN 999</code>, <code>DCSTRING-LANG X(1)</code> (88 <code>HEB</code>=H / <code>ENG</code>=E),
+<code>DCSTRING-RETURN X(2)</code> (88 <code>TAKIN</code>=00 / <code>PEULA</code>=01 / <code>IO-ERR</code>=02 / <code>ERR</code>=99).</p>
+
+<p><strong><code>ERRTV-PARAM</code></strong> — error-message fetch (<code>TBERR</code>):
+<code>ERRTV-PEULA X(1)</code> (88 <code>READ</code>=R / <code>CLOSE</code>=C), <code>ERRTV-MSG-NO X(5)</code>,
+<code>ERRTV-RETURN X(2)</code> (88 <code>OK</code>=00 / <code>ERR</code>=01 / <code>NOT-FOUND</code>=02),
+<code>ERRTV-MSG-TXT X(76)</code> (redefined to expose an embedded <code>ERRTV-MSG-MSG-NO X(5)</code>).</p>
+
+<p><strong><code>PRM-DCPCIMSF-*</code></strong> — (declared, <code>DCPCIMSF</code> not called in main flow):
+<code>KVUZ X(2)</code>, <code>TERN7 X(7)</code>, <code>RETURN X(2)</code> (88 <code>TAKIN</code>=00), <code>TERN10 X(10)</code>.</p>
+
+<h3>2.4 File-operation / status enumerations</h3>
+
+<p><strong><code>SA-PEULA 9(2)</code></strong> — file action code: <code>0</code>=close, <code>1</code>=read-random,
+<code>2</code>=read S EQ, <code>3</code>=read S not-less, <code>4</code>=read-next, <code>5</code>=read-prior, <code>6</code>=read-last,
+<code>7</code>=S-not-less, <code>8</code>=S-greater, <code>9</code>=delete, <code>10</code>=rewrite, <code>11</code>=write,
+<code>12</code>=delete-no-chk, <code>13</code>=rewrite-no-chk.</p>
+
+<p><strong><code>SA-RETURN X(2)</code></strong> — file result: <code>00</code>=OK, <code>01</code>=error, <code>02</code>=EOF, <code>03</code>=BOF,
+<code>04</code>=change, <code>05</code>=lock, <code>06</code>=out-of-range/EOTV, <code>99</code>=bad peula.</p>
+
+<h3>2.5 Date-conversion copybook</h3>
+
+<p><strong><code>DT2TRN</code></strong> — a large block of redefinitions of one date value in every common
+format and length. Groups: <code>DMY</code>/<code>MDY</code>/<code>YMD</code> at 6, 7, and 8 digits (plus
+&quot;ARUCH&quot; = punctuated <code>X(8)</code>/<code>X(10)</code> variants with <code>SL</code> separators), plus
+<code>YM</code>/<code>MY</code>/<code>CYY</code>/<code>YYMM</code>/<code>MMYY</code>/<code>CYYMM</code>/<code>CYM</code>/<code>YYM</code>/<code>MYY</code>/<code>YYYY</code> sub-forms. Each
+sub-field breaks out <code>-DD</code>/<code>-MM</code>/<code>-YY</code>/<code>-CC</code>/<code>-C</code> components.
+<code>DT2TRN-SW-EDIT X(1)</code> selects DMY vs MDY editing.</p>
+
+<p><strong><code>DTW-PARM</code></strong> — date-utility call block:
+<code>DTW-PEULA X(2)</code> (dozens of 88s: return-date, hef/add days-months-years,
+reverse, system date, new month/year end, day-in-week…),
+<code>DTW-DATE1-DEF</code> / <code>DTW-DATE2-DEF</code> (each <code>MIVNE X(1)</code> <code>S</code>=DMY/<code>F</code>=YMD +
+<code>LENGTH X(1)</code> 6/7/8), <code>DTW-PARAM1</code>/<code>DTW-PARAM2</code> (<code>DTW-DATE1</code>/<code>DTW-DATE2 9(8)</code>
+with <code>-C</code>/<code>-YMD</code>/<code>-14</code>/<code>-56</code>/<code>-78</code> redefines), <code>DTW-PARAM3</code> (<code>DTW-DAYS S9(6)</code>),
+<code>DTW-PARAM4</code> (<code>DTW-RETURN-KOD X(2)</code>: <code>00</code>=OK, <code>01</code>/<code>02</code>/<code>41</code>=date errors,
+<code>71</code>–<code>77</code>=numeric/structure/length errors, <code>99</code>=days error).</p>
+
+<h3>2.6 Work areas &amp; switches</h3>
+
+<p><strong><code>EZER</code></strong> — general work fields: <code>EZ-UDATE 9(8)</code>, <code>EZ-UDATE-YMD X(8)</code>,
+<code>EZ-TIME</code> (<code>HH</code>/<code>MM</code>/<code>SS 9(2)</code>), <code>EZ-DT</code> (<code>YYYY</code>/<code>MM</code>/<code>DD</code>), <code>EZ-DT10</code>
+(punctuated), <code>EZ-SUG-N 9(3)</code>, <code>EZ-TVIA-N 9(13)</code>, <code>EZ-STRING X(300)</code>,
+<code>EZ-TXT-300-IN/-OUT X(300)</code> + <code>-LEN 9(3)</code>, <code>EZ-LEN 9(3)</code>, <code>EZ-ERR-TXT X(9)</code>,
+<code>EZ-ERR-KTXT X(5)</code>, <code>EZ-MOB</code> (<code>KOD X(3)</code> + <code>NUM X(7)</code>), and an input/output
+block (<code>EZ-IN-LANG</code>, <code>EZ-IN-CONFIG-CODE</code>, <code>EZ-IN-UD X(19)</code>, <code>EZ-IN-FILLER X(379)</code>,
+<code>EZ-OUT-AUTH-NUMBER X(7)</code>, <code>EZ-OUT-FILLER X(108)</code>, <code>EZ-OUT-RETRN X(5)</code>,
+<code>EZ-OUT-ERROR X(80)</code>).</p>
+
+<p><strong>Others:</strong> <code>MAS-USR</code>/<code>MAS-JOB X(10)</code>, <code>MAS-JOBNUM X(6)</code>; <code>INDEXX</code> (<code>I</code>/<code>J</code>/<code>LENN 9(3)</code>);
+<code>SWITCH</code> (<code>SW-END-JOB</code>, <code>SW-BEG-END</code>, <code>SW-ERROR</code>, each <code>9(1)</code> with on/off 88s).</p>
+
+<hr>
+
+<h2>3. RPGLE <code>SAATCG</code> structures</h2>
+
+<h3>3.1 Entry parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Kind</th>
+<th>Purpose</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>SAATCGI</code> (<code>saatcgi</code> DS)</td>
+<td>in</td>
+<td><code>SACGLANG 1a</code>, <code>SACGCONF 1a</code>, <code>SACGNUMR 16a</code>, <code>SACGUD 19a</code> — all <code>varying</code>.</td>
+</tr>
+<tr>
+<td><code>SAATCGO</code> (<code>saatcgo</code> DS)</td>
+<td>out</td>
+<td><code>SACGCGAU 7a</code> (auth), <code>SACGREST 5a</code> (status), <code>SACGERTX 80a</code> (error text), <code>SACGCLCO 2a</code> (clearing), <code>SACGINST 5a</code> (interface status), <code>SACGINTX 10a</code> (interface text) — all <code>varying</code>.</td>
+</tr>
+<tr>
+<td><code>ecptrnsv</code></td>
+<td>in/out</td>
+<td><code>703a varying</code> — the transaction record; copied to/from <code>ecptrns</code>.</td>
+</tr>
+</tbody></table>
+
+<h3>3.2 <code>InputParm</code> — values sent to CreditGuard (<code>Ixxx</code>)</h3>
+
+<p>Populated by <code>InitProgram</code>/<code>BuildWSBody</code> from the <code>PTxxx</code> record.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Field</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>IRequestId</code></td>
+<td><code>20a</code></td>
+<td><code>Iid</code></td>
+<td><code>9s 0</code></td>
+</tr>
+<tr>
+<td><code>ITerminalId</code></td>
+<td><code>10a</code></td>
+<td><code>ItransactionType</code></td>
+<td><code>20a</code></td>
+</tr>
+<tr>
+<td><code>ICardNumber</code></td>
+<td><code>19a</code></td>
+<td><code>ICreditType</code></td>
+<td><code>20a</code></td>
+</tr>
+<tr>
+<td><code>ICardId</code></td>
+<td><code>16a</code></td>
+<td><code>ICurrency</code></td>
+<td><code>10a</code></td>
+</tr>
+<tr>
+<td><code>IcardExpiration</code></td>
+<td><code>4s 0</code></td>
+<td><code>ItransactionCode</code></td>
+<td><code>20a</code></td>
+</tr>
+<tr>
+<td><code>Icvv</code></td>
+<td><code>4s 0</code></td>
+<td><code>ITotal</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>IauthNumber</code></td>
+<td><code>7a</code></td>
+<td><code>IfirstPayment</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>Ivalidation</code></td>
+<td><code>15a</code></td>
+<td><code>IperiodicalPayment</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>IClubCode</code></td>
+<td><code>1a</code></td>
+<td><code>InumberOfPayments</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>ITimeout</code></td>
+<td><code>3s 0</code></td>
+<td><code>IrecurringTotalNo</code></td>
+<td><code>3s 0</code></td>
+</tr>
+<tr>
+<td><code>IrecurringTotalSum</code></td>
+<td><code>10s 2</code></td>
+<td><code>IrecurringNo</code></td>
+<td><code>3s 0</code></td>
+</tr>
+<tr>
+<td><code>IrecurringFrequency</code></td>
+<td><code>3s 0</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3>3.3 <code>OutputParm</code> — values received from CreditGuard (<code>Oxxx</code>)</h3>
+
+<p>Populated by the <code>EndElement</code> XML callback; consumed by <code>BuildResponse</code>.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Field</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>ODateTime</code></td>
+<td><code>20a</code></td>
+<td><code>OcardAcquirer(+Code/Code2)</code></td>
+<td><code>20a</code>/<code>1s</code>/<code>2s</code></td>
+</tr>
+<tr>
+<td><code>ORequestId</code></td>
+<td><code>20a</code></td>
+<td><code>OserviceCode</code></td>
+<td><code>20a</code></td>
+</tr>
+<tr>
+<td><code>OTranId</code> / <code>OTranId20</code></td>
+<td><code>9s 0</code> / <code>20a</code></td>
+<td><code>Otransaction­Type(+Code)</code></td>
+<td><code>20a</code> / <code>2s 0</code></td>
+</tr>
+<tr>
+<td><code>OLanguage</code></td>
+<td><code>3a</code></td>
+<td><code>OcreditType(+Code)</code></td>
+<td><code>20a</code> / <code>1s 0</code></td>
+</tr>
+<tr>
+<td><code>OResult</code></td>
+<td><code>3s 0</code></td>
+<td><code>Ocurrency(+Code)</code></td>
+<td><code>10a</code> / <code>1s 0</code></td>
+</tr>
+<tr>
+<td><code>OMessage</code></td>
+<td><code>80a</code></td>
+<td><code>Otransaction­Code(+Code)</code></td>
+<td><code>20a</code> / <code>2s 0</code></td>
+</tr>
+<tr>
+<td><code>OUserMessage</code></td>
+<td><code>80a</code></td>
+<td><code>Ototal</code> / <code>Obalance</code> / <code>OStarTotal</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>OAdditionalInfo</code></td>
+<td><code>80a</code></td>
+<td><code>OFirstPayment</code> / <code>OPeriodicalpayment</code></td>
+<td><code>10s 0</code></td>
+</tr>
+<tr>
+<td><code>OVersion</code></td>
+<td><code>4a</code></td>
+<td><code>ONumberOfPayments</code></td>
+<td><code>2s 0</code></td>
+</tr>
+<tr>
+<td><code>OStatus</code></td>
+<td><code>3s 0</code></td>
+<td><code>OclubId</code> / <code>OclubCode</code></td>
+<td><code>8s</code> / <code>1s</code></td>
+</tr>
+<tr>
+<td><code>OstatusText</code></td>
+<td><code>80a</code></td>
+<td><code>Ovalidation(+Code)</code></td>
+<td><code>20a</code> / <code>3s 0</code></td>
+</tr>
+<tr>
+<td><code>OTerminalNumber</code></td>
+<td><code>10a</code></td>
+<td><code>OcommReason(+Code)</code></td>
+<td><code>20a</code> / <code>1a</code></td>
+</tr>
+<tr>
+<td><code>OcardName</code></td>
+<td><code>20a</code></td>
+<td><code>OidStatus(+Code)</code> / <code>OidSource(+Code)</code></td>
+<td><code>20a</code> / <code>1s</code></td>
+</tr>
+<tr>
+<td><code>OcardType(+Code)</code></td>
+<td><code>20a</code> / <code>2s 0</code></td>
+<td><code>OcvvStatus(+Code)</code></td>
+<td><code>20a</code> / <code>1s 0</code></td>
+</tr>
+<tr>
+<td><code>OcreditCompany(+Code)</code></td>
+<td><code>20a</code> / <code>2s 0</code></td>
+<td><code>OauthSource(+Code)</code></td>
+<td><code>20a</code> / <code>1s 0</code></td>
+</tr>
+<tr>
+<td><code>OcardBrand(+Code)</code></td>
+<td><code>20a</code> / <code>1s 0</code></td>
+<td><code>OauthNumber</code></td>
+<td><code>7a</code></td>
+</tr>
+<tr>
+<td><code>OCardId</code> / <code>OCardBin</code> / <code>OCardMask</code></td>
+<td><code>16a</code></td>
+<td><code>OFileNumber</code></td>
+<td><code>2s 0</code></td>
+</tr>
+<tr>
+<td><code>OCardLength</code></td>
+<td><code>2s 0</code></td>
+<td><code>OslaveTerminalNumber/Sequence</code></td>
+<td><code>3s 0</code></td>
+</tr>
+<tr>
+<td><code>OCardNo</code></td>
+<td><code>19a</code></td>
+<td><code>OcreditGroup</code> / <code>OpinKeyIn</code> / <code>Opfsc</code> / <code>Oeci</code></td>
+<td><code>20a</code></td>
+</tr>
+<tr>
+<td><code>OCardExpiration</code></td>
+<td><code>4s 0</code></td>
+<td><code>Ocavv(+Code)</code></td>
+<td><code>50a</code> / <code>1a</code></td>
+</tr>
+<tr>
+<td><code>Ouser</code></td>
+<td><code>19a</code></td>
+<td><code>OaddonData</code></td>
+<td><code>8s 0</code></td>
+</tr>
+<tr>
+<td><code>OsupplierNumber</code></td>
+<td><code>20a</code></td>
+<td><code>OintIn</code> / <code>OintOt</code></td>
+<td><code>120a</code></td>
+</tr>
+<tr>
+<td><code>OpayDate</code></td>
+<td><code>10a</code></td>
+<td><code>OextendedStatus(+Text)</code></td>
+<td><code>5s 0</code> / <code>80a</code></td>
+</tr>
+</tbody></table>
+
+<h3>3.4 Configuration &amp; runtime standalones</h3>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>samainda</code> (DS, <code>dtaara</code>)</td>
+<td><code>Daguid 36a</code>, <code>Dalng 1a</code>, <code>Daenv 10a</code>, <code>Dfiller 953a</code></td>
+<td>Data area — supplies environment name.</td>
+</tr>
+<tr>
+<td><code>WSUSR/WSPWD/WSURL/WSDTL/WSTRM/WSNTKN</code></td>
+<td><code>10a</code></td>
+<td>Parameter <strong>names</strong> looked up in <code>SAMAINPF</code> (<code>CGGCOMTUSR</code>, <code>CGGCOMTPWD</code>, <code>CGGCOMTURL</code>, <code>CGGCOMTDTL</code>, <code>CGGCOMTTRM</code>, <code>CGGCOMNTKN</code>).</td>
+</tr>
+<tr>
+<td><code>usr</code> / <code>pwd</code></td>
+<td><code>100a</code></td>
+<td>Resolved credentials.</td>
+</tr>
+<tr>
+<td><code>url</code></td>
+<td><code>128a</code></td>
+<td>Endpoint URL.</td>
+</tr>
+<tr>
+<td><code>TRM</code></td>
+<td><code>100a</code></td>
+<td>Logical terminal (config 2).</td>
+</tr>
+<tr>
+<td><code>NONTKN</code></td>
+<td><code>1a</code></td>
+<td>Non-token flag.</td>
+</tr>
+<tr>
+<td><code>Soap</code> / <code>tmpsoap</code></td>
+<td><code>32000a varying</code></td>
+<td>SOAP request buffer.</td>
+</tr>
+<tr>
+<td><code>Header</code> / <code>Body</code> / <code>Footer</code></td>
+<td><code>1024a varying</code></td>
+<td>XML fragments.</td>
+</tr>
+<tr>
+<td><code>wCustomerData</code></td>
+<td><code>512a</code></td>
+<td><code>&lt;customerData&gt;</code> fragment.</td>
+</tr>
+<tr>
+<td><code>tmpBuff</code> / <code>logBuff</code></td>
+<td><code>8196a</code></td>
+<td>HTTP/convert buffers.</td>
+</tr>
+<tr>
+<td><code>logString</code></td>
+<td><code>2048a</code></td>
+<td>Log message.</td>
+</tr>
+<tr>
+<td><code>cvtInBuff</code> / <code>cvtOutBuff</code></td>
+<td><code>8196a</code></td>
+<td>Code-page conversion buffers.</td>
+</tr>
+<tr>
+<td><code>frmCCSID</code> / <code>toCCSID</code></td>
+<td><code>6a</code></td>
+<td><code>00424</code> (EBCDIC-Heb) / <code>01208</code> (UTF-8).</td>
+</tr>
+<tr>
+<td><code>swLog</code></td>
+<td><code>10i 0</code> inz(3)</td>
+<td>Minimum log level (DEBUG 1 … SEVERE 9).</td>
+</tr>
+<tr>
+<td><code>swCardId</code> / <code>swCredit</code> / <code>swEndOk</code> / <code>swEndXML</code></td>
+<td><code>n</code></td>
+<td>State flags.</td>
+</tr>
+<tr>
+<td><code>Language</code></td>
+<td><code>3a</code></td>
+<td><code>Heb</code>/<code>Eng</code>.</td>
+</tr>
+<tr>
+<td><code>Version</code></td>
+<td><code>4a</code> inz(<code>2000</code>)</td>
+<td>Protocol version.</td>
+</tr>
+<tr>
+<td><code>TimeOut</code></td>
+<td><code>10i 0</code></td>
+<td>HTTP timeout (set to 60).</td>
+</tr>
+<tr>
+<td><code>ABCDEFGHJK</code></td>
+<td><code>10a</code></td>
+<td>Per-step debug-log toggle string (<code>CGGCOMTDTL</code>); each position enables a log point.</td>
+</tr>
+</tbody></table>
+
+<p><strong>Named constants:</strong> <code>DEBUG</code>=1, <code>INFO</code>=3, <code>WARNING</code>=5, <code>ERROR</code>=7, <code>SEVERE</code>=9.</p>
+
+<h3>3.5 Files &amp; externally-described structures</h3>
+
+<table><thead>
+<tr>
+<th>Object</th>
+<th>Kind</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>SAMAINPF</code></td>
+<td>input, keyed (<code>if e k disk</code>)</td>
+<td>Parameter master; keyed by system name + parm name; field <code>SAVALUE</code>.</td>
+</tr>
+<tr>
+<td><code>SAATCGLG</code></td>
+<td>output (<code>o e disk</code>)</td>
+<td>Log file; record <code>SAATCGR</code> (<code>jldate</code>, <code>jltime</code>, <code>jljname</code>, <code>jljusr</code>, <code>jljnbr</code>, <code>jlprog</code>, <code>jlproc</code>, <code>jlsts</code>, <code>jltext</code>).</td>
+</tr>
+<tr>
+<td><code>SACGTRNS</code></td>
+<td>output (<code>o e disk</code>)</td>
+<td>Transaction log; record <code>SACGTRNSR</code> with <code>SAxxx</code> fields mirroring the <code>PTxxx</code> record + job/user/date/time + <code>SASRIN</code> (1=send/2=receive).</td>
+</tr>
+<tr>
+<td><code>ecptrns</code></td>
+<td>ext DS (<code>extname(ecptrns)</code>)</td>
+<td>The transaction record (<code>PTxxx</code>).</td>
+</tr>
+<tr>
+<td><code>int_ot</code></td>
+<td>ext DS (<code>extname(int_ot)</code>)</td>
+<td>Interface-output structure.</td>
+</tr>
+<tr>
+<td>PSDS</td>
+<td><code>/include psds</code></td>
+<td>Program status (<code>program</code>, <code>jobname</code>, <code>jobusr</code>, <code>jobnbr</code>, <code>uyear</code>/<code>umonth</code>/<code>uday</code>).</td>
+</tr>
+</tbody></table>
+
+<h3>3.6 Extended status codes (returned in <code>SACGREST</code> / <code>OextendedStatus</code>)</h3>
+
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>00000</code></td>
+<td>Permitted transaction</td>
+</tr>
+<tr>
+<td><code>99002</code></td>
+<td>Communication problem with the credit interface</td>
+</tr>
+<tr>
+<td><code>99003</code></td>
+<td>Data problem in the CG response (parse/convert)</td>
+</tr>
+<tr>
+<td><code>99005</code></td>
+<td>General credit-interface problem (missing config)</td>
+</tr>
+<tr>
+<td><code>99006</code></td>
+<td>TOKEN problem</td>
+</tr>
+<tr>
+<td><code>99010</code></td>
+<td>Error in the credit interface (no valid XML end)</td>
+</tr>
+</tbody></table>
+</body></html>

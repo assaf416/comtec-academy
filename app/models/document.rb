@@ -50,6 +50,14 @@ class Document < ApplicationRecord
     increment!(:views_count)
   end
 
+  # True when the source file is HTML — such documents are shown as their
+  # original file in a new tab rather than through the branded markdown view.
+  def html_original?
+    return false unless original.attached?
+
+    original.content_type == "text/html" || original.filename.to_s.downcase.end_with?(".html", ".htm")
+  end
+
   def favorited_by?(user)
     return false unless user
 
