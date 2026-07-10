@@ -55,3 +55,17 @@ body { text-align: start; }
 .branded-doc th, .branded-doc td { border: 1px solid #ddd; padding: .5rem .75rem; text-align: start; }
 .branded-doc th { background: var(--brand-primary, #1f3a93); color: #fff; }
 .branded-doc tr:nth-child(even) td { background: #fafafa; }
+
+/* Overlapping round avatars (project members) */
+.avatar-stack { display: flex; align-items: center; }
+.avatar-stack .avatar,
+.avatar-stack .avatar-more {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.12);
+  object-fit: cover; background: #e9ecef; margin-inline-start: -10px;
+}
+.avatar-stack > :first-child { margin-inline-start: 0; }
+.avatar-stack .avatar-more {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--brand-primary, #1f3a93); color: #fff; font-size: .8rem; font-weight: 700;
+}

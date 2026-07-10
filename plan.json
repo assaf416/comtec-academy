@@ -344,6 +344,21 @@
       "last_tested_at": "2026-07-10T08:08:09Z",
       "code_generation_seconds": null,
       "test_generation_seconds": null
+    },
+    {
+      "id": "S24",
+      "type": "story",
+      "name": "Project members & avatars",
+      "description": "Users belong to projects (many-to-many); non-admin users imported from an Excel roster with avatars; project pages show an overlapping avatar stack.",
+      "cucumber_test": "see features/project_members.feature",
+      "feature_file": "features/project_members.feature",
+      "github_issue": null,
+      "status": "completed",
+      "started_at": "2026-07-10T08:33:51Z",
+      "completed_at": "2026-07-10T08:33:51Z",
+      "last_tested_at": "2026-07-10T08:33:51Z",
+      "code_generation_seconds": null,
+      "test_generation_seconds": null
     }
   ]
 }

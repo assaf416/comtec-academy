@@ -214,6 +214,9 @@ he:
       missing: "חסר"
       view: "צפייה"
       empty: "אין עדיין פרויקטים."
+      members: "חברי צוות"
+      members_count: "חברים"
+      no_members: "אין עדיין חברי צוות."
     documents:
       new_title: "מסמך חדש"
       edit_title: "עריכת מסמך"

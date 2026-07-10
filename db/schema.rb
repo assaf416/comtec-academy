@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_080050) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_082418) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -127,6 +127,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_080050) do
     t.index ["episode_id"], name: "index_markdown_docs_on_episode_id"
   end
 
+  create_table "project_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "project_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["project_id"], name: "index_project_memberships_on_project_id"
+    t.index ["user_id", "project_id"], name: "index_project_memberships_on_user_id_and_project_id", unique: true
+    t.index ["user_id"], name: "index_project_memberships_on_user_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -167,11 +177,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_080050) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "activated_at"
+    t.string "avatar_url"
     t.datetime "created_at", null: false
     t.string "email_address", null: false
     t.datetime "invited_at"
     t.string "name"
     t.string "password_digest"
+    t.string "phone"
     t.integer "role", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -188,6 +200,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_080050) do
   add_foreign_key "favorites", "documents"
   add_foreign_key "favorites", "users"
   add_foreign_key "markdown_docs", "episodes"
+  add_foreign_key "project_memberships", "projects"
+  add_foreign_key "project_memberships", "users"
   add_foreign_key "quiz_answers", "quiz_questions"
   add_foreign_key "quiz_answers", "users"
   add_foreign_key "quiz_questions", "episodes"

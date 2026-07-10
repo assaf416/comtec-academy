@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_many :activities, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorite_documents, through: :favorites, source: :document
+  has_many :project_memberships, dependent: :destroy
+  has_many :projects, through: :project_memberships
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -36,5 +38,13 @@ class User < ApplicationRecord
 
   def display_name
     name.presence || email_address
+  end
+
+  # Avatar image URL: the stored fake-photo URL, or an initials avatar fallback.
+  def avatar_source
+    return avatar_url if avatar_url.present?
+
+    initials = display_name.split.first(2).map { |w| w[0] }.join
+    "https://ui-avatars.com/api/?name=#{CGI.escape(initials.presence || '?')}&background=1f3a93&color=fff"
   end
 end

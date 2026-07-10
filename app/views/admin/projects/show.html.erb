@@ -11,10 +11,19 @@
   <p class="transcript"><%= @project.description %></p>
 <% end %>
 
+<section class="mb-4">
+  <h2 class="<%= ui_class(:subtitle) %>"><%= t("admin.projects.members") %> (<%= @project.users.size %>)</h2>
+  <% if @project.users.any? %>
+    <%= render "shared/avatar_stack", users: @project.users.order(:name), limit: 8 %>
+  <% else %>
+    <p class="text-muted"><%= t("admin.projects.no_members") %></p>
+  <% end %>
+</section>
+
 <h2 class="<%= ui_class(:subtitle) %>"><%= t("admin.projects.documents") %></h2>
 <table class="<%= ui_class(:table) %>">
   <tbody>
-    <% Document.doc_types.keys.each do |type| %>
+    <% Document::AI_DOC_TYPES.each do |type| %>
       <% doc = @project.document(type) %>
       <tr>
         <td><%= t("documents.types.#{type}") %></td>

@@ -22,14 +22,9 @@ gold.password = "demo123" if gold.new_record?
 gold.save!
 puts "Admin ready: #{gold.email_address}"
 
-# --- Sample student ---
-student = User.find_or_initialize_by(email_address: "dana@comtecglobal.com")
-student.assign_attributes(name: "דנה", role: :student, status: :active,
-                          activated_at: student.activated_at || Time.current,
-                          invited_at: student.invited_at || Time.current)
-student.password = "password123" if student.new_record?
-student.save!
-puts "Student ready: #{student.email_address}"
+# --- Non-admin users imported from the Excel roster (with org projects) ---
+counts = Users::Importer.import(Rails.root.join("db/seeds/users.xlsx"))
+puts "Imported #{counts[:users]} users, #{counts[:memberships]} project memberships"
 
 # --- Sample course with a movie episode and a quiz episode ---
 course = Course.find_or_create_by!(name: "יסודות ריאקט") do |c|

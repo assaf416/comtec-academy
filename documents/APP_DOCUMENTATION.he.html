@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAATCG / SAATCGSL — תיעוד ממשק CreditGuard</title>
+<style>
+  :root{
+    --char:#3b82f6;      /* character */
+    --packed:#10b981;    /* packed decimal comp-3 */
+    --zoned:#14b8a6;     /* zoned decimal */
+    --binary:#8b5cf6;    /* binary */
+    --money:#f59e0b;     /* signed amount */
+    --date:#ec4899;      /* date / time */
+    --flag:#6b7280;      /* indicator / flag */
+    --group:#0f172a;     /* group item */
+    --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header.hero{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);color:#fff;padding:40px 32px}
+  header.hero h1{margin:0 0 6px;font-size:30px}
+  header.hero p{margin:4px 0;opacity:.95}
+  nav{position:sticky;top:0;z-index:20;background:#0f172a;padding:10px 20px;display:flex;flex-wrap:wrap;gap:8px}
+  nav a{color:#cbd5e1;text-decoration:none;font-size:13px;padding:6px 12px;border-radius:6px}
+  nav a:hover{background:#1e293b;color:#fff}
+  main{max-width:1200px;margin:0 auto;padding:24px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h2{margin-top:0;font-size:23px;border-bottom:3px solid #0ea5e9;padding-bottom:8px;display:flex;align-items:center;gap:10px}
+  h3{font-size:18px;color:#1e3a8a;margin-top:28px}
+  h4{font-size:15px;color:#334155;margin:18px 0 6px}
+  p.lead{font-size:16px;color:#334155}
+  .emoji{font-size:22px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600}
+  tr:nth-child(even) td{background:#fafcff}
+  code,pre{font-family:'Cascadia Code',Consolas,'Courier New',monospace}
+  code.inl{background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#3730a3}
+  pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;overflow:auto;font-size:12.5px;line-height:1.5}
+  pre .cm{color:#7dd3fc}      /* comment */
+  pre .kw{color:#f9a8d4}      /* keyword */
+  pre .st{color:#bef264}      /* string */
+  /* field-type legend + chips */
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 12px;border-radius:20px;color:#fff;font-weight:600}
+  .dot{width:12px;height:12px;border-radius:50%;background:#fff9;display:inline-block}
+  .t-char{background:var(--char)} .t-packed{background:var(--packed)} .t-zoned{background:var(--zoned)}
+  .t-binary{background:var(--binary)} .t-money{background:var(--money)} .t-date{background:var(--date)}
+  .t-flag{background:var(--flag)} .t-group{background:var(--group)}
+  /* field cards grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:16px 0}
+  .fcard{border-radius:10px;padding:12px 14px;color:#fff;position:relative;overflow:hidden;min-height:96px}
+  .fcard .ic{position:absolute;right:10px;top:8px;font-size:26px;opacity:.35}
+  .fcard .code{font-weight:700;font-size:14px;letter-spacing:.3px}
+  .fcard .pic{font-family:monospace;font-size:11px;opacity:.9;background:#0003;display:inline-block;padding:1px 6px;border-radius:4px;margin-top:3px}
+  .fcard .en{font-size:13px;margin-top:6px;font-weight:600}
+  .fcard .mn{font-size:11.5px;opacity:.92;margin-top:2px}
+  .badge-ret{position:absolute;left:0;bottom:0;background:#0006;font-size:9px;padding:2px 7px;border-top-right-radius:8px;letter-spacing:.5px}
+  .note{background:#fffbeb;border-left:4px solid var(--money);padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+  .note.blue{background:#eff6ff;border-color:#3b82f6}
+  .note.pink{background:#fdf2f8;border-color:#ec4899}
+  .proc{border:1px solid var(--line);border-radius:12px;margin:18px 0;overflow:hidden}
+  .proc>summary{cursor:pointer;padding:14px 18px;background:#f1f5f9;font-weight:700;font-size:15px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .proc>summary::-webkit-details-marker{display:none}
+  .proc[open]>summary{background:#e0e7ff;border-bottom:1px solid var(--line)}
+  .proc .body{padding:16px 18px}
+  .tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+  .tag.cbl{background:#7c3aed}.tag.rpg{background:#0891b2}
+  .callchip{display:inline-block;font-size:11px;background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:12px;margin:2px}
+  .kv{font-size:13.5px;margin:4px 0}
+  .kv b{color:#1e3a8a}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .diagram-wrap{overflow-x:auto;background:#fbfdff;border:1px dashed var(--line);border-radius:10px;padding:8px}
+  footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:800px){.two{grid-template-columns:1fr}}
+  body{direction:rtl;text-align:right;}
+  table th,table td{text-align:right;}
+  code,pre{direction:ltr;text-align:left;unicode-bidi:embed;}
+  nav{direction:rtl;}
+  .fcard .pic{direction:ltr}
+  pre.gherkin{direction:rtl;text-align:right;unicode-bidi:plaintext}
+  svg{direction:ltr}
+  svg text{direction:ltr;unicode-bidi:plaintext}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>💳 SAATCG / SAATCGSL — ממשק תשלומים CreditGuard ("אשראית")</h1>
+  <p>IBM i (AS/400) &nbsp;•&nbsp; עוטף ILE COBOL + מנוע SOAP בשפת ILE RPGLE &nbsp;•&nbsp; קומטק</p>
+  <p>תיעוד תיקייה · חלק אחד לכל קובץ מקור · טבלאות שדות של ה-Data Division · דיאגרמות ERD · סקירת פרוצדורות · בדיקות Gherkin מוצעות</p>
+</header>
+
+<nav>
+  <a href="#files">📁 קבצים בתיקייה זו</a>
+  <a href="#legend">🎨 מקרא סוגי שדות</a>
+  <a href="#cbl">📘 saatcgsl.cbl (SAATCGSL)</a>
+  <a href="#cbl-data">— Data Division</a>
+  <a href="#cbl-proc">— פרוצדורות</a>
+  <a href="#cbl-tests">— בדיקות מוצעות</a>
+  <a href="#rpg">📗 saatcg.rpgle (SAATCG)</a>
+  <a href="#rpg-data">— מבני נתונים</a>
+  <a href="#rpg-proc">— פרוצדורות</a>
+  <a href="#rpg-tests">— בדיקות מוצעות</a>
+</nav>
+
+<main>
+
+<!-- ================================================================= -->
+<!-- 1 · FILES IN THIS FOLDER                                          -->
+<!-- ================================================================= -->
+<section id="files">
+  <h2><span class="emoji">📁</span> קבצים בתיקייה זו</h2>
+  <p class="lead">התיקייה <code class="inl">C:\Users\assaf.g\projects\400</code> מכילה שני חברי מקור
+  מדור קודם (legacy) של IBM&nbsp;i שיחד מהווים שער תשלומי כרטיסי אשראי אל <b>CreditGuard</b> (שער הסליקה
+  הישראלי שהפרוטוקול שלו נקרא <b>"אשראית"</b>). המקורות מאוחסנים ב-EBCDIC-עברית (IBM-424);
+  הטבלאות למטה חולצו מהטקסט המפוענח בקידוד UTF-8.</p>
+
+  <table>
+    <tr><th>קובץ</th><th>סוג</th><th>שפה</th><th>ייעוד</th></tr>
+    <tr>
+      <td><code class="inl">saatcgsl.cbl</code><br>PROGRAM-ID <b>SAATCGSL</b></td>
+      <td>תוכנית נקראת (שירות)</td>
+      <td>ILE COBOL</td>
+      <td><b>עוטף / מפקח</b> לפני ה-API של CreditGuard. מאמת ומקצץ את
+          הפרמטרים של הקורא, מביא מספר רץ, מתרגם קודים פנימיים, קורא למנוע ה-RPGLE
+          <code class="inl">SAATCG</code>, ופורק את התשובה בחזרה אל הקורא. שלושה פרמטרים:
+          רשומת התנועה בגודל 703 בתים (קלט/פלט), בלוק אפשרויות בגודל 400 בתים (קלט), ובלוק תוצאה בגודל 200 בתים (פלט).</td>
+    </tr>
+    <tr>
+      <td><code class="inl">saatcg.rpgle</code><br>PROGRAM <b>SAATCG</b></td>
+      <td>תוכנית נקראת (מנוע)</td>
+      <td>ILE RPGLE (פורמט חופשי)</td>
+      <td><b>מנוע ה-API.</b> בונה בקשת XML מסוג SOAP <code class="inl">doDeal</code> מתוך רשומת
+          התנועה, שולח אותה ל-CreditGuard מעל HTTP (HTTPAPI), מנתח את תשובת ה-XML, ממפה את התוצאות בחזרה
+          אל הרשומה, ומתעד גם את הבקשה וגם את התשובה. פרמטרי כניסה: <code class="inl">SAATCGI</code>
+          (קלט), <code class="inl">SAATCGO</code> (פלט), <code class="inl">ecptrnsv</code> (רשומה בגודל 703 בתים).</td>
+    </tr>
+  </table>
+
+  <h3>קשרים — מי מריץ את מי</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1040 300" font-family="Segoe UI,Arial" font-size="12.5">
+    <defs>
+      <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>
+    </defs>
+    <!-- boxes -->
+    <rect x="20"  y="120" width="150" height="54" rx="9" fill="#334155"/>
+    <text x="95"  y="143" text-anchor="middle" fill="#fff" font-weight="700">אפליקציה עסקית</text>
+    <text x="95"  y="161" text-anchor="middle" fill="#cbd5e1" font-size="10.5">(תוכנית ביטוח)</text>
+
+    <rect x="230" y="112" width="180" height="70" rx="9" fill="#7c3aed"/>
+    <text x="320" y="138" text-anchor="middle" fill="#fff" font-weight="700">SAATCGSL</text>
+    <text x="320" y="156" text-anchor="middle" fill="#e9d5ff" font-size="10.5">עוטף COBOL</text>
+    <text x="320" y="171" text-anchor="middle" fill="#e9d5ff" font-size="10.5">saatcgsl.cbl</text>
+
+    <rect x="470" y="112" width="180" height="70" rx="9" fill="#0891b2"/>
+    <text x="560" y="138" text-anchor="middle" fill="#fff" font-weight="700">SAATCG</text>
+    <text x="560" y="156" text-anchor="middle" fill="#cffafe" font-size="10.5">מנוע SOAP ב-RPGLE</text>
+    <text x="560" y="171" text-anchor="middle" fill="#cffafe" font-size="10.5">saatcg.rpgle</text>
+
+    <rect x="720" y="120" width="170" height="54" rx="9" fill="#0ea5e9"/>
+    <text x="805" y="143" text-anchor="middle" fill="#fff" font-weight="700">CreditGuard</text>
+    <text x="805" y="161" text-anchor="middle" fill="#e0f2fe" font-size="10.5">שרת "אשראית" (HTTPS)</text>
+
+    <!-- arrows -->
+    <line x1="170" y1="147" x2="228" y2="147" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="199" y="139" text-anchor="middle" font-size="10.5" fill="#475569">CALL</text>
+    <line x1="410" y1="147" x2="468" y2="147" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="439" y="139" text-anchor="middle" font-size="10.5" fill="#475569">CALL 'SAATCG'</text>
+    <line x1="650" y1="147" x2="718" y2="147" stroke="#334155" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="684" y="139" text-anchor="middle" font-size="10.5" fill="#475569">SOAP POST</text>
+
+    <!-- shared record -->
+    <rect x="230" y="225" width="420" height="46" rx="9" fill="#fff" stroke="#f59e0b" stroke-width="2"/>
+    <text x="440" y="245" text-anchor="middle" fill="#b45309" font-weight="700" font-size="12">רשומת תנועה משותפת בגודל 703 בתים</text>
+    <text x="440" y="262" text-anchor="middle" fill="#92400e" font-size="10.5">DCCGE-* (COBOL) &nbsp;≡&nbsp; PTxxx (RPGLE)</text>
+    <line x1="320" y1="182" x2="320" y2="223" stroke="#f59e0b" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+    <line x1="560" y1="182" x2="560" y2="223" stroke="#f59e0b" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  </svg>
+  </div>
+
+  <p>אפליקציה עסקית <b>קוראת</b> ל-<code class="inl">SAATCGSL</code> ומעבירה את רשומת התנועה בתוספת בלוק
+  אפשרויות קטן (שפה 1=עברית/2=אנגלית וקונפיגורציה 1=גבייה/2=תביעה). <code class="inl">SAATCGSL</code>
+  מביא מספר רץ באמצעות <code class="inl">SAGETBKR</code>, מקצץ כל שדה קלט באמצעות <code class="inl">DCSTRING</code>,
+  אורז את הערכים לבלוקים עם קידומת אורך, ו<b>קורא</b> למנוע ה-RPGLE <code class="inl">SAATCG</code>.
+  <code class="inl">SAATCG</code> קורא את פרטי ההזדהות/כתובת ה-URL שלו מ-<code class="inl">SAMAINPF</code>, בונה את
+  בקשת ה-SOAP <code class="inl">doDeal</code> מאותה רשומה בגודל 703 בתים, שולח אותה לשרת CreditGuard,
+  מנתח את תשובת ה-XML, כותב את התוצאה בחזרה אל הרשומה ואל בלוק הפלט שלו, ומתעד את כל חילופי הדברים.
+  השליטה חוזרת במעלה השרשרת ו-<code class="inl">SAATCGSL</code> פורק את התשובה עבור הקורא.
+  <b>הרשומה בגודל 703 בתים היא עמוד השדרה</b>: COBOL מכנה את שדותיה <code class="inl">DCCGE-xxx</code>, ו-RPGLE מכנה את
+  אותם בתים <code class="inl">PTxxx</code>.</p>
+
+  <div class="note blue">תוכניות נוספות הנקראות לאורך הדרך: <code class="inl">SAGETBKR</code> (מספר רץ),
+  <code class="inl">DCSTRING</code> (קיצוץ/דחיסת מחרוזת), <code class="inl">SAATCGSL#P</code> (שינוי session/SSID),
+  <code class="inl">TBERR</code> (טקסט הודעת שגיאה), ו—בתוך SAATCG—<code class="inl">CONVERT</code>
+  (המרת קידוד EBCDIC-424 ↔ UTF-8-1208) ותוכנית השירות <code class="inl">HTTPAPI</code>.</div>
+</section>
+
+<!-- ================================================================= -->
+<!-- FIELD-TYPE LEGEND                                                  -->
+<!-- ================================================================= -->
+<section id="legend">
+  <h2><span class="emoji">🎨</span> מקרא סוגי שדות (צבעים ואייקונים)</h2>
+  <p>כל כרטיס שדה למטה צבוע ומסומן באייקון לפי סוג האחסון שלו כדי שתוכל לסרוק פריסה במבט חטוף.
+  <b>טבלאות</b> השדות נושאות את אותו מידע בטקסט.</p>
+  <div class="legend">
+    <span class="chip t-group"><span class="dot"></span>🗂️ קבוצה / מבנה</span>
+    <span class="chip t-char"><span class="dot"></span>🔤 תווי &nbsp;<code>X(n)/a</code></span>
+    <span class="chip t-zoned"><span class="dot"></span>🔢 עשרוני מוצג (zoned) &nbsp;<code>9(n)/s0</code></span>
+    <span class="chip t-packed"><span class="dot"></span>📦 עשרוני ארוז (packed) &nbsp;<code>COMP-3</code></span>
+    <span class="chip t-binary"><span class="dot"></span>⚙️ שלם בינארי</span>
+    <span class="chip t-money"><span class="dot"></span>💰 סכום עם סימן &nbsp;<code>S9V9</code></span>
+    <span class="chip t-date"><span class="dot"></span>📅 תאריך / שעה</span>
+    <span class="chip t-flag"><span class="dot"></span>🚩 דגל / מחוון</span>
+  </div>
+  <div class="note blue">בכל כרטיס: <b>CODE</b> = שם השדה המקורי · <span style="font-family:monospace">גלולה אפורה</span> = PIC/סוג ·
+  <b>אנגלית</b> = השם המתורגם · שורה קטנה = משמעות מהקוד · תגית <span class="badge-ret" style="position:static;border-radius:4px">RETURNED</span>
+  משמעה שה-API ממלא אותו בדרך חזרה.</div>
+</section>
+
+<!-- ================================================================= -->
+<!-- 2 · FILE ONE — saatcgsl.cbl                                        -->
+<!-- ================================================================= -->
+<section id="cbl">
+  <h2><span class="tag cbl">CBL</span> saatcgsl.cbl — תוכנית <code class="inl">SAATCGSL</code></h2>
+
+  <h3>שם התוכנית ומשמעותו</h3>
+  <p class="lead"><b>SAATCGSL</b> = <b>SA</b> (קידומת אפליקציית סדרת SA) + <b>ATCG</b> ("אשראית / CreditGuard")
+  + <b>SL</b> (סיומת "סליקה" / שירות עוטף). זהו <b>עוטף</b> דק והגנתי לפני
+  מנוע ה-API בשפת RPGLE <code class="inl">SAATCG</code>. תפקידו העסקי הוא לאפשר לכל תוכנית פנימית של IBM&nbsp;i להריץ
+  תנועת כרטיס אשראי מבלי לדעת דבר על SOAP, HTTP, XML, פרמטרים באורך משתנה של RPGLE או
+  המרת קידוד. הערת הכותרת (בעברית) מציינת את חמש האחריות שלו:</p>
+  <ul>
+    <li>לפקח / לעטוף את הקריאה ל-API של CreditGuard.</li>
+    <li>לאמת את תקינות הפרמטרים.</li>
+    <li>לבנות את הפרמטרים עבור ה-API.</li>
+    <li>לקרוא ל-API.</li>
+    <li>לעבד את הפרמטרים החוזרים מה-API (בתוספת הוספת USER&nbsp;DATA, למשל ענף פוליסה).</li>
+  </ul>
+
+  <div class="two">
+    <div>
+      <h4>שתי קונפיגורציות עסקיות</h4>
+      <table>
+        <tr><th>קונפיגורציה</th><th>ערך</th><th>משמעות</th></tr>
+        <tr><td><b>גבייה</b></td><td><code class="inl">1</code> GVIA-DBT</td>
+            <td>גבייה: <b>חיוב</b> כרטיס הלקוח בפרמיות.</td></tr>
+        <tr><td><b>תביעה</b></td><td><code class="inl">2</code> TVIA-CRD</td>
+            <td>תביעה / החזר: <b>זיכוי</b> כרטיס דרך מסוף לוגי ייעודי.</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>PROCEDURE DIVISION USING</h4>
+      <table>
+        <tr><th>#</th><th>פרמטר</th><th>כיוון</th></tr>
+        <tr><td>1</td><td><code class="inl">DCCGTRNE-REC</code> (703)</td><td>קלט/פלט</td></tr>
+        <tr><td>2</td><td><code class="inl">SAATCG-1-PARAM</code> (400)</td><td>קלט</td></tr>
+        <tr><td>3</td><td><code class="inl">SAATCG-2-PARAM</code> (200)</td><td>פלט</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ---------------- DATA DIVISION ------------------ -->
+  <h3 id="cbl-data">DATA DIVISION</h3>
+
+  <h4>פרמטר 2 ו-3 — <code class="inl">SAATCG-1-PARAM</code> (קלט) / <code class="inl">SAATCG-2-PARAM</code> (פלט)</h4>
+  <table>
+    <tr><th>שדה</th><th>PIC</th><th>משמעות בעברית</th><th>תיאור (מהקוד)</th></tr>
+    <tr><td>SAATCG-1-LANGUAGE</td><td>X(1)</td><td>שפה</td><td>ערכי 88: 1=עברית (HEB), 2=אנגלית (ENG). קובע את שפת ההודעות.</td></tr>
+    <tr><td>SAATCG-1-CONFIG-CODE</td><td>X(1)</td><td>קוד קונפיגורציה</td><td>ערכי 88: 1=GVIA-DBT (גבייה/חיוב), 2=TVIA-CRD (תביעה/זיכוי).</td></tr>
+    <tr><td>SAATCG-1-USER-DATA</td><td>X(19)</td><td>נתוני משתמש</td><td>טקסט חופשי, למשל ענף פוליסה; מועבר ל-CreditGuard כ-<code class="inl">&lt;user&gt;</code>.</td></tr>
+    <tr><td>SAATCG-1-FILLER</td><td>X(379)</td><td>מילוי</td><td>ריפוד הבלוק ל-400 בתים.</td></tr>
+    <tr><td>SAATCG-2-AUTH-NUMBER</td><td>X(7)</td><td>מספר אישור</td><td>מספר האישור המוחזר מ-CreditGuard.</td></tr>
+    <tr><td>SAATCG-2-FILLER</td><td>X(91)</td><td>מילוי</td><td>שמור.</td></tr>
+    <tr><td>SAATCG-2-INTERFACE-RET</td><td>X(5)</td><td>החזרת ממשק</td><td>88 INT-RET-TAKIN = '00000' (ממשק תקין).</td></tr>
+    <tr><td>SAATCG-2-INTERFACE-TEXT</td><td>X(10)</td><td>טקסט שגיאת ממשק</td><td>טקסט שגיאה קצר ברמת הממשק.</td></tr>
+    <tr><td>SAATCG-2-CLCO</td><td>X(2)</td><td>חברת סליקה (acquirer)</td><td>קוד סולק בן 2 ספרות מהעסקה.</td></tr>
+    <tr><td>SAATCG-2-RETURN</td><td>X(5)</td><td>קוד החזרה</td><td>88 RETURN-TAKIN = רווחים או '00000' (תקין).</td></tr>
+    <tr><td>SAATCG-2-ERROR-TEXT</td><td>X(80)</td><td>טקסט שגיאה</td><td>טקסט שגיאה / סטטוס קריא לאדם.</td></tr>
+  </table>
+
+  <h4>בלוקי API עם קידומת אורך המועברים ל-RPGLE (תואמים לשדות <code>varying</code> ב-RPGLE)</h4>
+  <p>כל פריט מפוצל ל-<code class="inl">-L</code> אורך (<span class="chip t-binary" style="padding:2px 8px">⚙️ 9(3) BINARY</span>) ו-<code class="inl">-V</code> ערך.</p>
+  <table>
+    <tr><th>שדה</th><th>PIC</th><th>משמעות בעברית</th><th>תיאור</th></tr>
+    <tr><td>SAATCGR-1-LANG-L / -V</td><td>9(3)B / X(1)</td><td>שפה (אורך/ערך)</td><td>ספרת שפה מקוצצת + אורכה.</td></tr>
+    <tr><td>SAATCGR-1-CONF-L / -V</td><td>9(3)B / X(1)</td><td>קונפיגורציה (אורך/ערך)</td><td>ספרת קונפיגורציה מקוצצת + אורך.</td></tr>
+    <tr><td>SAATCGR-1-NUMR-L / -V</td><td>9(3)B / X(16)</td><td>מונה (אורך/ערך)</td><td>מספר רץ מ-SAGETBKR; אורך מקובע ל-16.</td></tr>
+    <tr><td>SAATCGR-1-UD-L / -V</td><td>9(3)B / X(19)</td><td>נתוני משתמש (אורך/ערך)</td><td>נתוני משתמש מקוצצים + אורך.</td></tr>
+    <tr><td>SAATCGR-2-AUTH-NUMBER-L / -V</td><td>9(3)B / X(7)</td><td>מספר אישור</td><td>מספר אישור מוחזר.</td></tr>
+    <tr><td>SAATCGR-2-RETRN-L / -V</td><td>9(3)B / X(5)</td><td>קוד החזרה</td><td>קוד סטטוס מוחזר.</td></tr>
+    <tr><td>SAATCGR-2-ERROR-L / -V</td><td>9(3)B / X(80)</td><td>טקסט שגיאה</td><td>טקסט שגיאה מוחזר.</td></tr>
+    <tr><td>SAATCGR-2-CLCO-L / -V</td><td>9(3)B / X(2)</td><td>חברת סליקה</td><td>קוד סולק מוחזר.</td></tr>
+    <tr><td>SAATCGR-2-INT-RTN-L / -V</td><td>9(3)B / X(5)</td><td>החזרת ממשק</td><td>סטטוס ברמת הממשק.</td></tr>
+    <tr><td>SAATCGR-2-INT-TXT-L / -V</td><td>9(3)B / X(10)</td><td>טקסט שגיאת ממשק</td><td>טקסט שגיאה ברמת הממשק.</td></tr>
+    <tr><td>DCCGTRNE-IO-REC-L / -V</td><td>9(3)B / X(703)</td><td>עוטף רשומה</td><td>הרשומה בגודל 703 בתים + אורכה (703) → RPGLE <code class="inl">ecptrnsv</code>.</td></tr>
+  </table>
+
+  <h4>בלוקי פרמטרים של תוכניות נקראות</h4>
+  <table>
+    <tr><th>שדה</th><th>PIC</th><th>משמעות בעברית</th><th>תיאור</th></tr>
+    <tr><td>SAGETBKR-PEULA</td><td>X(1)</td><td>פעולה</td><td>'C'=סגירה, 'U'=עדכון. העוטף משאיר ריק (קריאה).</td></tr>
+    <tr><td>SAGETBKR-KNUM</td><td>9(4)</td><td>מספר מפתח</td><td>ערכי 88: 1=HIDRQ, 2=HIDRE. העוטף מגדיר HIDRQ.</td></tr>
+    <tr><td>SAGETBKR-NUM-RAZ</td><td>9(16)</td><td>מספר רץ (מספר רץ)</td><td>המספר הייחודי שנשלף מועבר אל מונה ה-API.</td></tr>
+    <tr><td>SAGETBKR-RETURN</td><td>X(3)</td><td>החזרה</td><td>ערכי 88: '000'=TAKIN (תקין), '002'=ERROR.</td></tr>
+    <tr><td>SAGETBKR-ERROR-TEXT</td><td>X(76)</td><td>טקסט שגיאה</td><td>תיאור שגיאה מ-SAGETBKR.</td></tr>
+    <tr><td>DCSTRING-STRING-IN</td><td>X(1)×300</td><td>מחרוזת קלט</td><td>טבלה של 300 תווים המוזנת ל-DCSTRING.</td></tr>
+    <tr><td>DCSTRING-STRING-OUT</td><td>X(300)</td><td>מחרוזת פלט</td><td>תוצאה מקוצצת / דחוסה.</td></tr>
+    <tr><td>DCSTRING-PEULA</td><td>X(1)</td><td>פעולה</td><td>ערכי 88: Z=דחיסה (צמצום), X=דחיסה ללא רווח, R/H/L=היפוך, U=אותיות גדולות, S=soundex, I=סימון, E=הסרת שגיאה, C=סגירה.</td></tr>
+    <tr><td>DCSTRING-IN-LEN / -OUT-LEN</td><td>9(3)</td><td>אורך קלט/פלט</td><td>אורכים משמעותיים של קלט ופלט.</td></tr>
+    <tr><td>DCSTRING-LANG</td><td>X(1)</td><td>שפה</td><td>ערכי 88: H=עברית, E=אנגלית. העוטף משתמש ב-ENG.</td></tr>
+    <tr><td>DCSTRING-RETURN</td><td>X(2)</td><td>החזרה</td><td>ערכי 88: 00=TAKIN, 01=פעולה שגויה, 02=שגיאת קלט/פלט, 99=שגיאה.</td></tr>
+    <tr><td>ERRTV-PEULA</td><td>X(1)</td><td>פעולה</td><td>ערכי 88: R=קריאה, C=סגירה.</td></tr>
+    <tr><td>ERRTV-MSG-NO</td><td>X(5)</td><td>מספר הודעה</td><td>קוד שגיאה לשליפה (למשל RD105, RD199).</td></tr>
+    <tr><td>ERRTV-RETURN</td><td>X(2)</td><td>החזרה</td><td>ערכי 88: 00=תקין, 01=שגיאה, 02=לא נמצא.</td></tr>
+    <tr><td>ERRTV-MSG-TXT</td><td>X(76)</td><td>טקסט הודעה</td><td>טקסט ההודעה שנשלף.</td></tr>
+    <tr><td>PRM-DCPCIMSF-KVUZ / -TERN7 / -RETURN / -TERN10</td><td>X(2)/X(7)/X(2)/X(10)</td><td>פרמטרי מסוף PCI</td><td>מוצהרים עבור הקריאה למסוף PCI (<code class="inl">R10</code>); <b>לא בשימוש</b> בזרימה החיה.</td></tr>
+  </table>
+
+  <h4>מוני ערכים, מתגים ואזורי עבודה</h4>
+  <div class="two">
+    <div>
+      <h4>SA-PEULA <span class="chip t-zoned" style="padding:2px 8px">9(2)</span> — קודי פעולת קובץ</h4>
+      <table><tr><th>#</th><th>פעולה</th><th>#</th><th>פעולה</th></tr>
+      <tr><td>0</td><td>סגירה</td><td>7</td><td>הצבה ≥</td></tr>
+      <tr><td>1</td><td>קריאה אקראית</td><td>8</td><td>הצבה &gt;</td></tr>
+      <tr><td>2</td><td>קריאה =</td><td>9</td><td>מחיקה</td></tr>
+      <tr><td>3</td><td>קריאה ≥</td><td>10</td><td>כתיבה מחדש</td></tr>
+      <tr><td>4</td><td>קריאה הבא</td><td>11</td><td>כתיבה</td></tr>
+      <tr><td>5</td><td>קריאה קודם</td><td>12</td><td>מחיקה ללא בדיקה</td></tr>
+      <tr><td>6</td><td>קריאה אחרון</td><td>13</td><td>כתיבה מחדש ללא בדיקה</td></tr></table>
+    </div>
+    <div>
+      <h4>SA-RETURN <span class="chip t-char" style="padding:2px 8px">X(2)</span> · SWITCH</h4>
+      <table><tr><th>קוד</th><th>משמעות</th></tr>
+      <tr><td>00</td><td>TAKIN (תקין)</td></tr><tr><td>01</td><td>שגיאה</td></tr>
+      <tr><td>02</td><td>סוף קובץ / EOTV</td></tr><tr><td>03</td><td>תחילת קובץ</td></tr>
+      <tr><td>05</td><td>רשומה נעולה</td></tr><tr><td>06</td><td>מחוץ לטווח</td></tr>
+      <tr><td>99</td><td>פעולה שגויה</td></tr></table>
+      <p style="font-size:13px"><b>SWITCH:</b> <code class="inl">SW-END-JOB</code> (0 כבוי/1 דלוק),
+      <code class="inl">SW-BEG-END</code> (0 התחלה/1 סוף), <code class="inl">SW-ERROR</code> (0 כבוי/1 דלוק).
+      <b>EZER</b> (<i>עזר</i>): משתני עבודה לתאריך/שעה, מאגרי <code class="inl">EZ-TXT-300-IN/OUT</code>
+      עבור סבב הלוך-ושוב של DCSTRING, <code class="inl">EZ-LEN</code>, <code class="inl">EZ-ERR-TXT/KTXT</code>,
+      <code class="inl">EZ-IN-LANG / -CONFIG-CODE / -UD</code> ובלוק ההכנה של IN/OUT.</p>
+    </div>
+  </div>
+
+  <div class="note pink">📅 <b>Copybook לתאריכים <code class="inl">DT2TRN</code> / <code class="inl">DTW-PARM</code>:</b> copybook
+  גדול משותף להמרת תאריכים (כל צורות DMY/MDY/YMD ב-4/5/6/7/8 ספרות בתוספת גרסאות "ARUCH"/ארוכות
+  עם סימני פיסוק, וטבלת פעולות <code class="inl">DTW-PEULA</code>). הוא יושב ב-Working-Storage אך
+  <b>אינו מוזכר בלוגיקה של תוכנית זו</b> — יש להתייחס אליו כ-include מורש.</div>
+
+  <h4>רשומת תנועה — <code class="inl">DCCGTRNE-REC</code> / <code class="inl">DCCGE-*</code> (703 בתים, LINKAGE)</h4>
+  <p>רשימת השדות המלאה, מאומתת מה-LINKAGE SECTION. זוהי אותה רשומה ש-RPGLE רואה כ-
+  <code class="inl">PTxxx</code>. סוגים: <span class="chip t-char" style="padding:2px 8px">X</span> תווי ·
+  <span class="chip t-zoned" style="padding:2px 8px">9</span> מוצג (zoned) ·
+  <span class="chip t-packed" style="padding:2px 8px">P</span> COMP-3 ·
+  <span class="chip t-money" style="padding:2px 8px">S9V9</span> סכום עם סימן.</p>
+  <table>
+    <tr><th>שדה</th><th>PIC</th><th>משמעות בעברית</th><th>תיאור וקודים</th></tr>
+    <tr><td>DCCGE-TERN</td><td>9(10)</td><td>מספר מסוף</td><td>מסוף CreditGuard / מסוף.</td></tr>
+    <tr><td>DCCGE-PTID</td><td>9(6)</td><td>מזהה נקודה</td><td>מזהה נקודת מכירה.</td></tr>
+    <tr><td>DCCGE-RQSC</td><td>X(2)</td><td>קוד בקשה</td><td>ערכי 88: '01'=ISHUR-RAGL (אישור רגיל), '11'=ITHUL-KSKO (ביטול); בוחר את סוג התנועה.</td></tr>
+    <tr><td>DCCGE-PCSC</td><td>X(2)</td><td>קוד עיבוד</td><td>תת-קוד עיבוד.</td></tr>
+    <tr><td>DCCGE-QUEP</td><td>X(2)</td><td>תור</td><td>תור / עדיפות.</td></tr>
+    <tr><td>DCCGE-WRKS</td><td>X(10)</td><td>עמדת עבודה</td><td>מקבל גם תווים 1–10 של tranId בחזרה.</td></tr>
+    <tr><td>DCCGE-PRSL</td><td>X(10)</td><td>אישי / מפעיל</td><td>מקבל גם תווים 11–20 של tranId בחזרה.</td></tr>
+    <tr><td>DCCGE-USRP</td><td>X(10)</td><td>פרופיל משתמש</td><td>המשתמש המגיש.</td></tr>
+    <tr><td>DCCGE-USRC</td><td>X(10)</td><td>קוד משתמש</td><td>קוד משתמש משני.</td></tr>
+    <tr><td>DCCGE-RPGM</td><td>X(10)</td><td>תוכנית</td><td>שם התוכנית הקוראת.</td></tr>
+    <tr><td>DCCGE-CMPC</td><td>X(3)</td><td>קוד חברה</td><td>→ <code class="inl">&lt;compCode&gt;</code>.</td></tr>
+    <tr><td>DCCGE-SERN</td><td>9(5) P</td><td>מספר סידורי</td><td>סידורי פנימי.</td></tr>
+    <tr><td>DCCGE-DOCN</td><td>9(12) P</td><td>מספר מסמך</td><td>→ <code class="inl">&lt;docNum&gt;</code>.</td></tr>
+    <tr><td>DCCGE-LINN</td><td>X(3)</td><td>מספר שורה</td><td>שורת מסמך.</td></tr>
+    <tr><td>DCCGE-DOCT</td><td>X(2)</td><td>סוג מסמך</td><td>→ <code class="inl">&lt;docType&gt;</code>.</td></tr>
+    <tr><td>DCCGE-RQDT</td><td>9(8) P</td><td>תאריך בקשה</td><td>CCYYMMDD; ברירת מחדל להיום; חלק מ-requestId.</td></tr>
+    <tr><td>DCCGE-TRNO</td><td>9(6) P</td><td>מספר תנועה</td><td>רצף עסקה; חלק מ-requestId.</td></tr>
+    <tr><td>DCCGE-RTIM</td><td>9(6) P</td><td>שעת בקשה</td><td>HHMMSS; ברירת מחדל לעכשיו.</td></tr>
+    <tr><td>DCCGE-TRST</td><td>X(3)</td><td>סטטוס תנועה</td><td>88 TAKIN = רווחים / '000' (תקין). מתוך <code class="inl">&lt;status&gt;</code>. RETURNED.</td></tr>
+    <tr><td>DCCGE-STSD</td><td>X(79)</td><td>תיאור סטטוס</td><td>טקסט סטטוס מורחב (עב/אנ). RETURNED.</td></tr>
+    <tr><td>DCCGE-REFN</td><td>9(10) P</td><td>מספר אסמכתא</td><td>tranId של CreditGuard. RETURNED.</td></tr>
+    <tr><td>DCCGE-REF1</td><td>X(30)</td><td>אסמכתא 1</td><td>אסמכתא כללית.</td></tr>
+    <tr><td>DCCGE-REF2</td><td>X(20)</td><td>אסמכתא 2</td><td>מזהה כרטיס / מספר כרטיס בחזרה. RETURNED.</td></tr>
+    <tr><td>DCCGE-REF3</td><td>X(8)</td><td>אסמכתא 3</td><td>מחזיק מספר אישור לא מספרי. RETURNED.</td></tr>
+    <tr><td>DCCGE-TRSM</td><td>S9(6)V9(2) P</td><td>סכום תנועה</td><td>סכום העסקה; ×100 → <code class="inl">&lt;total&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CRET</td><td>X(1)</td><td>סוג אשראי</td><td>1 רגיל · 2 Isra · 3 AdHock · 4 ClubDeal · 5 SpecialAlpha · 6 SpecialCredit · 8 תשלומים · 9 PaymentsClub.</td></tr>
+    <tr><td>DCCGE-FRSM</td><td>S9(6)V9(2) P</td><td>סכום תשלום ראשון</td><td>תשלום ראשון; ×100.</td></tr>
+    <tr><td>DCCGE-FXSM</td><td>S9(6)V9(2) P</td><td>סכום תשלום קבוע</td><td>תשלום תקופתי; ×100.</td></tr>
+    <tr><td>DCCGE-PAYN</td><td>9(2) P</td><td>מספר תשלומים</td><td>מספר תשלומים; 99 = הוראת קבע.</td></tr>
+    <tr><td>DCCGE-SRSM</td><td>S9(6)V9(2) P</td><td>סכום נוסף</td><td>סכום נוסף.</td></tr>
+    <tr><td>DCCGE-DILC</td><td>X(1)</td><td>קוד עסקה / אימות</td><td>ממופה לאימות: 1 NoComm · 2 Normal · 3 CreditLimit · 4 AutoComm · 5 Verify · 6 Dealer · 9 AutoCommHold · B Token · R AutoCommRelease · Q cardNo. (ערכי 88: 2 BDIKA/בדיקה, 4 ISKA/עסקה, 5 ISUR/חסימה).</td></tr>
+    <tr><td>DCCGE-VENN</td><td>9(7) P</td><td>מספר ספק</td><td>מתוך <code class="inl">&lt;supplierNumber&gt;</code>. RETURNED.</td></tr>
+    <tr><td>DCCGE-CURT</td><td>X(1)</td><td>סוג מטבע</td><td>1 ILS · 2 USD · 3 GBP · 4 HKD · 5 JPY · 6 EUR.</td></tr>
+    <tr><td>DCCGE-CLBC</td><td>X(1)</td><td>קוד מועדון</td><td>→ <code class="inl">&lt;clubCode&gt;</code>.</td></tr>
+    <tr><td>DCCGE-APPN</td><td>9(7) P</td><td>מספר אישור</td><td>מספר אישור; −9999999 אם לא מספרי. RETURNED.</td></tr>
+    <tr><td>DCCGE-APSR</td><td>X(1)</td><td>מקור אישור</td><td>קוד מקור אישור. RETURNED.</td></tr>
+    <tr><td>DCCGE-CRCO</td><td>X(1)</td><td>חברת אשראי</td><td>ערכי 88: 1 ישראכרט · 2 ויזה-כאל · 3 דיינרס · 4 אמריקן · 5 JCB · 6 לאומי-קארד. ברירת מחדל לישראכרט בגבייה. RETURNED.</td></tr>
+    <tr><td>DCCGE-CANM</td><td>X(15)</td><td>שם כרטיס</td><td>שם מוצר הכרטיס. RETURNED.</td></tr>
+    <tr><td>DCCGE-FORF</td><td>X(1)</td><td>דגל זר</td><td>קוד סוג כרטיס. RETURNED.</td></tr>
+    <tr><td>DCCGE-FILN</td><td>9(2) P</td><td>מספר קובץ</td><td>מספר אצווה/קובץ. RETURNED.</td></tr>
+    <tr><td>DCCGE-CHSN</td><td>9(4) P</td><td>קוד קופה</td><td>→ <code class="inl">&lt;codeKupa&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CSHS</td><td>9(3)</td><td>תת-קוד קופה</td><td>קוד קופה עזר.</td></tr>
+    <tr><td>DCCGE-TRTO</td><td>X(2)</td><td>סוג תנועה (מוחזר)</td><td>קוד סוג מוחזר. RETURNED.</td></tr>
+    <tr><td>DCCGE-DILR</td><td>X(1)</td><td>מחוון עסקה</td><td>דגל עסקה.</td></tr>
+    <tr><td>DCCGE-SRVC</td><td>9(3) P</td><td>קוד שירות</td><td>מזהה שירות.</td></tr>
+    <tr><td>DCCGE-CRDT</td><td>9(8) P</td><td>תאריך אשראי / תשלום</td><td>מתוך <code class="inl">&lt;payDate&gt;</code>. RETURNED.</td></tr>
+    <tr><td>DCCGE-TRNC</td><td>X(2)</td><td>קוד תנועה</td><td>00 רגיל · 50 טלפון · 60 חתימה · 70 אינטרנט. מוגדר 00 כאשר track2 קיים, אחרת 50.</td></tr>
+    <tr><td>DCCGE-CARN</td><td>9(18) P</td><td>מספר כרטיס</td><td>PAN, או טוקן מזהה כרטיס אם הוא 16 ספרות שמתחיל ב-10/15.</td></tr>
+    <tr><td>DCCGE-VLDT</td><td>9(4)</td><td>תאריך תוקף</td><td>תוקף הכרטיס MMYY. RETURNED.</td></tr>
+    <tr><td>DCCGE-CIDN</td><td>9(9) P</td><td>מספר ת"ז של בעל הכרטיס</td><td>תעודת זהות → <code class="inl">&lt;id&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CUSN</td><td>9(12) P</td><td>מספר לקוח</td><td>→ <code class="inl">&lt;customerNumber&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CUNM</td><td>X(30)</td><td>שם לקוח</td><td>→ <code class="inl">&lt;userData1&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CUSF</td><td>X(1)</td><td>דגל לקוח</td><td>מחוון לקוח.</td></tr>
+    <tr><td>DCCGE-TEL1</td><td>X(15)</td><td>טלפון</td><td>→ <code class="inl">&lt;customerPhone&gt;</code>.</td></tr>
+    <tr><td>DCCGE-CNTC</td><td>9(3)</td><td>קוד מדינה</td><td>מדינה מספרית.</td></tr>
+    <tr><td>DCCGE-STTC</td><td>X(3)</td><td>קוד מחוז</td><td>מדינה / אזור.</td></tr>
+    <tr><td>DCCGE-CNCA</td><td>X(2)</td><td>קיצור מדינה</td><td>קוד בסגנון ISO.</td></tr>
+    <tr><td>DCCGE-CTYC</td><td>9(4) P</td><td>קוד עיר</td><td>מזהה עיר.</td></tr>
+    <tr><td>DCCGE-CTYD</td><td>X(15)</td><td>תיאור עיר</td><td>שם העיר.</td></tr>
+    <tr><td>DCCGE-ADDR</td><td>X(30)</td><td>כתובת</td><td>כתובת רחוב.</td></tr>
+    <tr><td>DCCGE-ZIPC</td><td>9(5) P</td><td>מיקוד</td><td>מיקוד דואר.</td></tr>
+    <tr><td>DCCGE-T180</td><td>X(80)</td><td>Track 2</td><td>נתוני פס מגנטי; מספר הכרטיס מחולץ לפני '='.</td></tr>
+    <tr><td>DCCGE-BRNC…BRS2</td><td>9(4) P</td><td>סניף / תת-סניף</td><td>שדות בנק/סניף BRNC, BRS1, BRS2.</td></tr>
+    <tr><td>DCCGE-GRUP…GRS2</td><td>9(4) P</td><td>קבוצה / תת-קבוצה</td><td>שדות קיבוץ GRUP, GRS1, GRS2.</td></tr>
+    <tr><td>DCCGE-BNPS / BPYN</td><td>9(3) P</td><td>תשלומי בנק / מספר תשלום</td><td>שדות תשלומי בנק.</td></tr>
+    <tr><td>DCCGE-BCRD / BCLD / BBLD</td><td>9(8) P</td><td>אשראי בנק / סליקה / יתרה</td><td><b>BCLD + BBLD מרכיבים את ה-refundKey</b> עבור תנועות זיכוי.</td></tr>
+    <tr><td>DCCGE-LOCN / LOS1</td><td>9(4) P</td><td>מיקום / תת-מיקום</td><td>שדות מיקום.</td></tr>
+    <tr><td>DCCGE-COID</td><td>X(6)</td><td>מזהה חברה</td><td>מזהה חברת סוחר.</td></tr>
+    <tr><td>DCCGE-MGTF / LFFL / SCRN / PSLF / TRCF</td><td>X(1)</td><td>דגלים</td><td>דגלי מגנטי / חיים / מסך / אישי / מעקב.</td></tr>
+    <tr><td>DCCGE-MSGT</td><td>9(2)</td><td>סוג הודעה</td><td>קוד סוג הודעה.</td></tr>
+    <tr><td>DCCGE-MMSR</td><td>X(2)</td><td>מקור MM</td><td>מקור עזר.</td></tr>
+    <tr><td>DCCGE-CA12 / CA14 / CA16</td><td>X(2)/X(4)/X(6)</td><td>מאפייני כרטיס</td><td>CA12 = קוד מותג כרטיס. RETURNED.</td></tr>
+    <tr><td>DCCGE-CN12 / CN14 / CN16</td><td>9(2)/9(4)/9(6)</td><td>ערכים מספריים של כרטיס</td><td>CN16 = slaveTerminal×1000 + רצף. RETURNED.</td></tr>
+    <tr><td>DCCGE-CVV2</td><td>X(4)</td><td>CVV2</td><td>ערך אימות כרטיס.</td></tr>
+    <tr><td>DCCGE-LS4D</td><td>X(4)</td><td>4 ספרות אחרונות</td><td>סיומת כרטיס ממוסכת. RETURNED.</td></tr>
+    <tr><td>DCCGE-CL4D</td><td>X(4)</td><td>4 אחרונות סליקה</td><td>סיומת כרטיס סליקה.</td></tr>
+    <tr><td>DCCGE-BRCO</td><td>X(1)</td><td>חברת סניף</td><td>קוד סניף/סולק.</td></tr>
+    <tr><td>DCCGE-CLCO</td><td>X(1)</td><td>חברת סליקה</td><td>ערכי 88 זהים ל-CRCO (1 Isra … 6 לאומי-קארד). RETURNED.</td></tr>
+    <tr><td>DCCGE-ISUR-NEW</td><td>X(7)</td><td>אישור חדש</td><td>עותק מספר אישור המוגדר על ידי עוטף ה-COBOL. RETURNED.</td></tr>
+    <tr><td>DCCGE-FILR</td><td>X(68)</td><td>מילוי</td><td>ריפוד הרשומה ל-703 בתים.</td></tr>
+  </table>
+
+  <h4>ERD 1 — מודל הפרמטרים של העוטף</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1000 430" font-family="Segoe UI,Arial" font-size="11.5">
+    <defs>
+      <marker id="e1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/></marker>
+    </defs>
+    <!-- DCCGTRNE-REC -->
+    <rect x="30" y="30" width="220" height="150" rx="8" fill="#fff" stroke="#0f172a" stroke-width="1.5"/>
+    <rect x="30" y="30" width="220" height="26" rx="8" fill="#0f172a"/>
+    <text x="140" y="48" text-anchor="middle" fill="#fff" font-weight="700">DCCGTRNE-REC (703)</text>
+    <text x="42" y="74" fill="#334155">TERN · PTID · RQSC · DILC</text>
+    <text x="42" y="92" fill="#334155">CARN · VLDT · CVV2 · CIDN</text>
+    <text x="42" y="110" fill="#334155">TRSM · PAYN · CURT · CRET</text>
+    <text x="42" y="128" fill="#334155">TRST · APPN · REFN (מוחזר)</text>
+    <text x="42" y="146" fill="#334155">CRCO · CLCO · ISUR-NEW</text>
+    <text x="42" y="164" fill="#64748b" font-size="10">… כ-110 שדות (DCCGE-*)</text>
+
+    <!-- SAATCG-1 -->
+    <rect x="30" y="230" width="220" height="80" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/>
+    <rect x="30" y="230" width="220" height="24" rx="8" fill="#7c3aed"/>
+    <text x="140" y="247" text-anchor="middle" fill="#fff" font-weight="700">SAATCG-1-PARAM (400) קלט</text>
+    <text x="42" y="272" fill="#334155">LANGUAGE · CONFIG-CODE</text>
+    <text x="42" y="290" fill="#334155">USER-DATA · FILLER</text>
+
+    <!-- SAATCG-2 -->
+    <rect x="30" y="330" width="220" height="80" rx="8" fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="30" y="330" width="220" height="24" rx="8" fill="#f59e0b"/>
+    <text x="140" y="347" text-anchor="middle" fill="#fff" font-weight="700">SAATCG-2-PARAM (200) פלט</text>
+    <text x="42" y="372" fill="#334155">AUTH-NUMBER · RETURN · CLCO</text>
+    <text x="42" y="390" fill="#334155">INTERFACE-RET · ERROR-TEXT</text>
+
+    <!-- SAATCGR blocks -->
+    <rect x="420" y="60" width="230" height="90" rx="8" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/>
+    <rect x="420" y="60" width="230" height="24" rx="8" fill="#7c3aed"/>
+    <text x="535" y="77" text-anchor="middle" fill="#fff" font-weight="700">SAATCGR-1-PARAM (אורך/ערך)</text>
+    <text x="432" y="102" fill="#334155">LANG · CONF · NUMR(16) · UD</text>
+    <text x="432" y="120" fill="#64748b" font-size="10">כל אחד = אורך 9(3)B + ערך</text>
+    <text x="432" y="138" fill="#64748b" font-size="10">→ RPGLE SAATCGI (varying)</text>
+
+    <rect x="420" y="180" width="230" height="90" rx="8" fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="420" y="180" width="230" height="24" rx="8" fill="#f59e0b"/>
+    <text x="535" y="197" text-anchor="middle" fill="#fff" font-weight="700">SAATCGR-2-PARAM (אורך/ערך)</text>
+    <text x="432" y="222" fill="#334155">AUTH · RETRN · ERROR · CLCO</text>
+    <text x="432" y="240" fill="#334155">INT-RTN · INT-TXT</text>
+    <text x="432" y="258" fill="#64748b" font-size="10">← RPGLE SAATCGO (varying)</text>
+
+    <rect x="420" y="300" width="230" height="70" rx="8" fill="#fff" stroke="#0f172a" stroke-width="1.5"/>
+    <rect x="420" y="300" width="230" height="24" rx="8" fill="#0f172a"/>
+    <text x="535" y="317" text-anchor="middle" fill="#fff" font-weight="700">DCCGTRNE-IO (אורך/ערך)</text>
+    <text x="432" y="342" fill="#334155">REC-L 9(3)B + REC-V X(703)</text>
+    <text x="432" y="360" fill="#64748b" font-size="10">→ RPGLE ecptrnsv</text>
+
+    <!-- SAATCG engine -->
+    <rect x="790" y="150" width="180" height="130" rx="8" fill="#0891b2"/>
+    <text x="880" y="205" text-anchor="middle" fill="#fff" font-weight="700">CALL 'SAATCG'</text>
+    <text x="880" y="225" text-anchor="middle" fill="#cffafe" font-size="10.5">מנוע RPGLE</text>
+    <text x="880" y="242" text-anchor="middle" fill="#cffafe" font-size="10.5">(R00-CALL-API-CG)</text>
+
+    <!-- relationships -->
+    <line x1="250" y1="270" x2="418" y2="105" stroke="#64748b" marker-end="url(#e1)"/>
+    <text x="300" y="180" fill="#7c3aed" font-size="10">נערך+ארוז →</text>
+    <line x1="250" y1="105" x2="418" y2="330" stroke="#64748b" marker-end="url(#e1)"/>
+    <text x="300" y="300" fill="#0f172a" font-size="10">עטוף 703b →</text>
+    <line x1="650" y1="105" x2="788" y2="185" stroke="#64748b" marker-end="url(#e1)"/>
+    <line x1="650" y1="335" x2="788" y2="245" stroke="#64748b" marker-end="url(#e1)"/>
+    <line x1="788" y1="215" x2="652" y2="215" stroke="#16a34a" marker-end="url(#e1)"/>
+    <text x="670" y="290" fill="#16a34a" font-size="10">תוצאה ↩ נפרקת ל-SAATCG-2</text>
+    <line x1="418" y1="225" x2="252" y2="360" stroke="#16a34a" marker-end="url(#e1)"/>
+  </svg>
+  </div>
+  <p class="note">העוטף אינו מדבר עם CreditGuard ישירות. הוא <b>ממפה</b> את הבלוקים הידידותיים-לקורא
+  <code class="inl">SAATCG-1/2-PARAM</code> אל הבלוקים בעלי קידומת האורך הידידותיים-ל-RPGLE <code class="inl">SAATCGR-1/2</code>
+  ו-<code class="inl">DCCGTRNE-IO</code>, <b>קורא</b> למנוע, ואז מעתיק את התוצאות בחזרה.</p>
+
+  <!-- ---------------- PROCEDURE DIVISION ------------------ -->
+  <h3 id="cbl-proc">PROCEDURE DIVISION — חלקים (sections)</h3>
+  <p>פאנל אחד ניתן להרחבה לכל SECTION (כולם קיימים במקור). לחץ כדי לפתוח.</p>
+
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> A-TOCHNIT-RASHIT <span style="font-weight:400;color:#64748b">— מנהל ראשי</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> — (משתמש ב-3 פרמטרי התוכנית)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">כניסת התוכנית</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">ZA-ATCHALAT-TOCHNIT</span><span class="callchip">B-TIPUL</span><span class="callchip">ZZ-SIYUM-TOCHNIT</span></div>
+      <p><b>מה הוא עושה:</b> זרימה עליונה. מריץ אתחול; אם האתחול הפעיל את מתג סיום-העבודה הוא קופץ ישירות
+      אל <code class="inl">EXIT PROGRAM</code>; אחרת מריץ את העיבוד הראשי ואז את שלב הסיום.</p>
+      <pre><span class="kw">PERFORM</span> ZA-ATCHALAT-TOCHNIT.
+<span class="kw">IF</span> SW-END-JOB-ON <span class="kw">GO TO</span> 999-PROG <span class="kw">END-IF</span>.
+<span class="kw">PERFORM</span> B-TIPUL.
+<span class="kw">PERFORM</span> ZZ-SIYUM-TOCHNIT.
+999-PROG. <span class="kw">EXIT PROGRAM</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> ZA-ATCHALAT-TOCHNIT <span style="font-weight:400;color:#64748b">— אתחול</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">A-TOCHNIT-RASHIT</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> מנקה את שני בלוקי ה-API ואת אזור העבודה ומגדיר את המתגים לברירות המחדל שלהם
+      (סיום-עבודה כבוי, שגיאה כבוי, התחלה).</p>
+      <pre><span class="kw">INITIALIZE</span> SAATCGR-1-PARAM.
+<span class="kw">INITIALIZE</span> SAATCGR-2-PARAM.
+<span class="kw">INITIALIZE</span> EZER.
+<span class="kw">SET</span> SW-END-JOB-OFF / SW-ERROR-OFF / SW-BEG <span class="kw">TO TRUE</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B-TIPUL <span style="font-weight:400;color:#64748b">— עיבוד ראשי</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">A-TOCHNIT-RASHIT</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B20-TIPUL-PER-CONFIG</span><span class="callchip">B40-EDIT-FIELDS</span><span class="callchip">R00-CALL-API-CG</span><span class="callchip">B80-TIPUL-RESPONSE</span></div>
+      <p><b>מה הוא עושה:</b> מתזמר את ארבעת השלבים: הגדרה לפי קונפיגורציה → בניית שדות בקשה → קריאה ל-API → פירוק התשובה.</p>
+      <pre><span class="kw">PERFORM</span> B20-TIPUL-PER-CONFIG.
+<span class="kw">PERFORM</span> B40-EDIT-FIELDS.
+<span class="kw">PERFORM</span> R00-CALL-API-CG.
+<span class="kw">PERFORM</span> B80-TIPUL-RESPONSE.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B20-TIPUL-PER-CONFIG <span style="font-weight:400;color:#64748b">— ניתוב לפי קונפיגורציה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B-TIPUL</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B21-TIPUL-CONFIG-ALL</span><span class="callchip">B22-CONFIG-GVIA-DBT</span><span class="callchip">B24-CONFIG-TVIA-CRD</span></div>
+      <p><b>מה הוא עושה:</b> מריץ את ההגדרה המשותפת, ואז מסתעף לפי קוד קונפיגורציה — 1 = גבייה/חיוב, 2 = תביעה/זיכוי; כל ערך אחר יוצא.</p>
+      <pre><span class="kw">PERFORM</span> B21-TIPUL-CONFIG-ALL.
+<span class="kw">EVALUATE TRUE</span>
+ <span class="kw">WHEN</span> SAATCG-1-CONFIG-GVIA-DBT <span class="kw">PERFORM</span> B22-CONFIG-GVIA-DBT
+ <span class="kw">WHEN</span> SAATCG-1-CONFIG-TVIA-CRD <span class="kw">PERFORM</span> B24-CONFIG-TVIA-CRD
+ <span class="kw">WHEN OTHER</span> <span class="kw">GO TO</span> 999-EXIT
+<span class="kw">END-EVALUATE</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B21-TIPUL-CONFIG-ALL <span style="font-weight:400;color:#64748b">— הגדרה משותפת / קבלת מונה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B20-TIPUL-PER-CONFIG</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">R30-CALL-SAGETBKR</span><span class="callchip">S-CALL-ERRORTV</span></div>
+      <p><b>מה הוא עושה:</b> מגדיר את המפתח HIDRQ, קורא ל-<code class="inl">SAGETBKR</code> למספר רץ, ומעביר אותו
+      (אורך 16) אל <code class="inl">SAATCGR-1-NUMR</code>. בכישלון הוא מפעיל את מתג השגיאה, שולף את הודעה
+      <code class="inl">RD105</code> באמצעות <code class="inl">S-CALL-ERRORTV</code>, מחזיר אותה בבלוק התשובה, ויוצא.</p>
+      <pre><span class="kw">SET</span> SAGETBKR-KNUM-HIDRQ <span class="kw">TO TRUE</span>.
+<span class="kw">PERFORM</span> R30-CALL-SAGETBKR.
+<span class="kw">IF NOT</span> SAGETBKR-RETURN-TAKIN <span class="kw">SET</span> SW-ERROR-ON <span class="kw">TO TRUE</span> ... <span class="kw">END-IF</span>.
+<span class="kw">MOVE</span> SAGETBKR-NUM-RAZ <span class="kw">TO</span> SAATCGR-1-NUMR-V. <span class="kw">MOVE</span> 16 <span class="kw">TO</span> SAATCGR-1-NUMR-L.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B22-CONFIG-GVIA-DBT <span style="font-weight:400;color:#64748b">— קונפיגורציית גבייה/חיוב</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B20-TIPUL-PER-CONFIG</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">R20-CALL-CHGSSID</span></div>
+      <p><b>מה הוא עושה:</b> עבור גביית פרמיות: קורא לעוזר ה-SSID, ואז קובע ברירת מחדל של חברת אשראי ל-
+      ישראכרט כאשר לא סופקה אף אחת (CRCO = '0' או ריק).</p>
+      <pre><span class="kw">PERFORM</span> R20-CALL-CHGSSID.
+<span class="kw">IF</span> DCCGE-CRCO = '0' <span class="kw">OR</span> ' ' <span class="kw">SET</span> DCCGE-CRCO-ISRA <span class="kw">TO TRUE</span> <span class="kw">END-IF</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B24-CONFIG-TVIA-CRD <span style="font-weight:400;color:#64748b">— קונפיגורציית תביעה/זיכוי</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B20-TIPUL-PER-CONFIG</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> כרגע חלק ריק (no-op). המסוף הלוגי של תביעה/זיכוי מסופק בצד
+      ה-RPGLE (מתוך פרמטר <code class="inl">CGGCOMTTRM</code> ב-<code class="inl">SAMAINPF</code>), כך שהעוטף
+      אינו זקוק לטיפול COBOL מיוחד כאן.</p>
+      <pre>999-EXIT. <span class="kw">EXIT</span>.   <span class="cm">*&gt; no-op</span></pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B40-EDIT-FIELDS <span style="font-weight:400;color:#64748b">— בניית שדות בקשה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B-TIPUL</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B42-MOVE-LANG</span><span class="callchip">B44-MOVE-CONF</span><span class="callchip">B46-MOVE-DCCGTRNE</span><span class="callchip">B48-MOVE-UD</span></div>
+      <p><b>מה הוא עושה:</b> ממלא את כל ארבעת פריטי הבקשה של <code class="inl">SAATCGR-1-PARAM</code> בתוספת עוטף הרשומה.</p>
+      <pre><span class="kw">PERFORM</span> B42-MOVE-LANG / B44-MOVE-CONF / B46-MOVE-DCCGTRNE / B48-MOVE-UD.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B42-MOVE-LANG / B44-MOVE-CONF / B48-MOVE-UD <span style="font-weight:400;color:#64748b">— קיצוץ והכנת קלטים</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B40-EDIT-FIELDS</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">F00-TIPUL-FLD</span></div>
+      <p><b>מה הוא עושה:</b> שלוש רוטינות כמעט זהות. כל אחת מכינה קלט אחד (שפה / קונפיגורציה / נתוני
+      משתמש בגודל 19 בתים) אל <code class="inl">EZ-TXT-300-IN</code>, מריצה אותו דרך <code class="inl">F00-TIPUL-FLD</code>
+      (קיצוץ/דחיסה), ומאחסנת את הערך הנקי + האורך המשמעותי בקבוצה המתאימה
+      <code class="inl">SAATCGR-1-*</code>. בשגיאה היא מאחסנת את טקסט השגיאה בחריץ הערך ויוצאת.
+      מוצג: B42 (שפה, אורך 1); B48 משתמש באורך 19.</p>
+      <pre><span class="kw">MOVE</span> SAATCG-1-LANGUAGE <span class="kw">TO</span> EZ-IN-LANG, EZ-TXT-300-IN.
+<span class="kw">MOVE</span> 1 <span class="kw">TO</span> EZ-TXT-300-IN-LEN, EZ-TXT-300-OUT-LEN.
+<span class="kw">PERFORM</span> F00-TIPUL-FLD.
+<span class="kw">MOVE</span> EZ-TXT-300-OUT(1:EZ-TXT-300-IN-LEN) <span class="kw">TO</span> SAATCGR-1-LANG-V.
+<span class="kw">MOVE</span> EZ-LEN <span class="kw">TO</span> SAATCGR-1-LANG-L.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B46-MOVE-DCCGTRNE <span style="font-weight:400;color:#64748b">— עטיפת הרשומה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B40-EDIT-FIELDS</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> מעתיק את רשומת התנועה בגודל 703 בתים אל העוטף בעל קידומת האורך המועבר למנוע, עם אורך 703.</p>
+      <pre><span class="kw">MOVE</span> DCCGTRNE-REC <span class="kw">TO</span> DCCGTRNE-IO-REC-V.
+<span class="kw">MOVE</span> 703 <span class="kw">TO</span> DCCGTRNE-IO-REC-L.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B80-TIPUL-RESPONSE <span style="font-weight:400;color:#64748b">— פירוק תשובת ה-API</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B-TIPUL</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> מעתיק כל שדה של <code class="inl">SAATCGR-2-PARAM</code> בחזרה אל
+      <code class="inl">SAATCG-2-PARAM</code> של הקורא, מרענן את רשומת התנועה מהעוטף, ומעתיק את מספר
+      האישור אל <code class="inl">DCCGE-ISUR-NEW</code>.</p>
+      <pre><span class="kw">MOVE</span> SAATCGR-2-AUTH-NUMBER-V <span class="kw">TO</span> SAATCG-2-AUTH-NUMBER, DCCGE-ISUR-NEW.
+<span class="kw">MOVE</span> SAATCGR-2-RETRN-V / -ERROR-V / -CLCO-V <span class="kw">TO</span> SAATCG-2-RETURN / -ERROR-TEXT / -CLCO.
+<span class="kw">MOVE</span> DCCGTRNE-IO-REC-V <span class="kw">TO</span> DCCGTRNE-REC.
+<span class="kw">MOVE</span> SAATCGR-2-INT-RTN-V / -INT-TXT-V <span class="kw">TO</span> SAATCG-2-INTERFACE-RET / -INTERFACE-TEXT.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> F00-TIPUL-FLD <span style="font-weight:400;color:#64748b">— ניקוי שדה בודד</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B42</span><span class="callchip">B44</span><span class="callchip">B48</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">F10-READ-DCSTRING</span><span class="callchip">F20-GET-LENGTH</span><span class="callchip">S-CALL-ERRORTV</span></div>
+      <p><b>מה הוא עושה:</b> מזין את <code class="inl">EZ-TXT-300-IN</code> ל-DCSTRING (דחיסה), מחשב את
+      האורך המשמעותי באמצעות <code class="inl">F20-GET-LENGTH</code>. בכישלון DCSTRING הוא מפעיל את מתג השגיאה ו-
+      שולף את הודעה <code class="inl">RD199</code>.</p>
+      <pre><span class="kw">SET</span> SW-ERROR-OFF <span class="kw">TO TRUE</span>.
+<span class="kw">MOVE</span> EZ-TXT-300-IN <span class="kw">TO</span> DCSTRING-STRING-IN.
+<span class="kw">PERFORM</span> F10-READ-DCSTRING.
+<span class="kw">IF NOT</span> DCSTRING-RETURN-TAKIN <span class="kw">SET</span> SW-ERROR-ON ... <span class="kw">MOVE</span> 'RD199' <span class="kw">TO</span> ERRTV-MSG-NO ... <span class="kw">END-IF</span>.
+<span class="kw">PERFORM</span> F20-GET-LENGTH. <span class="kw">MOVE</span> LENN <span class="kw">TO</span> EZ-LEN.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> F10-READ-DCSTRING <span style="font-weight:400;color:#64748b">— קריאה לכלי המחרוזות</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">F00-TIPUL-FLD</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">DCSTRING (חיצוני)</span></div>
+      <p><b>מה הוא עושה:</b> מפעיל את <code class="inl">DCSTRING</code> במצב דחיסה (<i>צמצום</i>, אנגלית) ולוכד את הפלט המקוצץ.</p>
+      <pre><span class="kw">SET</span> DCSTRING-PEULA-ZIMZUM / DCSTRING-LANG-ENG <span class="kw">TO TRUE</span>.
+<span class="kw">CALL</span> 'DCSTRING' <span class="kw">USING</span> DCSTRING-STRING-IN DCSTRING-STRING-OUT DCSTRING-PARAM.
+<span class="kw">MOVE</span> DCSTRING-STRING-OUT <span class="kw">TO</span> EZ-TXT-300-OUT.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> F20-GET-LENGTH <span style="font-weight:400;color:#64748b">— אורך משמעותי</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">F00-TIPUL-FLD</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> סורק אחורה מ-<code class="inl">LENN</code> כדי למצוא את התו הלא-ריק האחרון, ואז מחזיר את המיקום ההוא + 1 כאורך המקוצץ.</p>
+      <pre><span class="kw">PERFORM VARYING</span> J <span class="kw">FROM</span> LENN <span class="kw">BY</span> -1 <span class="kw">UNTIL</span> J = 0 <span class="kw">OR</span> SW-END
+  <span class="kw">IF</span> EZ-STRING(J:1) <span class="kw">NOT =</span> SPACES <span class="kw">SET</span> SW-END <span class="kw">TO TRUE</span> <span class="kw">END-IF</span>
+<span class="kw">END-PERFORM</span>.
+<span class="kw">ADD</span> 1 <span class="kw">TO</span> J. <span class="kw">MOVE</span> J <span class="kw">TO</span> LENN.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R00-CALL-API-CG <span style="font-weight:400;color:#64748b">— קריאה למנוע ה-RPGLE</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B-TIPUL</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">SAATCG (חיצוני)</span></div>
+      <p><b>מה הוא עושה:</b> הקריאה המרכזית. מפעיל את מנוע ה-RPGLE עם שני בלוקי הפרמטרים בעלי קידומת האורך ועם עוטף הרשומה; <code class="inl">ON OVERFLOW CONTINUE</code> מגן מפני כישלון קריאה.</p>
+      <pre><span class="kw">CALL</span> 'SAATCG' <span class="kw">USING</span> SAATCGR-1-PARAM SAATCGR-2-PARAM DCCGTRNE-IO
+   <span class="kw">ON OVERFLOW</span> <span class="kw">CONTINUE</span> <span class="kw">END-CALL</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R10-CALL-DCPCIMSF <span style="font-weight:400;color:#64748b">— מסוף PCI (לא בשימוש)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">— (לא מבוצע בזרימה הראשית)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">DCPCIMSF (חיצוני)</span></div>
+      <p><b>מה הוא עושה:</b> קיים אך מת: היה קורא ל-<code class="inl">DCPCIMSF</code> כדי לפתור מסוף PCI
+      (קבוצה → מסוף בן 7/10 ספרות). אף PERFORM אינו מגיע אליו בלוגיקה הנוכחית.</p>
+      <pre><span class="kw">CALL</span> 'DCPCIMSF' <span class="kw">USING</span> PRM-DCPCIMSF-KVUZ PRM-DCPCIMSF-TERN7
+                       PRM-DCPCIMSF-RETURN PRM-DCPCIMSF-TERN10.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R20-CALL-CHGSSID / R30-CALL-SAGETBKR / S-CALL-ERRORTV <span style="font-weight:400;color:#64748b">— עוטפי CALL חיצוניים</span></summary>
+    <div class="body">
+      <div class="kv"><b>R20-CALL-CHGSSID</b> — נקרא על ידי <span class="callchip">B22</span>; <b>קורא ל</b> <span class="callchip">SAATCGSL#P</span> (שינוי session/SSID; ללא פרמטרים).</div>
+      <div class="kv"><b>R30-CALL-SAGETBKR</b> — נקרא על ידי <span class="callchip">B21</span>; <b>קורא ל</b> <span class="callchip">SAGETBKR</span> ומעביר <code class="inl">SAGETBKR-PARAM</code> (מונה).</div>
+      <div class="kv"><b>S-CALL-ERRORTV</b> — נקרא על ידי <span class="callchip">B21</span><span class="callchip">F00</span>; מגדיר <code class="inl">ERRTV-PEULA-READ</code> ו<b>קורא ל</b> <span class="callchip">TBERR</span> ומעביר <code class="inl">ERRTV-PARAM</code> (טקסט הודעה).</div>
+      <pre><span class="kw">CALL</span> 'SAATCGSL#P'.
+<span class="kw">CALL</span> 'SAGETBKR' <span class="kw">USING</span> SAGETBKR-PARAM.
+<span class="kw">SET</span> ERRTV-PEULA-READ <span class="kw">TO TRUE</span>. <span class="kw">CALL</span> 'TBERR' <span class="kw">USING</span> ERRTV-PARAM.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> ZZ-SIYUM-TOCHNIT <span style="font-weight:400;color:#64748b">— שלב סיום</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">A-TOCHNIT-RASHIT</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> ניקוי אחרון: עבור קונפיגורציית גבייה, אם חברת האשראי עדיין לא הוגדרה ('0'/ריק) היא נקבעת כברירת מחדל לישראכרט.</p>
+      <pre><span class="kw">EVALUATE TRUE</span>
+ <span class="kw">WHEN</span> SAATCG-1-CONFIG-GVIA-DBT
+   <span class="kw">IF</span> DCCGE-CRCO = '0' <span class="kw">OR</span> ' ' <span class="kw">SET</span> DCCGE-CRCO-ISRA <span class="kw">TO TRUE</span> <span class="kw">END-IF</span>
+ <span class="kw">WHEN OTHER</span> <span class="kw">GO TO</span> 999-EXIT
+<span class="kw">END-EVALUATE</span>.</pre>
+    </div>
+  </details>
+
+  <!-- ---------------- SUGGESTED TESTS (CBL) ------------------ -->
+  <h3 id="cbl-tests">בדיקות מוצעות — SAATCGSL (Gherkin)</h3>
+  <p>תרחיש אחד לכל חלק (עוטפי CALL טריוויאליים מקובצים). כל אחד מלווה במה שהוא מאמת ומדוע.</p>
+
+  <div class="proc"><div class="body">
+  <h4>A-TOCHNIT-RASHIT / ZA-ATCHALAT-TOCHNIT — מנהל ואתחול</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> מנהל העטיפה ואתחול
+  <span class="kw">תרחיש:</span> האתחול מנקה את המצב והמנהל מריץ את כל השלבים
+    <span class="kw">בהינתן</span> ששטחי העבודה SAATCGR-1-PARAM ו-EZER מכילים נתונים ישנים
+    <span class="kw">כאשר</span> קוראים ל-SAATCGSL עם DCCGTRNE-REC תקין ו-CONFIG-CODE = "1"
+    <span class="kw">אז</span> SW-END-JOB כבוי, SW-ERROR כבוי ו-SW-BEG נדלק אחרי ZA-ATCHALAT-TOCHNIT
+    <span class="kw">וגם</span> B-TIPUL ו-ZZ-SIYUM-TOCHNIT מבוצעים שניהם
+    <span class="kw">וגם</span> השליטה חוזרת דרך EXIT PROGRAM
+  <span class="kw">תרחיש:</span> הפסקה מוקדמת כאשר האתחול מבקש סיום עבודה
+    <span class="kw">בהינתן</span> שהאתחול מדליק את SW-END-JOB
+    <span class="kw">כאשר</span> SAATCGSL רץ
+    <span class="kw">אז</span> B-TIPUL אינו מבוצע והתוכנית יוצאת מיד</pre>
+  <p><b>מה נבדק ולמה:</b> שהאתחול מאפס כל מתג ואת מאגר העבודה (כדי שקבוצת הפעלה
+  ממוחזרת לא תוכל להדליף מצב קודם לעסקה חדשה), ושהמשמר העליון על <code class="inl">SW-END-JOB</code>
+  קוצר את הזרימה נכון. זה מגן מפני עיבוד תנועה על בלוק בקרה מאותחל למחצה.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>B-TIPUL / B20 / B24 — תזמור וניתוב קונפיגורציה</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> ניתוב לפי תצורה
+  <span class="kw">תבנית תרחיש:</span> ניתוב לפי קוד תצורה
+    <span class="kw">בהינתן</span> ש-SAATCG-1-CONFIG-CODE = "&lt;code&gt;"
+    <span class="kw">כאשר</span> B20-TIPUL-PER-CONFIG רץ
+    <span class="kw">אז</span> הסקשן "&lt;section&gt;" מבוצע
+    <span class="kw">דוגמאות:</span>
+      | code | section            |
+      | 1    | B22-CONFIG-GVIA-DBT |
+      | 2    | B24-CONFIG-TVIA-CRD |
+      | 9    | (ללא — GO TO ליציאה) |
+  <span class="kw">תרחיש:</span> סדר המסלול התקין המלא
+    <span class="kw">בהינתן</span> בקשת גבייה תקינה
+    <span class="kw">כאשר</span> B-TIPUL רץ
+    <span class="kw">אז</span> הסדר הוא B20 → B40 → R00 → B80</pre>
+  <p><b>מה נבדק ולמה:</b> שה-<code class="inl">EVALUATE</code> מנתב נכון בין קונפיגורציה 1 ל-2 ושקוד
+  לא מוכר נופל דרך ללא תופעות לוואי. היות ש-B24 הוא no-op הדבר מכוון, ולכן הבדיקה קובעת שהוא
+  נכנס אך לא משנה דבר. בדיקת הסדר מגנה על החוזה שהשדות נבנים לפני קריאת ה-API ושהתשובה
+  נפרקת אחריה.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>B21-TIPUL-CONFIG-ALL — שליפת מספר רץ</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> השגת מספר רץ
+  <span class="kw">תרחיש:</span> המונה מתקבל בהצלחה
+    <span class="kw">בהינתן</span> ש-SAGETBKR מחזיר RETURN = "000" ו-NUM-RAZ = "0000000000123456"
+    <span class="kw">כאשר</span> B21-TIPUL-CONFIG-ALL רץ
+    <span class="kw">אז</span> SAATCGR-1-NUMR-V = "0000000000123456" ו-SAATCGR-1-NUMR-L = 16
+  <span class="kw">תרחיש:</span> כשל במונה מציף את RD105
+    <span class="kw">בהינתן</span> ש-SAGETBKR מחזיר RETURN = "002"
+    <span class="kw">כאשר</span> B21-TIPUL-CONFIG-ALL רץ
+    <span class="kw">אז</span> SW-ERROR דלוק
+    <span class="kw">וגם</span> ERRTV נקרא עבור ההודעה "RD105"
+    <span class="kw">וגם</span> טקסט ההודעה מוכנס אל SAATCGR-2-ERROR-V</pre>
+  <p><b>מה נבדק ולמה:</b> העסקה חייבת לשאת מספר רץ ייחודי; אם SAGETBKR נכשל העוטף אסור
+  שימשיך בשקט. הבדיקה מאשרת שהאורך נכפה ל-16 (RPGLE מצפה לרוחב מונה קבוע) ושמסלול
+  הכישלון מחזיר קוד/טקסט שגיאה משמעותי במקום תשובה ריקה.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>B22-CONFIG-GVIA-DBT / ZZ-SIYUM-TOCHNIT — ברירת מחדל לחברת אשראי</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> חברת אשראי ברירת מחדל לגבייה
+  <span class="kw">תבנית תרחיש:</span> CRCO ריק/אפס הופך לישראכרט
+    <span class="kw">בהינתן</span> ש-CONFIG-CODE = "1" ו-DCCGE-CRCO = "&lt;in&gt;"
+    <span class="kw">כאשר</span> B22-CONFIG-GVIA-DBT (או ZZ-SIYUM-TOCHNIT) רץ
+    <span class="kw">אז</span> DCCGE-CRCO = "&lt;out&gt;"
+    <span class="kw">דוגמאות:</span>
+      | in | out |
+      | 0  | 1   |
+      |    | 1   |
+      | 2  | 2   |</pre>
+  <p><b>מה נבדק ולמה:</b> עסקאות גבייה קובעות ברירת מחדל לישראכרט כאשר הקורא משאיר את CRCO ריק, אבל
+  חברה מפורשת (למשל ויזה-כאל "2") חייבת להישמר. זה נבדק גם בהגדרה (B22) וגם בסגירה
+  (ZZ) משום שהרשומה עשויה להיכתב מחדש על ידי תשובת ה-API בינתיים.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>B40 / B42 / B44 / B48 / F00 / F10 / F20 — עריכת וקיצוץ שדות</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> קיצוץ והכנת שדות הבקשה
+  <span class="kw">תרחיש:</span> נתוני המשתמש נדחסים ואורכם נחתם
+    <span class="kw">בהינתן</span> ש-SAATCG-1-USER-DATA = "BR 077            " (19 בתים)
+    <span class="kw">וגם</span> DCSTRING מחזיר RETURN = "00" עם הערך הדחוס
+    <span class="kw">כאשר</span> B48-MOVE-UD רץ
+    <span class="kw">אז</span> SAATCGR-1-UD-V מחזיק את הערך המקוצץ
+    <span class="kw">וגם</span> SAATCGR-1-UD-L שווה לאורך המשמעותי מ-F20-GET-LENGTH
+  <span class="kw">תרחיש:</span> כשל ב-DCSTRING מתעד RD199
+    <span class="kw">בהינתן</span> ש-DCSTRING מחזיר RETURN = "99"
+    <span class="kw">כאשר</span> F00-TIPUL-FLD רץ
+    <span class="kw">אז</span> SW-ERROR דלוק וטקסט ההודעה "RD199" נלכד ב-EZ-ERR-TXT</pre>
+  <p><b>מה נבדק ולמה:</b> RPGLE צורך פרמטרים באורך משתנה, לכן העוטף חייב לחשב אורך
+  משמעותי מדויק (F20 סורק אחורה לתו הלא-ריק האחרון). הבדיקה מוכיחה שקיצוץ קורה ושתקלת DCSTRING
+  נתפסת ומדווחת (RD199) במקום לשלוח אורכים שגויים במורד הזרם.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>B46-MOVE-DCCGTRNE / R00 / B80 — סבב הלוך-ושוב של הרשומה דרך המנוע</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> עטיפת רשומה, קריאת API ופריקת תגובה
+  <span class="kw">תרחיש:</span> מחזור הרשאה מוצלח
+    <span class="kw">בהינתן</span> DCCGTRNE-REC תקין בגודל 703 בתים עבור חיוב של 150.00 ILS
+    <span class="kw">וגם</span> SAATCG מחזיר AUTH-NUMBER = "0012345", RETURN = "00000", CLCO = "02"
+    <span class="kw">כאשר</span> SAATCGSL מעבד את העסקה
+    <span class="kw">אז</span> DCCGTRNE-IO-REC-L = 703 בדרך פנימה
+    <span class="kw">וגם</span> SAATCG-2-AUTH-NUMBER = "0012345" ו-DCCGE-ISUR-NEW = "0012345"
+    <span class="kw">וגם</span> SAATCG-2-RETURN = "00000" ו-SAATCG-2-CLCO = "02"
+    <span class="kw">וגם</span> DCCGTRNE-REC מתרענן מ-DCCGTRNE-IO-REC-V</pre>
+  <p><b>מה נבדק ולמה:</b> כל החוזה בין העוטף למנוע — הרשומה נעטפת עם אורך 703,
+  המנוע נקרא עם שלושת הבלוקים, וכל שדה מוחזר (אישור, החזרה, clco, ממשק, בתוספת
+  הרשומה המעודכנת ועותק ISUR-NEW) נפרק בחזרה אל הקורא. מגן מפני נשירת שדות או
+  מיפוי שגוי במסלול החזרה.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>R20 / R30 / S-CALL-ERRORTV / R10 — עוטפי CALL חיצוניים</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> קריאות לתוכניות חיצוניות
+  <span class="kw">תרחיש:</span> כל עטיפה קוראת לתוכנית הנכונה עם הבלוק הנכון
+    <span class="kw">אז</span> R30-CALL-SAGETBKR קורא ל-"SAGETBKR" USING SAGETBKR-PARAM
+    <span class="kw">וגם</span> R20-CALL-CHGSSID קורא ל-"SAATCGSL#P"
+    <span class="kw">וגם</span> S-CALL-ERRORTV מדליק את ERRTV-PEULA-READ ואז קורא ל-"TBERR" USING ERRTV-PARAM
+    <span class="kw">וגם</span> R10-CALL-DCPCIMSF לעולם אינו מבוצע בזרימה החיה</pre>
+  <p><b>מה נבדק ולמה:</b> עוטפים דקים אלה הם התלויות החיצוניות היחידות של התוכנית; הבדיקה מקבעת את
+  שם התוכנית ובלוק הפרמטרים לכל אחד כך ששינוי שם או חתימה נתפס מיד, ומתעדת
+  ש-R10 (DCPCIMSF) הוא קוד מת שאסור שירוץ.</p>
+  </div></div>
+</section>
+
+<!-- ================================================================= -->
+<!-- 3 · FILE TWO — saatcg.rpgle                                        -->
+<!-- ================================================================= -->
+<section id="rpg">
+  <h2><span class="tag rpg">RPG</span> saatcg.rpgle — תוכנית <code class="inl">SAATCG</code></h2>
+
+  <h3>שם התוכנית ומשמעותו</h3>
+  <p class="lead"><b>SAATCG</b> = <b>SA</b> (קידומת אפליקציה) + <b>ATCG</b> ("אשראית / CreditGuard"). זהו
+  <b>מנוע ה-API</b>: תוכנית שירות-אינטרנט גנרית (הערת כותרת: "ws generic program created") שמכינה בקשת
+  XML אל משתנה SOAP ושולחת אותה לשרת CreditGuard. היא מהודרת עם
+  <code class="inl">dftactgrp(*no)</code> וקשורה ל-<code class="inl">QC2LE</code> ול-<code class="inl">TFHTTP</code>
+  (ה-HTTPAPI של Scott Klement). פרמטרי כניסה: <code class="inl">SAATCGI</code> (DS קלט),
+  <code class="inl">SAATCGO</code> (DS פלט), <code class="inl">ecptrnsv</code> (הרשומה בגודל 703 בתים, varying).</p>
+
+  <!-- ---------------- DATA STRUCTURES ------------------ -->
+  <h3 id="rpg-data">מבני DATA (D-specs)</h3>
+
+  <h4>מבני פרמטרי כניסה — <code class="inl">SAATCGI</code> (קלט) / <code class="inl">SAATCGO</code> (פלט)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>משמעות בעברית</th><th>תיאור</th></tr>
+    <tr><td>SACGLANG</td><td>1a varying</td><td>קוד שפה (קלט)</td><td>'1'/ריק → עברית, אחרת אנגלית.</td></tr>
+    <tr><td>SACGCONF</td><td>1a varying</td><td>קוד קונפיגורציה (קלט)</td><td>'1'=גבייה, '2'=תביעה (משתמש במסוף לוגי).</td></tr>
+    <tr><td>SACGNUMR</td><td>16a varying</td><td>מונה (קלט)</td><td>מספר רץ מהעוטף; מתועד כ-SANUMR.</td></tr>
+    <tr><td>SACGUD</td><td>19a varying</td><td>נתוני משתמש (קלט)</td><td>מועבר כ-<code class="inl">&lt;user&gt;</code> כאשר אין זו עסקת זיכוי.</td></tr>
+    <tr><td>SACGCGAU</td><td>7a varying</td><td>קוד אישור (פלט)</td><td>מספר אישור.</td></tr>
+    <tr><td>SACGREST</td><td>5a varying</td><td>סטטוס תוצאה (פלט)</td><td>סטטוס מורחב בן 5 ספרות (editc X).</td></tr>
+    <tr><td>SACGERTX</td><td>80a varying</td><td>טקסט שגיאה (פלט)</td><td>טקסט סטטוס מורחב (עב/אנ).</td></tr>
+    <tr><td>SACGCLCO</td><td>2a varying</td><td>קוד סליקה (פלט)</td><td>קוד סולק בן 2 ספרות.</td></tr>
+    <tr><td>SACGINST</td><td>5a varying</td><td>סטטוס ממשק (פלט)</td><td>סטטוס ברמת הממשק (למשל 99002/03/05/06/10).</td></tr>
+    <tr><td>SACGINTX</td><td>10a varying</td><td>טקסט שגיאת ממשק (פלט)</td><td>שם רכיב ה-XML שהמרתו נכשלה.</td></tr>
+  </table>
+
+  <h4><code class="inl">InputParm</code> — ערכים הנבנים ונשלחים ל-CreditGuard (<code class="inl">I…</code>)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>אנגלית</th><th>תיאור / מקור</th></tr>
+    <tr><td>IRequestId</td><td>20a</td><td>Request ID</td><td>%editc(PTRQDT:'X') + %editc(PTTRNO:'X').</td></tr>
+    <tr><td>ITerminalId</td><td>10a</td><td>Terminal ID</td><td>PTTERN, או מסוף לוגי מ-SAMAINPF כאשר config='2'.</td></tr>
+    <tr><td>ICardNumber</td><td>19a</td><td>Card number</td><td>PAN (מ-PTCARN, או מחולץ מ-track2 לפני '=').</td></tr>
+    <tr><td>ICardId</td><td>16a</td><td>Card ID / token</td><td>מוגדר כאשר PTCARN הוא 16 ספרות שמתחיל ב-10/15.</td></tr>
+    <tr><td>IcardExpiration</td><td>4s0</td><td>Expiration</td><td>PTVLDT (MMYY).</td></tr>
+    <tr><td>Icvv</td><td>4s0</td><td>CVV</td><td>%dec(PTCVV2).</td></tr>
+    <tr><td>Iid</td><td>9s0</td><td>Holder ID</td><td>PTCIDN תעודת זהות.</td></tr>
+    <tr><td>ItransactionType</td><td>20a</td><td>Transaction type</td><td>מ-PTRQSC: 01 Debit, 11/57 RecurringDebit, 51 Credit, 52 Refund, 54 Forced, 55 CashBack, 56 Cash, 59 BalanceInquiry, 60 Load, 61 Discharge.</td></tr>
+    <tr><td>ICreditType</td><td>20a</td><td>Credit type</td><td>מ-PTCRET: 1 RegularCredit … 9 PaymentsClub.</td></tr>
+    <tr><td>ICurrency</td><td>10a</td><td>Currency</td><td>מ-PTCURT: 1 ILS … 6 EUR.</td></tr>
+    <tr><td>ItransactionCode</td><td>20a</td><td>Transaction code</td><td>מ-PTTRNC: 00 Regular, 50 Phone, 60 Signature, 70 Internet.</td></tr>
+    <tr><td>ITotal</td><td>10s0</td><td>Total</td><td>PTTRSM × 100 (אגורות).</td></tr>
+    <tr><td>IfirstPayment / IperiodicalPayment</td><td>10s0</td><td>Payments</td><td>PTFRSM×100 / PTFXSM×100.</td></tr>
+    <tr><td>InumberOfPayments</td><td>10s0</td><td>No. of payments</td><td>PTPAYN.</td></tr>
+    <tr><td>IauthNumber</td><td>7a</td><td>Auth number</td><td>מ-PTAPPN (או PTREF3 כאשר לא מספרי).</td></tr>
+    <tr><td>Ivalidation</td><td>15a</td><td>Validation</td><td>מ-PTDILC: Normal / Token / AutoComm / Verify …</td></tr>
+    <tr><td>IClubCode</td><td>1a</td><td>Club code</td><td>PTCLBC.</td></tr>
+    <tr><td>IrecurringTotalNo / IrecurringFrequency</td><td>3s0</td><td>Recurring count / freq</td><td>עבור RecurringDebit; 999 ותדירות 4 (חודשי) כאשר PAYN=99 ו-config='1'.</td></tr>
+    <tr><td>ITimeout</td><td>3s0</td><td>Timeout</td><td>מזין את TimeOut (נדרס ל-60 שניות לפני POST).</td></tr>
+  </table>
+
+  <h4><code class="inl">OutputParm</code> — ערכים המנותחים בחזרה מ-CreditGuard (<code class="inl">O…</code>, כ-90 שדות)</h4>
+  <p>ממולא שדה-אחר-שדה על ידי ה-callback של <b>EndElement</b> ב-XML. המרכזיים:</p>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>אנגלית</th><th>תיאור / יעד</th></tr>
+    <tr><td>OStatus</td><td>3s0</td><td>Status</td><td>&lt;status&gt; (000 = תקין) → PTTRST. הופעתו מסמנת סוף XML.</td></tr>
+    <tr><td>OextendedStatus</td><td>5s0</td><td>Extended status</td><td>&lt;extendedStatus&gt; → SACGREST / מקביל ל-PTREST.</td></tr>
+    <tr><td>OextendedStatusText / OstatusText</td><td>80a</td><td>Status text</td><td>→ PTSTSD / SACGERTX.</td></tr>
+    <tr><td>OauthNumber</td><td>7a</td><td>Auth number</td><td>→ PTAPPN / SACGCGAU (−9999999 ו-PTREF3 אם לא מספרי).</td></tr>
+    <tr><td>OTranId / OTranId20</td><td>9s0 / 20a</td><td>Transaction ID</td><td>→ PTREFN; 20-תווים מפוצל ל-PTWRKS(1-10) ו-PTPRSL(11-20).</td></tr>
+    <tr><td>OcardId / OcardNo / OcardMask / OcardBin</td><td>16a/19a/16a</td><td>Card data</td><td>token / PAN / ממוסך → PTREF2, PTLS4D, PTCARN.</td></tr>
+    <tr><td>OcreditCompanyCode</td><td>2s0</td><td>Credit-co code</td><td>→ PTCRCO.</td></tr>
+    <tr><td>OcardAcquirerCode / …Code2</td><td>1s0 / 2s0</td><td>Acquirer code</td><td>→ PTCLCO / SACGCLCO.</td></tr>
+    <tr><td>OtransactionTypeCode</td><td>2s0</td><td>Trans-type code</td><td>→ PTTRTO.</td></tr>
+    <tr><td>OauthSourceCode</td><td>1s0</td><td>Auth-source code</td><td>→ PTAPSR.</td></tr>
+    <tr><td>OfileNumber</td><td>2s0</td><td>File number</td><td>→ PTFILN.</td></tr>
+    <tr><td>OslaveTerminalNumber / …Sequence</td><td>3s0</td><td>Slave terminal</td><td>×1000 + רצף → PTCN16.</td></tr>
+    <tr><td>OcardTypeCode</td><td>2s0</td><td>Card-type code</td><td>→ PTFORF.</td></tr>
+    <tr><td>OcardBrandCode</td><td>1s0</td><td>Card-brand code</td><td>→ PTCA12.</td></tr>
+    <tr><td>OCardExpiration</td><td>4s0</td><td>Expiration</td><td>→ PTVLDT.</td></tr>
+    <tr><td>OsupplierNumber</td><td>20a</td><td>Supplier number</td><td>→ PTVENN.</td></tr>
+    <tr><td>OpayDate</td><td>10a</td><td>Pay date</td><td>→ PTCRDT.</td></tr>
+    <tr><td>Ototal / Obalance / OStarTotal</td><td>10s0</td><td>Amounts</td><td>סכומים / יתרה מאושרים.</td></tr>
+    <tr><td>OintIn / OintOt</td><td>120a</td><td>Interface in/out</td><td>blob ממשק CG גולמי (OintOt → int_ot DS).</td></tr>
+  </table>
+
+  <h4>משתני קונפיגורציה וזמן-ריצה עצמאיים (standalones)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>ייעוד</th></tr>
+    <tr><td>samainda (data area)</td><td>DS dtaara</td><td>Daguid(36) · Dalng(1) · <b>Daenv</b>(10) = שם סביבה/מערכת · Dfiller(953).</td></tr>
+    <tr><td>WSUSR / WSPWD / WSURL / WSDTL / WSTRM / WSNTKN</td><td>10a</td><td><b>שמות</b> פרמטרים הנשלפים ב-SAMAINPF: CGGCOMTUSR / PWD / URL / DTL (פירוט) / TRM (מסוף לוגי) / CGGCOMNTKN (לא-טוקן).</td></tr>
+    <tr><td>usr / pwd / url / TRM / NONTKN</td><td>100–128a / 1a</td><td>פרטי הזדהות, endpoint, מסוף ודגל לא-טוקן שנפתרו.</td></tr>
+    <tr><td>Soap / tmpsoap</td><td>32000a varying</td><td>מאגר בקשת SOAP.</td></tr>
+    <tr><td>Header / Body / Footer</td><td>1024a varying</td><td>מקטעי XML.</td></tr>
+    <tr><td>frmCCSID / toCCSID</td><td>6a</td><td>'00424' (EBCDIC-עברית) → '01208' (UTF-8).</td></tr>
+    <tr><td>swLog</td><td>10i0 inz(3)</td><td>רמת לוג מינימלית: DEBUG 1 · INFO 3 · WARNING 5 · ERROR 7 · SEVERE 9.</td></tr>
+    <tr><td>ABCDEFGHJK</td><td>10a</td><td>מחרוזת החלפה (toggle) ללוג דיבאג לכל שלב (מ-CGGCOMTDTL); כל תו '1' מפעיל WriteLog של שלב אחד.</td></tr>
+    <tr><td>Version</td><td>4a inz('2000')</td><td>גרסת פרוטוקול אשראית.</td></tr>
+    <tr><td>swCardId / swCredit</td><td>n</td><td>דגל כרטיס-טוקן / דגל אשראי-מיוחד.</td></tr>
+    <tr><td>SRInd</td><td>1a</td><td>מחוון שליחה/קבלה: '1' שליחה, '2' קבלה.</td></tr>
+    <tr><td>TimeOut</td><td>10i0</td><td>timeout של HTTP (מוגדר ל-60 שניות).</td></tr>
+  </table>
+
+  <h4>קבצים ומבנים חיצוניים</h4>
+  <table>
+    <tr><th>קובץ / DS</th><th>תפקיד</th><th>פרטים</th></tr>
+    <tr><td>SAMAINPF</td><td>קלט, ממופתח (if e k disk)</td><td>מאסטר פרמטרים. ממופתח לפי (שם-מערכת, שם-פרמטר); מחזיר SAVALUE.</td></tr>
+    <tr><td>SAATCGLG</td><td>פלט</td><td>לוג אפליקציה; פורמט רשומה SAATCGR (תאריך/שעה, job, תוכנית, פרוצדורה, סטטוס, טקסט).</td></tr>
+    <tr><td>SACGTRNS</td><td>פלט</td><td>לוג תנועות; פורמט רשומה SACGTRNSR (כ-90 שדות SA* = עותק של רשומת ה-PT + מחוון שליחה/קבלה).</td></tr>
+    <tr><td>ecptrns / ecptrnsv</td><td>DS חיצוני / varying</td><td>רשומת התנועה בגודל 703 בתים (שדות PTxxx).</td></tr>
+    <tr><td>int_ot</td><td>DS חיצוני</td><td>מבנה פלט-ממשק.</td></tr>
+  </table>
+
+  <h4>ERD 2 — קבצים, לוגים ומיפוי InputParm/OutputParm</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1000 470" font-family="Segoe UI,Arial" font-size="11.5">
+    <defs>
+      <marker id="e2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="#64748b"/></marker>
+    </defs>
+    <!-- SAMAINPF -->
+    <rect x="30" y="30" width="230" height="120" rx="8" fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="30" y="30" width="230" height="24" rx="8" fill="#f59e0b"/>
+    <text x="145" y="47" text-anchor="middle" fill="#fff" font-weight="700">SAMAINPF (ממופתח)</text>
+    <text x="42" y="72" fill="#334155">🔑 שם-מערכת + שם-פרמטר</text>
+    <text x="42" y="90" fill="#334155">SAVALUE</text>
+    <text x="42" y="112" fill="#64748b" font-size="10">CGGCOMTUSR/PWD/URL/DTL</text>
+    <text x="42" y="130" fill="#64748b" font-size="10">CGGCOMTTRM · CGGCOMNTKN</text>
+
+    <!-- SAATCG engine -->
+    <rect x="380" y="60" width="240" height="150" rx="8" fill="#0891b2"/>
+    <text x="500" y="88" text-anchor="middle" fill="#fff" font-weight="700">SAATCG (מנוע)</text>
+    <text x="392" y="112" fill="#cffafe" font-size="10.5">InitProgram → InputParm</text>
+    <text x="392" y="130" fill="#cffafe" font-size="10.5">BuildWS → Soap XML</text>
+    <text x="392" y="148" fill="#cffafe" font-size="10.5">SendToServer → ניתוח</text>
+    <text x="392" y="166" fill="#cffafe" font-size="10.5">EndElement → OutputParm</text>
+    <text x="392" y="184" fill="#cffafe" font-size="10.5">BuildResponse → רשומת PT</text>
+
+    <!-- CreditGuard -->
+    <rect x="740" y="90" width="220" height="80" rx="8" fill="#0ea5e9"/>
+    <text x="850" y="125" text-anchor="middle" fill="#fff" font-weight="700">שרת CreditGuard</text>
+    <text x="850" y="145" text-anchor="middle" fill="#e0f2fe" font-size="10.5">SOAP doDeal (HTTPS)</text>
+
+    <!-- logs -->
+    <rect x="330" y="290" width="160" height="70" rx="8" fill="#fff" stroke="#10b981" stroke-width="1.5"/>
+    <rect x="330" y="290" width="160" height="24" rx="8" fill="#10b981"/>
+    <text x="410" y="307" text-anchor="middle" fill="#fff" font-weight="700">SAATCGLG</text>
+    <text x="342" y="332" fill="#334155">SAATCGR: לוג אבחון</text>
+    <text x="342" y="350" fill="#64748b" font-size="10">לפי רמת swLog</text>
+
+    <rect x="520" y="290" width="180" height="70" rx="8" fill="#fff" stroke="#10b981" stroke-width="1.5"/>
+    <rect x="520" y="290" width="180" height="24" rx="8" fill="#10b981"/>
+    <text x="610" y="307" text-anchor="middle" fill="#fff" font-weight="700">SACGTRNS</text>
+    <text x="532" y="332" fill="#334155">SACGTRNSR: שליחה + קבלה</text>
+    <text x="532" y="350" fill="#64748b" font-size="10">PAN ממוסך; SASRIN 1/2</text>
+
+    <!-- record -->
+    <rect x="30" y="290" width="230" height="90" rx="8" fill="#fff" stroke="#0f172a" stroke-width="1.5"/>
+    <rect x="30" y="290" width="230" height="24" rx="8" fill="#0f172a"/>
+    <text x="145" y="307" text-anchor="middle" fill="#fff" font-weight="700">ecptrns (703 · PTxxx)</text>
+    <text x="42" y="332" fill="#334155">קלט: בונה InputParm</text>
+    <text x="42" y="350" fill="#334155">פלט: ממולא ע"י BuildResponse</text>
+    <text x="42" y="368" fill="#64748b" font-size="10">= DCCGE-* בצד COBOL</text>
+
+    <!-- relationships -->
+    <line x1="260" y1="90" x2="378" y2="120" stroke="#64748b" marker-end="url(#e2)"/>
+    <text x="270" y="80" fill="#f59e0b" font-size="10">ממופתח → פרטי הזדהות</text>
+    <line x1="620" y1="135" x2="738" y2="130" stroke="#64748b" marker-end="url(#e2)"/>
+    <text x="630" y="120" fill="#0f172a" font-size="10">POST →</text>
+    <line x1="738" y1="150" x2="622" y2="160" stroke="#16a34a" marker-end="url(#e2)"/>
+    <text x="640" y="185" fill="#16a34a" font-size="10">← תשובת XML</text>
+    <line x1="145" y1="288" x2="400" y2="212" stroke="#64748b" marker-end="url(#e2)"/>
+    <text x="160" y="255" fill="#0891b2" font-size="10">ממופה ל-InputParm →</text>
+    <line x1="450" y1="212" x2="200" y2="288" stroke="#16a34a" marker-end="url(#e2)"/>
+    <text x="260" y="270" fill="#16a34a" font-size="10">← OutputParm ממופה חזרה</text>
+    <line x1="470" y1="210" x2="430" y2="288" stroke="#10b981" marker-end="url(#e2)"/>
+    <line x1="540" y1="210" x2="600" y2="288" stroke="#10b981" marker-end="url(#e2)"/>
+    <text x="560" y="255" fill="#10b981" font-size="10">מתעד ל- →</text>
+  </svg>
+  </div>
+  <p class="note"><b>ממופתח לפי:</b> SAMAINPF נשלף בשרשור לפי (מערכת, פרמטר) כדי לפתור פרטי הזדהות/URL/מסוף.
+  <b>ממופה ל / ממופה חזרה:</b> רשומת ה-PT ממלאת את InputParm לפני הקריאה וממולאת מחדש מ-
+  OutputParm אחריה. <b>מתעד ל:</b> כל שליחה וקבלה נכתבת ל-SACGTRNS (עם PAN ממוסך) ושורות
+  אבחון ל-SAATCGLG.</p>
+
+  <!-- ---------------- PROCEDURES ------------------ -->
+  <h3 id="rpg-proc">פרוצדורות</h3>
+
+  <details class="proc" open>
+    <summary><span class="tag rpg">RPG</span> Mainline (*entry) <span style="font-weight:400;color:#64748b">— מנהל</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> SAATCGI, SAATCGO, ecptrnsv</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">SAATCGSL באמצעות CALL 'SAATCG'</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">InitProgram</span><span class="callchip">BuildWS</span><span class="callchip">SendToServer</span><span class="callchip">BuildResponse</span></div>
+      <p><b>מה הוא עושה:</b> מריץ את ארבעת השלבים רק אם האתחול מחזיר 0, ואז מגדיר LR וחוזר.</p>
+      <pre>rc = InitProgram();
+<span class="kw">if</span> rc = 0;
+  rc = BuildWS();
+  rc = SendToServer(SoapAction);
+  rc = BuildResponse();
+<span class="kw">endif</span>;
+*inlr = *on; <span class="kw">return</span>;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> InitProgram <span style="font-weight:400;color:#64748b">— קונפיגורציה + מיפוי בקשה</span></summary>
+    <div class="body">
+      <div class="kv"><b>מחזיר:</b> 10i0 (0 תקין, שלילי בהיעדר קונפיגורציה)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">Mainline</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">GetParmValue</span><span class="callchip">WriteLog</span><span class="callchip">WriteTrnsLog</span></div>
+      <p><b>מה הוא עושה:</b> קורא את ה-data area לשם הסביבה; שולף שם משתמש/סיסמה/URL/פירוט
+      (ו, עבור config '2', את המסוף הלוגי) ואת דגל הלא-טוקן מ-<code class="inl">SAMAINPF</code>.
+      כל פרמטר חסר → <b>OextendedStatus 99005</b> והחזרה שלילית (−1…−5). אז הוא מנקה ומעתיק את
+      הרשומה, קובע ברירת מחדל לתאריך/שעה, בונה <code class="inl">iRequestId</code>, בוחר מסוף/כרטיס-מול-טוקן,
+      ומתרגם את PTRQSC/PTCRET/PTCURT/PTTRNC/PTDILC לטקסטים של סוג-תנועה/אשראי/מטבע/קוד/אימות,
+      מחשב ITotal = PTTRSM×100, מטפל בהוראות קבע ותשלומים, קוד מועדון ושפה, ואז כותב את
+      לוג התנועה של ה"שליחה".</p>
+      <pre><span class="kw">in</span> samainda; SystemName = %trim(Daenv);
+usr = GetParmValue(SystemName : WSUSR);
+<span class="kw">if</span> usr = '*NotFound'; OextendedStatus = 99005; ... <span class="kw">return</span> -1; <span class="kw">endif</span>;
+<span class="cm">// pwd(-2), url(-3), detail(-4), terminal(-5)…</span>
+iRequestId = %editc(PTRQDT:'X') + %editc(PTTRNO:'X');
+<span class="kw">select</span>; <span class="kw">when</span> PTRQSC='01'; ItransactionType='Debit'; <span class="cm">// …</span> <span class="kw">endsl</span>;
+Itotal = PTTRSM * 100;
+SRInd = '1'; rc = WriteTrnsLog();</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> BuildWS <span style="font-weight:400;color:#64748b">— הרכבת SOAP</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">Mainline</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">BuildWSHeader</span><span class="callchip">BuildWSBody</span><span class="callchip">BuildWSFooter</span><span class="callchip">WriteLog</span></div>
+      <p><b>מה הוא עושה:</b> משרשר את שלושת מקטעי ה-XML לתוך מאגר <code class="inl">Soap</code>.</p>
+      <pre>rc = BuildWSHeader(''); rc = BuildWSBody(); rc = BuildWSFooter('tem:doSheilta');
+Soap = Header + Body + Footer;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> BuildWSHeader / BuildWSFooter <span style="font-weight:400;color:#64748b">— מעטפת SOAP</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> pSoapAction 30a (header)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">BuildWS</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">WriteLog</span></div>
+      <p><b>מה הוא עושה:</b> ה-Header בונה את מעטפת ה-SOAP עם <code class="inl">&lt;xpo:user&gt;</code> /
+      <code class="inl">&lt;xpo:password&gt;</code> (מפרטי ההזדהות שנפתרו) ופותח
+      <code class="inl">&lt;xpo:int_in&gt;</code>; ה-Footer סוגר את int_in, את ה-ashraitTransaction, את ה-Body ואת ה-Envelope.</p>
+      <pre>Header = '&lt;soapenv:Envelope …&gt;…&lt;xpo:ashraitTransaction&gt;'
+       + '&lt;xpo:user&gt;'+%trim(USR)+'&lt;/xpo:user&gt;'
+       + '&lt;xpo:password&gt;'+%trim(PWD)+'&lt;/xpo:password&gt;&lt;xpo:int_in&gt;';
+Footer = '&lt;/xpo:int_in&gt;&lt;/xpo:ashraitTransaction&gt;&lt;/soapenv:Body&gt;&lt;/soapenv:Envelope&gt;';</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> BuildWSBody <span style="font-weight:400;color:#64748b">— מטען ה-doDeal</span></summary>
+    <div class="body">
+      <div class="kv"><b>מחזיר:</b> 10i0 = %len(Body)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">BuildWS</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">WriteLog</span></div>
+      <p><b>מה הוא עושה:</b> בונה את מטען <code class="inl">&lt;![CDATA[&lt;ashrait&gt;&lt;request&gt;&lt;doDeal&gt;</code>:
+      פקודה doDeal, requestId, version, language, terminalNumber; עבור AutoCommRelease מוסיף
+      <code class="inl">&lt;tranId&gt;</code>; ואז track2 (מחלץ את מספר הכרטיס) או cardNo/cardId, cardExpiration,
+      cvv, id, נתוני EMV להוראות קבע, transactionType/creditType/currency/transactionCode, authNumber אופציונלי, total,
+      validation, תשלומים, clubCode, תגית ה-<code class="inl">&lt;user&gt;</code> (או refundKey מ-PTBCLD+PTBBLD
+      עבור זיכויים), ו-<code class="inl">&lt;customerData&gt;</code> מקונן (טלפון, docType/Num, compCode,
+      customerNumber, userData1, codeKupa).</p>
+      <pre>Body = '&lt;![CDATA[&lt;ashrait&gt;&lt;request&gt;&lt;command&gt;doDeal&lt;/command&gt;…&lt;doDeal&gt;'
+     + '&lt;terminalNumber&gt;'+%trim(IterminalId)+'&lt;/terminalNumber&gt;' + … ;
+Body = %trim(Body)+'&lt;/doDeal&gt;&lt;/request&gt;&lt;/ashrait&gt;]]&gt;';
+<span class="kw">return</span> %len(Body);</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SendToServer <span style="font-weight:400;color:#64748b">— HTTP POST + ניתוח</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> pSoapAction 30a</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">Mainline</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">ConvertBuf</span><span class="callchip">http_url_post_xml</span><span class="callchip">http_parse_xml_string</span><span class="callchip">EndElement (callback)</span><span class="callchip">WriteLog</span></div>
+      <p><b>מה הוא עושה:</b> ממסך כל cardNo ב-SOAP המתועד, ממיר את המאגר ל-UTF-8 (ConvertBuf), שולח אותו ב-POST
+      אל <code class="inl">url</code> (timeout של 60 שניות, SOAPAction <code class="inl">ashraitTransaction</code>). בכשל
+      תעבורה (rc≠1) מגדיר <b>99002</b>. אחרת ממסך cardBin/cardMask בלוג התשובה ומנתח
+      את ה-XML עם <code class="inl">EndElement</code>. אם לא נראה סוף XML תקין (<code class="inl">swEndXML=off</code>)
+      הוא מנקה את הרשומה ומגדיר <b>99010</b>.</p>
+      <pre>rc = HTTP_setCCSIDs(1208:1208);
+rc = ConvertBuf(tmpBuff : 'Request');
+TimeOut = 60; SoapAction = 'http://tempuri.org/ashraitTransaction';
+rc = http_url_post_xml(url : %addr(SOAP)+2 : %len(SOAP) : *NULL
+      : %paddr(EndElement) : *NULL : TimeOut : HTTP_USERAGENT : 'text/xml' : SoapAction);
+<span class="kw">if</span> rc &lt;&gt; 1; OextendedStatus = 99002;
+<span class="kw">else</span>; rc = http_parse_xml_string(%addr(tmpBuff): … :%paddr(EndElement): *null); <span class="kw">endif</span>;
+<span class="kw">if</span> swEndXML = *off; clear ecptrns; OextendedStatus = 99010; <span class="kw">endif</span>;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> EndElement <span style="font-weight:400;color:#64748b">— callback לניתוח XML</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> userdata, depth, name, path, value, attrs (חתימת HTTPAPI)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">מנתח HTTPAPI (לכל תג סוגר)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">WriteLog</span></div>
+      <p><b>מה הוא עושה:</b> רץ פעם אחת לכל רכיב סוגר. לפי path: <code class="inl">/ashrait/response</code> →
+      שדות כותרת (command, dateTime, requestId, tranId, result, message, version, language);
+      <code class="inl">/ashrait/response/doDeal</code> (או <code class="inl">/refundDeal</code>) → העסקה המלאה אל
+      <code class="inl">OutputParm</code> (status/extendedStatus, נתוני כרטיס, סכומים, קודים, authNumber, file/slave
+      terminal, ספק, payDate…). כל המרה מספרית עטופה ב-<code class="inl">MONITOR</code> ומגדירה
+      סטטוס ממשק <b>99003</b> (עם שם הרכיב הבעייתי) בנתונים שגויים. הופעת <code class="inl">status</code>
+      מגדירה את <code class="inl">swEndXML</code>; <code class="inl">digitalWalletProvider</code> מגדיר swEndOk.</p>
+      <pre><span class="kw">when</span> name = 'status';
+   <span class="kw">monitor</span>; Ostatus = %dec(%subst(value:1:3):3:0);
+   <span class="kw">on-error</span>; Ostatus = 999; SACGINST='99003'; SACGINTX = name; <span class="kw">endmon</span>;
+   swEndXML = *on;
+<span class="kw">when</span> name = 'authNumber'; OauthNumber = value;
+<span class="kw">when</span> name = 'creditCompany'; OcreditCompanyCode = %dec(attrval:2:0); <span class="cm">// …</span></pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> ConvertBuf <span style="font-weight:400;color:#64748b">— המרת קידוד</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> pBuff 8196a, pSuffix 10a</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">SendToServer</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">convert (תוכנית CONVERT)</span><span class="callchip">WriteFile</span></div>
+      <p><b>מה הוא עושה:</b> ממיר את המאגר EBCDIC-עברית (00424) → UTF-8 (01208) באמצעות תוכנית CONVERT, שופך
+      אותו לקובץ IFS לצורכי דיבאג, ומחזיר את המאגר המומר.</p>
+      <pre>frmCCSID='00424'+null; toCCSID='01208'+null;
+cvtInBuff = %trim(pBuff)+x'00';
+<span class="kw">callp</span> convert(cvtInBuff : cvtOutBuff : frmCCSID : toCCSID);
+rc = WriteFile(1208 : pSuffix); pBuff = cvtOutBuff;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> BuildResponse <span style="font-weight:400;color:#64748b">— מיפוי תוצאה → רשומה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">Mainline</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">WriteLog</span><span class="callchip">WriteTrnsLog</span></div>
+      <p><b>מה הוא עושה:</b> מתרגם את <code class="inl">OutputParm</code> בחזרה אל רשומת ה-PT: מיישב את
+      status/extendedStatus, מגדיר טקסט עברית/אנגלית קבוע ל-99002/03/06/10, קודי אשראי וסולק, tranId →
+      PTREFN ומפצל ל-PTWRKS/PTPRSL, מספר/מזהה כרטיס עם טיפול טוקן מול לא-טוקן (99006 אם PAN לא-טוקן
+      ממוסך "xxxxxx"), authNumber (מספרי דרך MONITOR, אחרת −9999999 ו-PTREF3), מספרי file ו-slave-terminal,
+      ספק, תוקף, payDate. כותב את לוג התנועה של ה"קבלה" ומחזיר את הרשומה המעודכנת ב-
+      <code class="inl">ecptrnsv</code>.</p>
+      <pre>pttrst = %editc(Ostatus:'X'); SACGREST = %editc(Oextendedstatus:'X');
+<span class="kw">if</span> OextendedStatus = 99002; OextendedStatusText = '…communication problem…'; <span class="kw">endif</span>;
+ptrefn = OTranId; ptwrks = %subst(OtranId20:1:10); ptprsl = %subst(OtranId20:11:10);
+<span class="kw">if</span> OauthNumber &lt;&gt; *blanks;
+  <span class="kw">monitor</span>; ptappn = %dec(OauthNumber:7:0);
+  <span class="kw">on-error</span>; ptappn = -9999999; ptref3 = OauthNumber; <span class="kw">endmon</span>; <span class="kw">endif</span>;
+SRInd = '2'; rc = WriteTrnsLog(); ecptrnsv = ECPTRNS;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> GetParmValue <span style="font-weight:400;color:#64748b">— שליפת קונפיגורציה</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> pSystemName 10a, pParmName 10a → מחזיר 100a</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">InitProgram</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">SAMAINPF (CHAIN)</span></div>
+      <p><b>מה הוא עושה:</b> שולף בשרשור מ-SAMAINPF לפי (מערכת, פרמטר); מחזיר SAVALUE אם נמצא, אחרת את ערך הסמן
+      <code class="inl">'*NotFound'</code>.</p>
+      <pre><span class="kw">chain</span> (pSystemName : pParmName) SAMAINPF;
+<span class="kw">if</span> %found(SAMAINPF); <span class="kw">return</span> SAVALUE; <span class="kw">endif</span>;
+<span class="kw">return</span> '*NotFound';</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> WriteTrnsLog <span style="font-weight:400;color:#64748b">— שורת ביקורת תנועה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">InitProgram (שליחה)</span><span class="callchip">BuildResponse (קבלה)</span></div>
+      <div class="kv"><b>קורא ל:</b> —</div>
+      <p><b>מה הוא עושה:</b> מנקה את SACGTRNSR, מעתיק כל שדה PTxxx אל שדה ה-SAxxx המתאים (כ-90 העברות),
+      <b>ממסך את ה-PAN</b> ל-13 כוכביות עבור כרטיסים לא-טוקן (5 ראשונות אינן 00015/00010), חותם job/משתמש/תאריך/שעה ואת
+      מחוון השליחה/קבלה (SASRIN), וכותב את השורה.</p>
+      <pre><span class="kw">clear</span> SACGTRNSR;
+SARQSC=PTRQSC; SARQDT=PTRQDT; SATRNO=PTTRNO; <span class="cm">// …~90 moves</span>
+SACARN = %editc(PTCARN:'X');
+<span class="kw">if</span> not token; SACARN = %replace('*************':SACARN:1:13); <span class="kw">endif</span>;
+SASRIN = SRInd; <span class="kw">write</span> SACGTRNSR;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> WriteLog <span style="font-weight:400;color:#64748b">— לוג אפליקציה</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> pProcedure 20a, pLevel 10i0, pStatus 1a, pReturnCode 5s0, pText 2048a</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">רוב הפרוצדורות</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">SAATCGLG (כתיבה)</span></div>
+      <p><b>מה הוא עושה:</b> כותב שורת אבחון אל <code class="inl">SAATCGLG</code> רק כאשר
+      <code class="inl">pLevel &gt;= swLog</code>. מתעד תאריך/שעה (ms), זהות job, תוכנית, פרוצדורה, סטטוס ו-
+      טקסט; מכריח את הנתונים החוצה עם <code class="inl">feod</code>.</p>
+      <pre><span class="kw">if</span> pLevel &gt;= swLog;
+  jldate=%dec(%date()); jltime=…; jlprog=program; jlproc=pProcedure;
+  jlsts=pStatus; jltext=pText; <span class="kw">write</span>(e) SAATCGR; <span class="kw">feod</span> SAATCGLG;
+<span class="kw">endif</span>;</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> WriteFile <span style="font-weight:400;color:#64748b">— שפיכת XML ל-IFS</span></summary>
+    <div class="body">
+      <div class="kv"><b>פרמטרים:</b> ccsid 10i0 (*nopass), suffix 10a (*nopass)</div>
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">ConvertBuf</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">open / write / close (ifsio)</span></div>
+      <p><b>מה הוא עושה:</b> כותב את המאגר המומר אל
+      <code class="inl">/tmpcgg/&lt;pgm&gt;_&lt;date&gt;_&lt;time&gt;_&lt;msec&gt;_&lt;suffix&gt;.xml</code> לצורכי
+      פתרון תקלות; CCSID ברירת מחדל 424 כאשר לא מועבר.</p>
+      <pre>ifsFileName = '/tmpcgg/'+%trim(Program)+'_'+…+'.xml'+x'00';
+fd = open(ifsFileName : O_WRONLY+O_CREAT+O_CODEPAGE+O_TEXTDATA : 511 : wccsid);
+lRc = write(fd : InBuf@ : strLen); lRc = close(fd);</pre>
+    </div>
+  </details>
+
+  <!-- ---------------- SUGGESTED TESTS (RPG) ------------------ -->
+  <h3 id="rpg-tests">בדיקות מוצעות — SAATCG (Gherkin)</h3>
+  <p>תרחיש אחד לכל פרוצדורה (עוזרים טריוויאליים מקובצים), כל אחד עם הסבר.</p>
+
+  <div class="proc"><div class="body">
+  <h4>Mainline (*entry)</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> מנהל המנוע
+  <span class="kw">תרחיש:</span> השלבים רצים רק לאחר אתחול מוצלח
+    <span class="kw">בהינתן</span> ש-InitProgram יחזיר 0
+    <span class="kw">כאשר</span> קוראים ל-SAATCG עם SAATCGI, SAATCGO ו-ecptrnsv בגודל 703 בתים
+    <span class="kw">אז</span> BuildWS, SendToServer ו-BuildResponse כולם מבוצעים
+    <span class="kw">וגם</span> *inlr נדלק לפני החזרה
+  <span class="kw">תרחיש:</span> כשל באתחול מקצר את השלבים
+    <span class="kw">בהינתן</span> ש-InitProgram יחזיר -1
+    <span class="kw">אז</span> BuildWS, SendToServer ו-BuildResponse אינם מבוצעים</pre>
+  <p><b>מה נבדק ולמה:</b> המנוע אסור שינסה לבנות או לשלוח דבר כאשר חסרה קונפיגורציה;
+  המשמר על <code class="inl">rc = 0</code> הוא השער היחיד. מאשר ש-LR מוגדר כדי שהתוכנית תסתיים בנקיון.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>InitProgram</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> תצורה ומיפוי בקשה
+  <span class="kw">תרחיש:</span> חסר אישור גישה מחזיר 99005
+    <span class="kw">בהינתן</span> של-SAMAINPF אין CGGCOMTUSR עבור המערכת הנוכחית
+    <span class="kw">כאשר</span> InitProgram רץ
+    <span class="kw">אז</span> OextendedStatus = 99005 וההחזרה שלילית
+  <span class="kw">תרחיש:</span> תצורת תביעה משתמשת במסוף הלוגי
+    <span class="kw">בהינתן</span> ש-SACGCONF = "2" ו-CGGCOMTTRM = "0088000123"
+    <span class="kw">כאשר</span> InitProgram רץ
+    <span class="kw">אז</span> IterminalId = "0088000123"
+  <span class="kw">תבנית תרחיש:</span> קוד הבקשה ממופה לסוג עסקה
+    <span class="kw">בהינתן</span> ש-PTRQSC = "&lt;rqsc&gt;"
+    <span class="kw">אז</span> ItransactionType = "&lt;type&gt;"
+    <span class="kw">דוגמאות:</span>
+      | rqsc | type           |
+      | 01   | Debit          |
+      | 51   | Credit         |
+      | 52   | Refund         |
+      | 11   | RecurringDebit |
+  <span class="kw">תרחיש:</span> זיהוי כרטיס טוקן
+    <span class="kw">בהינתן</span> ש-PTCARN הוא 16 ספרות המתחילות ב-"10"
+    <span class="kw">אז</span> IcardId מוגדר ו-swCardId דלוק
+  <span class="kw">תרחיש:</span> הסכום מומר לאגורות
+    <span class="kw">בהינתן</span> ש-PTTRSM = 150.00
+    <span class="kw">אז</span> Itotal = 15000</pre>
+  <p><b>מה נבדק ולמה:</b> InitProgram הוא המקום שבו כל קוד עסקי מתורגם לאוצר המילים של CreditGuard וכל
+  פרט הזדהות נפתר. התרחישים מקבעים את מסלול הכשל 99005, את דריסת המסוף בקונפיגורציה-2, את טבלת
+  RQSC→type, זיהוי טוקן (קידומת 10/15), וסקאלת הסכום ×100 — הטעויות הסבירות ביותר לגרום לעסקה
+  שנדחתה או שחוייבה בטעות.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>BuildWS / BuildWSHeader / BuildWSFooter</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> הרכבת מעטפת SOAP
+  <span class="kw">תרחיש:</span> ה-Soap הוא כותרת + גוף + כותרת תחתונה עם אישורי גישה
+    <span class="kw">בהינתן</span> ש-USR = "cguser" ו-PWD = "secret"
+    <span class="kw">כאשר</span> BuildWS רץ
+    <span class="kw">אז</span> Soap מכיל "&lt;xpo:user&gt;cguser&lt;/xpo:user&gt;"
+    <span class="kw">וגם</span> Soap מכיל "&lt;xpo:password&gt;secret&lt;/xpo:password&gt;"
+    <span class="kw">וגם</span> כל תג שנפתח (Envelope, Body, ashraitTransaction, int_in) נסגר על ידי הכותרת התחתונה</pre>
+  <p><b>מה נבדק ולמה:</b> מעטפת פגומה או תגית פרטי הזדהות חסרה גורמת לשער לדחות את הקריאה
+  עוד לפני שהעסקה נקראת. הבדיקה קובעת שפרטי ההזדהות מוזרקים ושהמעטפת מאוזנת.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>BuildWSBody</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> מטען doDeal
+  <span class="kw">תרחיש:</span> Track2 מספק את מספר הכרטיס
+    <span class="kw">בהינתן</span> ש-PTT180 = "1234567890123456=2512..."
+    <span class="kw">כאשר</span> BuildWSBody רץ
+    <span class="kw">אז</span> Body מכיל "&lt;track2&gt;" ו-iCardNumber = "1234567890123456"
+  <span class="kw">תרחיש:</span> זיכוי בונה refundKey מ-PTBCLD + PTBBLD
+    <span class="kw">בהינתן</span> ש-ItransactionType = "Credit" ו-PTBBLD &lt;&gt; 0 ו-PTBCLD &lt;&gt; 0
+    <span class="kw">כאשר</span> BuildWSBody רץ
+    <span class="kw">אז</span> customerData מכיל "&lt;refundKey&gt;"
+  <span class="kw">תרחיש:</span> תשלומים נפלטים רק עבור עסקה שאינה מחזורית עם תשלומים
+    <span class="kw">בהינתן</span> ש-PTPAYN = 3 ו-ItransactionType &lt;&gt; "RecurringDebit"
+    <span class="kw">אז</span> Body מכיל firstPayment, periodicalPayment ו-numberOfPayments
+  <span class="kw">תרחיש:</span> ה-Body הוא CDATA תקין
+    <span class="kw">אז</span> Body מתחיל ב-"&lt;![CDATA[&lt;ashrait&gt;&lt;request&gt;" ומסתיים ב-"]]&gt;"</pre>
+  <p><b>מה נבדק ולמה:</b> ה-body הוא המקום שבו שוכנת סמנטיקת העסקה. תרחישים אלה מכסים את שלושת
+  הענפים בעלי הסיכון הגבוה ביותר — חילוץ כרטיס מ-track2, ה-refundKey הנחוץ לזיכויים, ופליטת תשלומים — בתוספת
+  תקינות CDATA כללית כך ששדה לא-מוברח סורר לא יוכל לשבור את הניתוח בשרת.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>SendToServer</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> תזמור HTTP POST ופענוח
+  <span class="kw">תרחיש:</span> כשל תעבורה מגדיר 99002
+    <span class="kw">בהינתן</span> ש-http_url_post_xml מחזיר rc &lt;&gt; 1
+    <span class="kw">כאשר</span> SendToServer רץ
+    <span class="kw">אז</span> OextendedStatus = 99002
+  <span class="kw">תרחיש:</span> היעדר אלמנט סיום XML מגדיר 99010
+    <span class="kw">בהינתן</span> שה-POST מצליח אך swEndXML נשאר כבוי
+    <span class="kw">אז</span> ecptrns מנוקה ו-OextendedStatus = 99010
+  <span class="kw">תרחיש:</span> נתוני הכרטיס ממוסכים ביומן
+    <span class="kw">בהינתן</span> שה-SOAP מכיל אלמנט cardNo
+    <span class="kw">אז</span> במחרוזת שנרשמה הספרות שבין תגי cardNo מוחלפות בכוכביות</pre>
+  <p><b>מה נבדק ולמה:</b> מבחין בין כשל תקשורת (99002) לבין מקרה של "תשובה התקבלה אך אינה ניתנת לניתוח"
+  (99010) — תגובות תפעוליות שונות. בדיקת המיסוך היא דרישת PCI/ביקורת: אף PAN אסור שיגיע לקובצי
+  הלוג.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>EndElement (XML callback)</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> מיפוי אלמנט סיום XML
+  <span class="kw">תרחיש:</span> status ממלא את OStatus ומסיים את הפענוח
+    <span class="kw">בהינתן</span> אלמנט סוגר בשם "status" עם ערך "000"
+    <span class="kw">כאשר</span> EndElement נורה בנתיב /ashrait/response/doDeal
+    <span class="kw">אז</span> OStatus = 0 ו-swEndXML דלוק
+  <span class="kw">תרחיש:</span> שדה מספרי שאינו מספרי מעלה 99003
+    <span class="kw">בהינתן</span> name = "total" עם ערך "ABC"
+    <span class="kw">אז</span> SACGINST = "99003" ו-SACGINTX = "total"
+  <span class="kw">תרחיש:</span> תכונת הסולק ממופה לקודים
+    <span class="kw">בהינתן</span> name = "cardAcquirer" עם תכונת קוד בת 2 ספרות "02"
+    <span class="kw">אז</span> OcardAcquirerCode2 = 2</pre>
+  <p><b>מה נבדק ולמה:</b> ה-callback הוא הנקודה היחידה שבה התשובה הופכת לנתונים. הבדיקות מאשרות את
+  סמן סוף-הניתוח (status), את ה-MONITOR ההגנתי המסמן נתוני שרת שגויים כ-99003 עם שם הרכיב (כדי
+  שמפעילים ידעו איזו תגית נשברה), וחילוץ נכון של מאפיין-לקוד.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>ConvertBuf / WriteFile</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> המרת קוד-עמוד והשלכה ל-IFS
+  <span class="kw">תרחיש:</span> באפר מומר מ-424 ל-1208
+    <span class="kw">בהינתן</span> באפר בקשה בעברית EBCDIC (424)
+    <span class="kw">כאשר</span> ConvertBuf רץ עם הסיומת "Request"
+    <span class="kw">אז</span> הבאפר המוחזר הוא UTF-8 (1208)
+    <span class="kw">וגם</span> נכתב קובץ /tmpcgg/SAATCG_..._Request.xml
+  <span class="kw">תרחיש:</span> WriteFile מגדיר CCSID לברירת מחדל 424 כשלא הועבר
+    <span class="kw">בהינתן</span> ש-WriteFile נקרא ללא ccsid
+    <span class="kw">אז</span> קובץ הזרם נוצר עם CCSID 424</pre>
+  <p><b>מה נבדק ולמה:</b> טקסט עברי חייב להגיע לשער כ-UTF-8 אחרת יתקלקל; הבדיקה מקבעת את
+  הכיוון 424→1208 ואת שמות קובצי הדיבאג, ומאשרת את ברירת המחדל המתועדת של CCSID כדי ששפיכות פתרון
+  התקלות תהיינה קריאות.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>BuildResponse</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> מיפוי התוצאה המפוענחת בחזרה לרשומה
+  <span class="kw">תרחיש:</span> מספר הרשאה מספרי נשמר ב-PTAPPN
+    <span class="kw">בהינתן</span> ש-OauthNumber = "0012345"
+    <span class="kw">כאשר</span> BuildResponse רץ
+    <span class="kw">אז</span> PTAPPN = 12345 ו-SACGCGAU = "0012345"
+  <span class="kw">תרחיש:</span> מספר הרשאה שאינו מספרי נופל בחזרה ל-PTREF3
+    <span class="kw">בהינתן</span> ש-OauthNumber = "OK-123"
+    <span class="kw">אז</span> PTAPPN = -9999999 ו-PTREF3 = "OK-123"
+  <span class="kw">תרחיש:</span> tranId מפוצל בין שדה עבודה לשדה אישי
+    <span class="kw">בהינתן</span> ש-OTranId20 = "12345678901234567890"
+    <span class="kw">אז</span> PTWRKS = "1234567890" ו-PTPRSL = "1234567890"
+  <span class="kw">תרחיש:</span> PAN ממוסך שאינו טוקן מעלה 99006
+    <span class="kw">בהינתן</span> ש-NONTKN = "1" ו-OcardNo מתחיל ב-"xxxxxx"
+    <span class="kw">אז</span> OextendedStatus = 99006</pre>
+  <p><b>מה נבדק ולמה:</b> מסלול החזרה אסור שיאבד לעולם את האישור. הפיצול מספרי/לא-מספרי שומר אישור
+  קריא-לאדם ב-PTREF3 תוך סימון PTAPPN כערך סמן −9999999; פיצול ה-tranId מזין את
+  התאמת החשבונות במורד הזרם; ו-99006 מגן על מסלול הלא-טוקן מפני PAN ממוסך שאינו יכול לאחסן.</p>
+  </div></div>
+
+  <div class="proc"><div class="body">
+  <h4>GetParmValue / WriteTrnsLog / WriteLog</h4>
+  <pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> עוזרי חיפוש תצורה ורישום ליומן
+  <span class="kw">תרחיש:</span> פרמטר חסר מחזיר את ערך הסימון
+    <span class="kw">בהינתן</span> של-SAMAINPF אין שורה עבור (SYS1, CGGCOMTURL)
+    <span class="kw">כאשר</span> קוראים ל-GetParmValue("SYS1","CGGCOMTURL")
+    <span class="kw">אז</span> הוא מחזיר "*NotFound"
+  <span class="kw">תרחיש:</span> יומן העסקאות ממסך את ה-PAN וחותם את הכיוון
+    <span class="kw">בהינתן</span> כרטיס שאינו טוקן 1234567890123456 ו-SRInd = "2"
+    <span class="kw">כאשר</span> WriteTrnsLog רץ
+    <span class="kw">אז</span> SACARN מתחיל ב-13 כוכביות ו-SASRIN = "2"
+  <span class="kw">תרחיש:</span> שורת יומן מדוכאת מתחת לסף
+    <span class="kw">בהינתן</span> ש-swLog = 3 (INFO)
+    <span class="kw">כאשר</span> קוראים ל-WriteLog עם pLevel = DEBUG (1)
+    <span class="kw">אז</span> לא נכתבת שורה ל-SAATCGLG</pre>
+  <p><b>מה נבדק ולמה:</b> ערך הסמן המוחזר הוא מה ש-InitProgram מבסס עליו את בדיקות ה-99005 שלו, לכן הוא חייב להיות מדויק.
+  WriteTrnsLog הוא נתיב הביקורת — מיסוך ה-PAN ומחוון השליחה/קבלה נבדקים לצורכי ציות
+  והתאמת חשבונות. מסנן הרמה מוכיח שרעש דיבאג נזרק בייצור (swLog=INFO) כדי להגן על נפח הלוג.</p>
+  </div></div>
+</section>
+
+</main>
+
+<footer>
+  תיעוד תיקייה שנוצר עבור <b>saatcgsl.cbl</b> (SAATCGSL, עוטף ILE COBOL) ו-
+  <b>saatcg.rpgle</b> (SAATCG, מנוע SOAP בשפת ILE RPGLE) · ממשק תשלומים CreditGuard "אשראית" ·
+  המקור פוענח מ-EBCDIC-עברית (IBM-424). רשימות השדות אומתו מול המקור המפוענח.
+</footer>
+
+</body>
+</html>

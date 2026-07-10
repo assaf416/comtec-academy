@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not-easy folder — M · UNFILE2PCC · UNSNDWEB — Documentation</title>
+<style>
+  :root{
+    --char:#3b82f6;--packed:#10b981;--zoned:#14b8a6;--binary:#8b5cf6;
+    --money:#f59e0b;--date:#ec4899;--flag:#6b7280;--group:#0f172a;
+    --bg:#f8fafc;--card:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header.hero{background:linear-gradient(135deg,#7c2d12,#b91c1c);color:#fff;padding:40px 32px}
+  header.hero h1{margin:0 0 6px;font-size:27px}
+  header.hero p{margin:4px 0;opacity:.95}
+  nav{position:sticky;top:0;z-index:20;background:#0f172a;padding:10px 20px;display:flex;flex-wrap:wrap;gap:8px}
+  nav a{color:#cbd5e1;text-decoration:none;font-size:13px;padding:6px 12px;border-radius:6px}
+  nav a:hover{background:#1e293b;color:#fff}
+  main{max-width:1180px;margin:0 auto;padding:24px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h2{margin-top:0;font-size:23px;border-bottom:3px solid #b91c1c;padding-bottom:8px;display:flex;align-items:center;gap:10px}
+  h3{font-size:18px;color:#7c2d12;margin-top:28px}
+  h4{font-size:15px;color:#334155;margin:18px 0 6px}
+  p.lead{font-size:16px;color:#334155}
+  .emoji{font-size:22px}
+  .filecard{border-left:6px solid #b91c1c;background:#fef2f2;border-radius:10px;padding:14px 18px;margin:10px 0}
+  .filecard.rpg{border-color:#0891b2;background:#ecfeff}
+  .filecard.cl{border-color:#f59e0b;background:#fffbeb}
+  .filecard h4{margin:0 0 4px;font-size:16px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600}
+  tr:nth-child(even) td{background:#fafcff}
+  code,pre{font-family:'Cascadia Code',Consolas,'Courier New',monospace}
+  code.inl{background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#3730a3}
+  pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;overflow:auto;font-size:12.5px;line-height:1.5}
+  pre .cm{color:#7dd3fc}pre .kw{color:#f9a8d4}pre .st{color:#bef264}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 12px;border-radius:20px;color:#fff;font-weight:600}
+  .dot{width:12px;height:12px;border-radius:50%;background:#fff9;display:inline-block}
+  .t-char{background:var(--char)}.t-packed{background:var(--packed)}.t-zoned{background:var(--zoned)}
+  .t-binary{background:var(--binary)}.t-money{background:var(--money)}.t-date{background:var(--date)}
+  .t-flag{background:var(--flag)}.t-group{background:var(--group)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:16px 0}
+  .fcard{border-radius:10px;padding:12px 14px;color:#fff;position:relative;overflow:hidden;min-height:92px}
+  .fcard .ic{position:absolute;right:10px;top:8px;font-size:26px;opacity:.35}
+  .fcard .code{font-weight:700;font-size:14px;letter-spacing:.3px}
+  .fcard .pic{font-family:monospace;font-size:11px;opacity:.9;background:#0003;display:inline-block;padding:1px 6px;border-radius:4px;margin-top:3px}
+  .fcard .en{font-size:13px;margin-top:6px;font-weight:600}
+  .fcard .mn{font-size:11.5px;opacity:.92;margin-top:2px}
+  .note{background:#fffbeb;border-left:4px solid var(--money);padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+  .note.blue{background:#eff6ff;border-color:#3b82f6}
+  .note.red{background:#fef2f2;border-color:#b91c1c}
+  .proc{border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+  .proc>summary{cursor:pointer;padding:13px 18px;background:#f1f5f9;font-weight:700;font-size:14.5px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .proc>summary::-webkit-details-marker{display:none}
+  .proc[open]>summary{background:#fee2e2;border-bottom:1px solid var(--line)}
+  .proc .body{padding:16px 18px}
+  .tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+  .tag.cbl{background:#7c3aed}.tag.rpg{background:#0891b2}.tag.cl{background:#d97706}
+  .callchip{display:inline-block;font-size:11px;background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:12px;margin:2px}
+  .kv{font-size:13.5px;margin:4px 0}.kv b{color:#7c2d12}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .diagram-wrap{overflow-x:auto;background:#fbfdff;border:1px dashed var(--line);border-radius:10px;padding:8px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:800px){.two{grid-template-columns:1fr}}
+  footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+  .badge{display:inline-block;background:#b91c1c;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+  pre.gherkin{direction:rtl;text-align:right;unicode-bidi:plaintext}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>🧩 "Not-easy" folder — <code>M</code> · <code>UNFILE2PCC</code> · <code>UNSNDWEB</code></h1>
+  <p>IBM i (AS/400) menu subsystem &amp; AS/400↔WEB portability engine &nbsp;•&nbsp; folder <code>example/not easy</code></p>
+  <p>The three heavy programs: an RPG menu driver, a CL DDS-build utility, and a 170-section COBOL WEB screen engine. Sources carry ASCII code with Windows-1255 Hebrew comments (decoded here to UTF-8).</p>
+</header>
+
+<nav>
+  <a href="#files">🗂️ Files in this folder</a>
+  <a href="#rel">🔗 Who runs who</a>
+  <a href="#legend">🎨 Field legend</a>
+  <a href="#menu">📗 M.rpg (Menu)</a>
+  <a href="#file2pcc">📙 UNFILE2PCC.cl (DDS build)</a>
+  <a href="#sndweb">📘 UNSNDWEB.cbl (WEB engine)</a>
+  <a href="#tests">✅ Suggested tests</a>
+  <a href="#glossary">🔤 Glossary</a>
+</nav>
+
+<main>
+
+<!-- ============ FILES IN THIS FOLDER ============ -->
+<section id="files">
+  <h2><span class="emoji">🗂️</span> Files in this folder</h2>
+  <p class="lead">Three unrelated-by-runtime but conceptually-linked programs from the AS/400↔WEB portability
+  subsystem. Every program supports a <b>dual code path</b>: lines flagged <code class="inl">X&amp;FLTA</code>
+  compile for AS/400 (COBOL), lines flagged <code class="inl">X&amp;FLTU</code> compile for UNIX.</p>
+  <table>
+    <tr><th>File</th><th>Type</th><th>Language</th><th>Purpose</th></tr>
+    <tr>
+      <td><code class="inl">M.rpg</code></td>
+      <td>Interactive program (WORKSTN)</td>
+      <td>RPG III / RPG 400</td>
+      <td>The main <b>MENU driver</b> for the "ME" application. Displays a 5250 menu, reads the user's choice and F-keys, checks authorization, logs activity, and launches the selected program or sub-menu. 68 subroutines.</td>
+    </tr>
+    <tr>
+      <td><code class="inl">UNFILE2PCC.cl</code></td>
+      <td>Utility program</td>
+      <td>CL (Control Language)</td>
+      <td><b>DDS / file build utility</b>. Reverse-engineers a physical file (<code class="inl">DSPFD</code>/<code class="inl">DSPFFD</code>), creates DDS source members A/F/HDR/X, builds PF objects, copies the data, and compiles+runs a generated header program. Build-time helper for the conversion pipeline.</td>
+    </tr>
+    <tr>
+      <td><code class="inl">UNSNDWEB.cbl</code></td>
+      <td>Called subprogram</td>
+      <td>COBOL (ILE / OPM)</td>
+      <td>The <b>WEB screen engine</b> (Hebrew banner <span dir="rtl">ניהול בניית מסכי WEB</span> = "management of building WEB screens"). One 64,412-byte parameter, a big action-code dispatcher, XML build/parse, and data-queue transport to the web tier. 170 sections, ~9,200 lines.</td>
+    </tr>
+  </table>
+
+  <div class="note red">⚠️ <b>Ship-together warning</b> (from the UNSNDWEB source header, "field-enlargement to K64" project):
+  UNSNDWEB <b>must be released together</b> with
+  <code class="inl">UNPARTQU</code>, <code class="inl">UNQUEST</code>, <code class="inl">UNSCRWEB</code>,
+  <code class="inl">UNSNDA2C</code>, <code class="inl">UNSNDC2X</code> and the comms programs
+  <code class="inl">WBAPP</code>, <code class="inl">WBSRVR03</code>, <code class="inl">WBSRDQ</code>. Because the
+  shared buffer layout changed, deploying UNSNDWEB alone will corrupt the parameter exchange.</div>
+</section>
+
+<!-- ============ RELATIONSHIPS ============ -->
+<section id="rel">
+  <h2><span class="emoji">🔗</span> Relationships — who runs who</h2>
+  <p class="lead">These three files are <b>not a single call-chain</b>. They belong to different tiers of the same
+  system: an interactive menu, a build-time utility, and a server-tier engine.</p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 960 420" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+
+    <!-- Menu tier -->
+    <text x="150" y="24" font-weight="700" fill="#0891b2">Menu tier (green-screen)</text>
+    <rect x="70" y="40" width="160" height="46" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="150" y="60" font-weight="700">M (RPG menu)</text><text x="150" y="76" font-size="10">reads MEMENU/MEAUT/MEUSR</text>
+    <rect x="55" y="130" width="90" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="100" y="154">app pgm A</text>
+    <rect x="155" y="130" width="90" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="200" y="154">app pgm B</text>
+    <rect x="105" y="190" width="90" height="34" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="150" y="211" font-size="10">…sub-menu</text>
+    <line x1="120" y1="86" x2="100" y2="128" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="180" y1="86" x2="200" y2="128" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="150" y1="86" x2="150" y2="188" stroke="#334155" marker-end="url(#r)" stroke-dasharray="3 3"/>
+
+    <!-- WEB tier -->
+    <text x="620" y="24" font-weight="700" fill="#b91c1c">WEB tier (portability engine)</text>
+    <rect x="440" y="40" width="150" height="46" rx="8" fill="#fee2e2" stroke="#b91c1c"/><text x="515" y="60" font-weight="700">WBSRVR03 / WBAPP</text><text x="515" y="76" font-size="10">web server + app driver</text>
+    <rect x="630" y="40" width="150" height="46" rx="8" fill="#fef2f2" stroke="#b91c1c"/><text x="705" y="60" font-weight="700">UNSNDWEB</text><text x="705" y="76" font-size="10">WEB screen engine</text>
+    <line x1="590" y1="63" x2="628" y2="63" stroke="#334155" marker-end="url(#r)"/>
+    <!-- DTAQ between -->
+    <rect x="470" y="120" width="120" height="34" rx="16" fill="#fef3c7" stroke="#d97706"/><text x="530" y="141" font-size="11">DTAQ (via WBSRDQ)</text>
+    <line x1="700" y1="86" x2="560" y2="118" stroke="#d97706" marker-end="url(#r)"/><text x="640" y="104" font-size="9" fill="#d97706">XML out</text>
+    <line x1="530" y1="118" x2="640" y2="90" stroke="#d97706" marker-end="url(#r)" stroke-dasharray="3 3"/><text x="560" y="112" font-size="9" fill="#d97706">reply</text>
+
+    <!-- UN* helpers -->
+    <rect x="600" y="185" width="320" height="120" rx="10" fill="#fffbeb" stroke="#f59e0b"/>
+    <text x="760" y="205" font-weight="700" fill="#b45309">~40 UN* / WB* helper programs (R*-CALL-* wrappers)</text>
+    <text x="760" y="228" font-size="10">UNRDCOMXX · UNPART · UNPARTQU · UNPARTXT · UNFLBLD · UNCMBLD</text>
+    <text x="760" y="246" font-size="10">UNRDRADXX · UNSAVSCR · UNFLQUN/C/D · UNLETTER · UNSNDMEM</text>
+    <text x="760" y="264" font-size="10">UNSNDGRF · UNSNDHLP · UNCHKIND · UNCHGTAG · UNFNDORG · UNOBLIB</text>
+    <text x="760" y="282" font-size="10">UNRDFILXX · UNFLTXT · UNFLCHK · UNCMCHK · WBSRDQ · HASHCPTP …</text>
+    <line x1="705" y1="86" x2="720" y2="183" stroke="#334155" marker-end="url(#r)"/>
+
+    <!-- Build tier -->
+    <text x="230" y="270" font-weight="700" fill="#d97706">Build tier (utility)</text>
+    <rect x="70" y="285" width="160" height="46" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="150" y="305" font-weight="700">UNFILE2PCC (CL)</text><text x="150" y="321" font-size="10">DDS / file build</text>
+    <rect x="55" y="365" width="150" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="130" y="389" font-size="11">UNCRTHDRK</text>
+    <rect x="225" y="365" width="150" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="300" y="389" font-size="11">UNUPDHDRK (gen.)</text>
+    <line x1="130" y1="331" x2="130" y2="363" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="200" y1="331" x2="290" y2="363" stroke="#334155" marker-end="url(#r)"/>
+  </svg>
+  </div>
+
+  <div class="two">
+    <div>
+      <h4>📗 Menu tier — M.rpg</h4>
+      <p>M reads menu/authorization/user files and, on a valid + authorized selection,
+      <code class="inl">CALL</code>s the chosen application program (or opens a sub-menu). It does <b>not</b> call
+      UNSNDWEB or UNFILE2PCC directly; the programs it launches are the general application catalogue.</p>
+    </div>
+    <div>
+      <h4>📘 WEB tier — UNSNDWEB.cbl</h4>
+      <p>UNSNDWEB is <b>called by the web server tier</b> (<code class="inl">WBSRVR03</code>/<code class="inl">WBAPP</code>).
+      It exchanges XML with the browser front-end over a <b>data queue</b> (through <code class="inl">WBSRDQ</code>) and
+      itself <code class="inl">CALL</code>s ~40 <code class="inl">UN*</code> helper programs to read screen/command
+      definitions and build/parse the XML.</p>
+    </div>
+  </div>
+  <h4>📙 Build tier — UNFILE2PCC.cl</h4>
+  <p>UNFILE2PCC is a <b>build-time utility</b>: it calls <code class="inl">UNCRTHDRK</code> to generate DDS + a
+  header-update program, then compiles and runs the generated <code class="inl">UNUPDHDRK</code>. It is invoked by the
+  conversion tooling, not by M or UNSNDWEB at runtime.</p>
+</section>
+
+<!-- ============ LEGEND ============ -->
+<section id="legend">
+  <h2><span class="emoji">🎨</span> Field-type legend</h2>
+  <div class="legend">
+    <span class="chip t-group"><span class="dot"></span>🗂️ Group / structure</span>
+    <span class="chip t-char"><span class="dot"></span>🔤 Character</span>
+    <span class="chip t-zoned"><span class="dot"></span>🔢 Zoned decimal</span>
+    <span class="chip t-packed"><span class="dot"></span>📦 Packed</span>
+    <span class="chip t-binary"><span class="dot"></span>🧮 Binary</span>
+    <span class="chip t-flag"><span class="dot"></span>🚩 Flag / switch (88-level)</span>
+    <span class="chip t-money"><span class="dot"></span>🗄️ File / DTAQ / data area</span>
+    <span class="chip t-date"><span class="dot"></span>⌨️ Function key / screen</span>
+  </div>
+</section>
+
+<!-- ============ M.rpg ============ -->
+<section id="menu">
+  <h2><span class="emoji">📗</span> M.rpg — Menu driver</h2>
+
+  <h3>Program name &amp; meaning</h3>
+  <p class="lead">Program <b>M</b> — the interactive menu of the "ME" (menu) application. It shows a menu on a 5250
+  workstation, validates the option and the user's <i>harshaot</i> (authorizations), writes a usage log, and transfers
+  control to the chosen program or sub-menu. RPG III / RPG 400, 68 subroutines.</p>
+
+  <h3>Files &amp; key data structures</h3>
+  <table>
+    <tr><th>Name</th><th>Type</th><th>English</th><th>Description</th></tr>
+    <tr><td><code class="inl">MENUFM</code></td><td>CF E WORKSTN (record <code class="inl">RMENU</code>, renamed <code class="inl">RMENUX</code>)</td><td>Menu display file</td><td>The 5250 green-screen menu the user interacts with. F-keys and the option field are read from here.</td></tr>
+    <tr><td><code class="inl">MEMENU</code></td><td>IF E K DISK</td><td>Menu definitions</td><td>Master of menu entries / options — text, target program, target sub-menu.</td></tr>
+    <tr><td><code class="inl">MEAUT</code></td><td>IF E K DISK</td><td>Authorization</td><td>Who may run what (<i>harshaot</i>). Read by <code class="inl">CHKHRS</code>/<code class="inl">HARSAN</code>/<code class="inl">HARSAA</code> before launch.</td></tr>
+    <tr><td><code class="inl">MEUSR</code></td><td>IF E K DISK</td><td>Users</td><td>User master — language, defaults, profile info (<code class="inl">SRUSRO</code> loads it).</td></tr>
+    <tr><td><code class="inl">MECNS</code></td><td>IF E K DISK</td><td>Constants</td><td>System constants / configuration for the menu subsystem.</td></tr>
+    <tr><td><code class="inl">MELOG</code></td><td>O E K DISK</td><td>Activity log</td><td>Output-only. One record written per launch by <code class="inl">SBWLOG</code>.</td></tr>
+    <tr><td><code class="inl">MEKLLIL0</code></td><td>IF E K DISK</td><td>General ("klali") file</td><td>Shared cross-application reference file.</td></tr>
+  </table>
+
+  <h4>Key work fields &amp; indicators</h4>
+  <table>
+    <tr><th>Name</th><th>Type</th><th>English</th><th>Description</th></tr>
+    <tr><td><code class="inl">RMENU / RMENUX</code></td><td><span class="chip t-date" style="padding:2px 8px">screen record</span></td><td>Menu record format</td><td>The displayed record; renamed on the F-spec so input &amp; output formats can be handled separately.</td></tr>
+    <tr><td><code class="inl">*INKx</code></td><td><span class="chip t-date" style="padding:2px 8px">F-key indicators</span></td><td>Command-key indicators</td><td>Set by the WORKSTN read; <code class="inl">SBFUNC</code> inspects them and branches to <code class="inl">SBF01…SBF24</code>.</td></tr>
+    <tr><td><code class="inl">*IN80</code></td><td><span class="chip t-flag" style="padding:2px 8px">flag</span></td><td>Format switch</td><td>Selects the input vs. output record format (<code class="inl">COMP 'RMENUX'</code>).</td></tr>
+    <tr><td><code class="inl">LR</code></td><td><span class="chip t-flag" style="padding:2px 8px">flag</span></td><td>Last-record</td><td>End-of-program indicator set in <code class="inl">SB99LR</code>.</td></tr>
+  </table>
+
+  <h4>ERD — user → authorization → menu → program</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 260" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="e1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="30" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="105" y="122" font-weight="700">MEUSR</text><text x="105" y="140" font-size="10">user master</text><text x="105" y="156" font-size="10">key: user id</text>
+    <rect x="240" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="315" y="122" font-weight="700">MEAUT</text><text x="315" y="140" font-size="10">authorization</text><text x="315" y="156" font-size="10">key: user + object</text>
+    <rect x="450" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="525" y="122" font-weight="700">MEMENU</text><text x="525" y="140" font-size="10">menu entries</text><text x="525" y="156" font-size="10">key: menu + option</text>
+    <rect x="660" y="40" width="200" height="56" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="760" y="62" font-weight="700">target program</text><text x="760" y="80" font-size="10">CALLed by SBPGM</text>
+    <rect x="660" y="150" width="200" height="56" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="760" y="172" font-weight="700">sub-menu</text><text x="760" y="190" font-size="10">SBMEN / SBMEPG</text>
+    <rect x="240" y="200" width="150" height="46" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="315" y="222" font-weight="700">MELOG</text><text x="315" y="238" font-size="10">one row / launch</text>
+    <g stroke="#334155" fill="none" marker-end="url(#e1)">
+      <line x1="180" y1="135" x2="238" y2="135"/><text x="209" y="126" font-size="10">has</text>
+      <line x1="390" y1="135" x2="448" y2="135"/><text x="419" y="126" font-size="10">grants</text>
+      <line x1="600" y1="120" x2="658" y2="80"/>
+      <line x1="600" y1="150" x2="658" y2="178"/>
+      <line x1="315" y1="170" x2="315" y2="198" stroke-dasharray="3 3"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>Subroutine map (68 total) — grouped by behavior</h3>
+  <table>
+    <tr><th>Group</th><th>Subroutines</th><th>Responsibility</th></tr>
+    <tr><td>⌨️ <b>Function keys</b></td><td><code class="inl">SBFUNC</code>, <code class="inl">SBF01…SBF24</code>, <code class="inl">SBFX</code>, <code class="inl">SBFOPR</code>, <code class="inl">SBFKPG</code>, <code class="inl">SBFKMS</code>, <code class="inl">SBFKOP</code></td><td>Dispatch each F1–F24 key (help, exit, page, operator functions).</td></tr>
+    <tr><td>🚀 <b>Launch / navigate</b></td><td><code class="inl">SBPGM</code>, <code class="inl">SBMEPG</code>, <code class="inl">SBMEN</code>, <code class="inl">SBOP</code>, <code class="inl">SBMODE</code>, <code class="inl">SBBACK</code>, <code class="inl">SBRM20</code>, <code class="inl">SBSMFL</code>, <code class="inl">SBSMAW</code>, <code class="inl">SBSAMN</code></td><td>Call the selected program, open a sub-menu, or go back.</td></tr>
+    <tr><td>🔐 <b>Authorization</b></td><td><code class="inl">CHKHRS</code>, <code class="inl">HARSAN</code>, <code class="inl">HARSAA</code>, <code class="inl">SBMVAU</code>, <code class="inl">SBRAMA</code>, <code class="inl">SBCSYS</code>, <code class="inl">BLTCTX</code></td><td>Check <i>harshaot</i> against MEAUT before launching.</td></tr>
+    <tr><td>🖥️ <b>Screen build</b></td><td><code class="inl">SBRSHI</code>, <code class="inl">DDSDSP</code>, <code class="inl">SBEXF</code>, <code class="inl">SBMSWR</code>, <code class="inl">SBPGTX</code></td><td>Format/write the menu record, messages and text.</td></tr>
+    <tr><td>🌐 <b>Language</b></td><td><code class="inl">SRMVHB</code> (Hebrew), <code class="inl">SRMVEN</code> (English)</td><td>Move Hebrew / English labels to the screen per user language.</td></tr>
+    <tr><td>🚩 <b>Indicators</b></td><td><code class="inl">SRIND</code>, <code class="inl">SRIND0</code></td><td>Set / reset display indicators.</td></tr>
+    <tr><td>📝 <b>Log &amp; misc</b></td><td><code class="inl">SBWLOG</code>, <code class="inl">SBPGQC</code>, <code class="inl">SBHELP</code>, <code class="inl">SBKTMN</code>, <code class="inl">SBPCDN</code>, <code class="inl">SSHRT</code>, <code class="inl">SBSTAM</code>, <code class="inl">SBEXSY</code></td><td>Write MELOG, show help, housekeeping.</td></tr>
+    <tr><td>⚙️ <b>Lifecycle</b></td><td><code class="inl">SRFRST</code>, <code class="inl">SRUSRO</code>, <code class="inl">SB99RT</code>, <code class="inl">SB99LR</code></td><td>First-cycle init, load user, return, last-record.</td></tr>
+  </table>
+
+  <h3>Typical flow (activity)</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 220" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <circle cx="40" cy="100" r="13" fill="#0f172a"/>
+    <rect x="80" y="80" width="120" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="140" y="104">display menu</text>
+    <rect x="230" y="80" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="290" y="100">read choice</text><text x="290" y="114" font-size="10">+ F-key</text>
+    <path d="M470,100 m-70,0 l70,-30 l70,30 l-70,30 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="470" y="96">F-key?</text><text x="470" y="110" font-size="10">SBFUNC</text>
+    <path d="M660,100 m-64,0 l64,-28 l64,28 l-64,28 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="660" y="96">authorized?</text><text x="660" y="110" font-size="10">CHKHRS</text>
+    <rect x="770" y="45" width="110" height="36" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="825" y="67">SBPGM: call</text>
+    <rect x="770" y="130" width="110" height="36" rx="8" fill="#fee2e2" stroke="#b91c1c"/><text x="825" y="152">error msg</text>
+    <g stroke="#334155" fill="none" marker-end="url(#m)">
+      <line x1="53" y1="100" x2="78" y2="100"/>
+      <line x1="200" y1="100" x2="228" y2="100"/>
+      <line x1="350" y1="100" x2="398" y2="100"/>
+      <line x1="540" y1="100" x2="594" y2="100"/><text x="567" y="90" fill="#16a34a">no</text>
+      <line x1="724" y1="90" x2="768" y2="70"/><text x="748" y="70" fill="#16a34a">yes</text>
+      <line x1="724" y1="112" x2="768" y2="140"/><text x="742" y="140" fill="#b91c1c">no</text>
+    </g>
+  </svg>
+  </div>
+
+  <h3>Procedures (subroutines)</h3>
+  <details class="proc" open>
+    <summary><span class="tag rpg">RPG</span> SBFUNC + SBF01…SBF24 <span style="font-weight:400;color:#64748b">— Function-key dispatch (grouped)</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">mainline (after WORKSTN read)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">SBHELP</span><span class="callchip">SBBACK</span><span class="callchip">SBPGM</span><span class="callchip">SBFKPG</span> …per key</div>
+      <p><b>Purpose:</b> <code class="inl">SBFUNC</code> inspects which command/attention key was pressed and <code class="inl">EXSR</code>s the matching handler <code class="inl">SBF01</code>…<code class="inl">SBF24</code>. Each <code class="inl">SBFnn</code> is a small routine (~5 lines) that maps one key to one action; grouped here because they are highly repetitive.</p>
+      <pre><span class="kw">C           SBFUNC    BEGSR</span>
+<span class="cm">*  branch on the command-key indicator that came back on</span>
+<span class="cm">*  F1  -> SBF01 (help) ... F3 -> SBF03 (exit) ... F12 -> SBF12 (back)</span>
+<span class="kw">C           SBF12     BEGSR</span>
+<span class="kw">C                     EXSR SBBACK</span>          <span class="cm">*&gt; go back one level</span>
+<span class="kw">C                     ENDSR</span></pre>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> CHKHRS <span style="font-weight:400;color:#64748b">— Authorization check</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">SBPGM</span><span class="callchip">SBMEN</span></div>
+      <div class="kv"><b>Reads:</b> <span class="callchip">MEAUT</span><span class="callchip">via HARSAN / HARSAA</span></div>
+      <p><b>Purpose:</b> Verify the current user is authorized (<i>harshaot</i>) to run the chosen program/menu before control is transferred; otherwise an error message is set and the menu is re-displayed.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBPGM <span style="font-weight:400;color:#64748b">— Launch program</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">SBMEPG</span><span class="callchip">mainline</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">CHKHRS</span><span class="callchip">SBWLOG</span><span class="callchip">CALL &lt;selected pgm&gt;</span></div>
+      <p><b>Purpose:</b> The core action — after authorization succeeds, write the log then <code class="inl">CALL</code> the selected program; on return, redisplay the menu.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBMEN / SBMEPG / SBBACK <span style="font-weight:400;color:#64748b">— Navigation</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">SBFUNC</span><span class="callchip">mainline</span></div>
+      <p><b>SBMEN</b> — read a menu definition from MEMENU and display it. <b>SBMEPG</b> — decide, for a chosen option, whether it targets a program (→ <code class="inl">SBPGM</code>) or a nested menu. <b>SBBACK</b> — pop back to the previous menu level (F12).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBWLOG · SBRSHI · SRMVHB / SRMVEN <span style="font-weight:400;color:#64748b">— Log &amp; screen build</span></summary>
+    <div class="body">
+      <div class="kv"><b>SBWLOG</b> — write an activity record to <code class="inl">MELOG</code> (user, menu, option, timestamp).</div>
+      <div class="kv"><b>SBRSHI / DDSDSP</b> — build / refresh the menu record (RMENU) and drive the display write.</div>
+      <div class="kv"><b>SRMVHB / SRMVEN</b> — load Hebrew or English text into the screen depending on the user's language.</div>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SRFRST · SRUSRO · SB99LR <span style="font-weight:400;color:#64748b">— Lifecycle</span></summary>
+    <div class="body">
+      <div class="kv"><b>SRFRST</b> — first-cycle initialization (run once).</div>
+      <div class="kv"><b>SRUSRO</b> — load the current user's record from MEUSR (language, defaults).</div>
+      <div class="kv"><b>SB99LR</b> — set the <code class="inl">LR</code> indicator and terminate cleanly on exit.</div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ UNFILE2PCC ============ -->
+<section id="file2pcc">
+  <h2><span class="emoji">📙</span> UNFILE2PCC.cl — DDS / file build utility</h2>
+
+  <h3>Program name &amp; meaning</h3>
+  <p class="lead">Program <b>UNFILE2PCC</b> — "UN[iversal] FILE to PC[C]". Given a physical file, it reverse-engineers
+  the file's DDS and builds all the artifacts the conversion pipeline needs: a temporary source PF with four members
+  (A / F / HDR / X), four PF objects, a copy of the data, and a compiled+run generated header program.</p>
+
+  <h3>Parameters &amp; variables</h3>
+  <table>
+    <tr><th>Name</th><th>Type</th><th>English</th><th>Description</th></tr>
+    <tr><td><code class="inl">&amp;FROMFILE</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>Source file (in)</td><td>The physical file to process.</td></tr>
+    <tr><td><code class="inl">&amp;FROMLIB</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>Source library (in)</td><td>Library containing the file.</td></tr>
+    <tr><td><code class="inl">&amp;RET</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 1</span></td><td>Return flag (out)</td><td>Set to <code class="inl">'1'</code> if the source PF can't be created or the file doesn't exist.</td></tr>
+    <tr><td><code class="inl">&amp;TYPE</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 6</span></td><td>Object type</td><td>Fixed to <code class="inl">'PF'</code>.</td></tr>
+    <tr><td><code class="inl">&amp;DDSFIL / &amp;DDSLIB</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>DDS source file / lib</td><td><code class="inl">QDDSSRC</code> in <code class="inl">QTEMP</code>.</td></tr>
+    <tr><td><code class="inl">&amp;DDSMBR</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>Base member name</td><td>First 5 chars of <code class="inl">&amp;FROMFILE</code> (<code class="inl">%SST(&amp;FROMFILE 1 5)</code>).</td></tr>
+    <tr><td><code class="inl">&amp;DDSMBRA/F/H/X</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>Member variants</td><td>Base + suffix <code class="inl">A</code> / <code class="inl">F</code> / <code class="inl">HDR</code> / <code class="inl">X</code>.</td></tr>
+    <tr><td><code class="inl">&amp;USER</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>Current user</td><td>Retrieved at start.</td></tr>
+    <tr><td><code class="inl">&amp;TEXT / &amp;TEXTX / &amp;MSG</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 50/50/70</span></td><td>Text / message work</td><td>Member text and error message strings.</td></tr>
+  </table>
+
+  <h4>Work-file flow (QTEMP)</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 920 250" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="c1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="20" y="90" width="120" height="60" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="80" y="112" font-weight="700">&amp;FROMFILE</text><text x="80" y="130" font-size="10">source PF</text>
+    <rect x="180" y="30" width="150" height="44" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="255" y="50" font-weight="700">QTEMP/DSPFD</text><text x="255" y="66" font-size="10">DSPFD outfile</text>
+    <rect x="180" y="90" width="150" height="44" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="255" y="110" font-weight="700">QTEMP/DSPFFD</text><text x="255" y="126" font-size="10">DSPFFD outfile</text>
+    <rect x="180" y="160" width="150" height="60" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="255" y="182" font-weight="700">QTEMP/QDDSSRC</text><text x="255" y="200" font-size="10">members A / F / HDR / X</text>
+    <rect x="400" y="90" width="150" height="60" rx="8" fill="#fef2f2" stroke="#b91c1c"/><text x="475" y="112" font-weight="700">UNCRTHDRK</text><text x="475" y="130" font-size="10">generates DDS + hdr pgm</text>
+    <rect x="600" y="30" width="140" height="44" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="670" y="50" font-weight="700">PF A/F/HDR/X</text><text x="670" y="66" font-size="10">CRTPF objects</text>
+    <rect x="600" y="100" width="140" height="44" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="670" y="120" font-weight="700">CPYF → F file</text><text x="670" y="136" font-size="10">*MAP *DROP</text>
+    <rect x="600" y="170" width="140" height="50" rx="8" fill="#ede9fe" stroke="#7c3aed"/><text x="670" y="190" font-weight="700">UNUPDHDRK</text><text x="670" y="206" font-size="10">compile + run</text>
+    <g stroke="#334155" fill="none" marker-end="url(#c1)">
+      <line x1="140" y1="110" x2="178" y2="55"/>
+      <line x1="140" y1="118" x2="178" y2="112"/>
+      <line x1="330" y1="112" x2="398" y2="118"/>
+      <line x1="330" y1="185" x2="398" y2="135"/>
+      <line x1="550" y1="110" x2="598" y2="55"/>
+      <line x1="550" y1="120" x2="598" y2="120"/>
+      <line x1="550" y1="130" x2="598" y2="190"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>Pipeline steps (labels)</h3>
+  <table>
+    <tr><th>Label</th><th>What it does</th></tr>
+    <tr><td><b>START</b></td><td>Retrieve current user; init work vars; set <code class="inl">&amp;TYPE='PF'</code>, DDS file <code class="inl">QDDSSRC</code> in <code class="inl">QTEMP</code>, member = first 5 chars of the file.</td></tr>
+    <tr><td><b>CRT_SRCF</b></td><td><code class="inl">CRTSRCPF QTEMP/QDDSSRC</code>; on error set <code class="inl">&amp;RET='1'</code> and exit.</td></tr>
+    <tr><td><b>CHK_FILE</b></td><td><code class="inl">CHKOBJ</code> the source file; if <code class="inl">CPF9801</code> (not found) send a Hebrew "file does not exist" message, set <code class="inl">&amp;RET='1'</code>, exit.</td></tr>
+    <tr><td><b>(members A/F/HDR/X)</b></td><td>For each variant: <code class="inl">CHKOBJ</code> the member, and on absence <code class="inl">ADDPFM</code> it with descriptive text.</td></tr>
+    <tr><td><b>DSPFD / DSPFFD</b></td><td>Dump file description &amp; field descriptions into <code class="inl">QTEMP/DSPFD</code> and <code class="inl">QTEMP/DSPFFD</code>.</td></tr>
+    <tr><td><b>OVRDBF1 / CRTDDS</b></td><td>Override the work files &amp; source members, then <code class="inl">CALL UNCRTHDRK</code> to generate DDS/header source. <code class="inl">DLTOVR</code> after.</td></tr>
+    <tr><td><b>CRT_DDSA/F/H/X</b></td><td><code class="inl">DLTF</code>+<code class="inl">CRTPF</code> each of the four PF objects from the generated members (<code class="inl">SIZE(*NOMAX) LVLCHK(*NO)</code>), then <code class="inl">CLRPFM</code>.</td></tr>
+    <tr><td><b>CPY_F2F</b></td><td><code class="inl">CPYF</code> the data into the "F" file (<code class="inl">MBROPT(*REPLACE) FMTOPT(*MAP *DROP)</code>).</td></tr>
+    <tr><td><b>DSPFD2 / OVRDBF2 / CMP_HDRPGM / UPDHDR</b></td><td>Describe the HDR file again, override, compile the generated <code class="inl">UNUPDHDRK</code> and run it.</td></tr>
+    <tr><td><b>EXIT</b></td><td>End program.</td></tr>
+  </table>
+  <div class="note">Uses <code class="inl">MONMSG CPF0000</code> liberally to swallow "already exists / not found" conditions, so re-running the utility is idempotent. The only errors it surfaces are the two that block progress: source-PF creation failure and a missing input file.</div>
+</section>
+
+<!-- ============ UNSNDWEB ============ -->
+<section id="sndweb">
+  <h2><span class="emoji">📘</span> UNSNDWEB.cbl — WEB screen engine</h2>
+
+  <h3>Program name &amp; meaning</h3>
+  <p class="lead">Program <b>UNSNDWEB</b> = "UN[iversal] SEND to WEB". A single COBOL program with one entry parameter
+  (a 64,412-byte buffer <code class="inl">SND-DATA</code> redefined by five parameter copybooks) and a big
+  <code class="inl">EVALUATE</code> on an <b>action code</b> <code class="inl">WB-KOD-PEULA</code>. It builds XML for
+  screens/fields/commands/grids/questionnaires/letters, exchanges it with the browser tier over data queues, and parses
+  the XML reply back into the application's screen buffer.</p>
+
+  <h3>DATA DIVISION — entry parameter &amp; overlays</h3>
+  <p>The program receives exactly one parameter, <code class="inl">SND-DATA</code>, and re-interprets it with five
+  <code class="inl">REDEFINES</code> overlays — each backed by a copybook <code class="inl">IN QWRKSRC</code>. The detailed
+  field layouts therefore live in those copybooks; what the source itself shows is the buffer and the redefines wiring.</p>
+  <table>
+    <tr><th>Field</th><th>Type / PIC</th><th>English</th><th>Description</th></tr>
+    <tr><td><code class="inl">SND-DATA</code></td><td><span class="chip t-group" style="padding:2px 8px">01 PIC X(64412)</span></td><td>Shared buffer (in/out)</td><td>The one <code class="inl">LINKAGE</code> parameter (<code class="inl">PROCEDURE DIVISION USING SND-DATA</code>). Enlarged from 29,900 to 64,412 by the K64 project.</td></tr>
+    <tr><td><code class="inl">UNSNDWEB-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNSNDWEBP</span></td><td>Screen params</td><td>Primary view: holds <code class="inl">WB-KOD-PEULA</code>, <code class="inl">WB-FILE-NAME</code>, <code class="inl">WB-RECORD-NAME</code>, <code class="inl">WB-CMD</code>, retcodes and the screen buffers.</td></tr>
+    <tr><td><code class="inl">UNQUESTP-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNQUESTP</span></td><td>Questionnaire params</td><td>Flexible screens (<i>shelon</i>). Passed to <code class="inl">UNPARTQU</code>/<code class="inl">UNSNDMEM</code>.</td></tr>
+    <tr><td><code class="inl">UNTEXTCTL-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNTEXTCTL</span></td><td>Text-control params</td><td>Text-entry control screens (T* family).</td></tr>
+    <tr><td><code class="inl">UNDLL-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNDLLPRM</span></td><td>DLL params</td><td>External DLL request/response (D* family).</td></tr>
+    <tr><td><code class="inl">UNLETTER-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNLETTERP</span></td><td>Letter params</td><td>Letters subsystem (V* family, calls <code class="inl">UNLETTER</code>).</td></tr>
+  </table>
+
+  <h4>Action-code field &amp; key switches (WORKING-STORAGE)</h4>
+  <table>
+    <tr><th>Field</th><th>Type / PIC</th><th>English</th><th>Description</th></tr>
+    <tr><td><code class="inl">WB-KOD-PEULA</code></td><td><span class="chip t-char" style="padding:2px 8px">char (in UNSNDWEBP)</span></td><td>Action code</td><td>The value the <code class="inl">EVALUATE</code> branches on. Its 88-level condition names are defined in the copybook — see the dispatch table below.</td></tr>
+    <tr><td><code class="inl">SW-END-READ</code></td><td><span class="chip t-flag" style="padding:2px 8px">PIC 9(01) · 88 ON=1 OFF=0</span></td><td>End-read switch</td><td>Loop terminator for the READ / SHELON / TEXTCTL / LETTER read cycles.</td></tr>
+    <tr><td><code class="inl">SW-FIRST-TIME</code></td><td><span class="chip t-flag" style="padding:2px 8px">PIC 9 · 88 ON=0 OFF=1</span></td><td>First-time switch</td><td>Triggers <code class="inl">Z00-INIT</code> on the first entry only.</td></tr>
+    <tr><td><code class="inl">SW-END-JOB</code></td><td><span class="chip t-flag" style="padding:2px 8px">88-level</span></td><td>End-job switch</td><td>Set when a data-queue transport error requires shutdown.</td></tr>
+    <tr><td><code class="inl">SW-TDI-ON</code></td><td><span class="chip t-flag" style="padding:2px 8px">88-level</span></td><td>Terminal/interactive mode</td><td>Distinguishes <i>tad"i</i> (green-screen) sessions from pure WEB.</td></tr>
+    <tr><td><code class="inl">ERR-MSG-KOD</code></td><td><span class="chip t-char" style="padding:2px 8px">char</span></td><td>Error-message code</td><td>Holds codes like <code class="inl">WB011</code> (invalid action), <code class="inl">WB003/WB004/WB025</code>, <code class="inl">WB800/WB900</code> (time-out). Sent by <code class="inl">I199-TIPUL-ERR</code>.</td></tr>
+    <tr><td><code class="inl">SRD-RETCOD</code></td><td><span class="chip t-char" style="padding:2px 8px">char · 88 OK / TIME-OUT</span></td><td>DTAQ return code</td><td>Result of the <code class="inl">WBSRDQ</code> data-queue send/receive.</td></tr>
+    <tr><td><code class="inl">DTAQ-DQ-DATA</code></td><td><span class="chip t-money" style="padding:2px 8px">DTAQ buffer</span></td><td>Data-queue payload</td><td>The XML written to / read from the data queue.</td></tr>
+  </table>
+
+  <h4>ERD (i) — SND-DATA and its five REDEFINES overlays</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 300" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <rect x="330" y="20" width="240" height="70" rx="10" fill="#0f172a"/><text x="450" y="46" fill="#fff" font-weight="700">SND-DATA</text><text x="450" y="66" fill="#cbd5e1" font-size="10">01 PIC X(64412)</text><text x="450" y="82" fill="#cbd5e1" font-size="10">the single LINKAGE parameter</text>
+    <g stroke="#64748b" fill="none">
+      <line x1="450" y1="90" x2="110" y2="150"/><line x1="450" y1="90" x2="280" y2="150"/>
+      <line x1="450" y1="90" x2="450" y2="150"/><line x1="450" y1="90" x2="620" y2="150"/>
+      <line x1="450" y1="90" x2="790" y2="150"/>
+    </g>
+    <rect x="30" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="105" y="172" font-weight="700">UNSNDWEB-PRM</text><text x="105" y="190" font-size="10">COPY UNSNDWEBP</text><text x="105" y="208" font-size="9.5">WB-KOD-PEULA,</text><text x="105" y="222" font-size="9.5">WB-FILE/RECORD,</text><text x="105" y="236" font-size="9.5">screen buffers</text>
+    <rect x="205" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="280" y="172" font-weight="700">UNQUESTP-PRM</text><text x="280" y="190" font-size="10">COPY UNQUESTP</text><text x="280" y="212" font-size="9.5">questionnaire</text><text x="280" y="226" font-size="9.5">(shelon)</text>
+    <rect x="375" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="450" y="172" font-weight="700">UNTEXTCTL-PRM</text><text x="450" y="190" font-size="10">COPY UNTEXTCTL</text><text x="450" y="212" font-size="9.5">text-entry</text><text x="450" y="226" font-size="9.5">controls</text>
+    <rect x="545" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="620" y="172" font-weight="700">UNDLL-PRM</text><text x="620" y="190" font-size="10">COPY UNDLLPRM</text><text x="620" y="212" font-size="9.5">external DLL</text><text x="620" y="226" font-size="9.5">request</text>
+    <rect x="715" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="790" y="172" font-weight="700">UNLETTER-PRM</text><text x="790" y="190" font-size="10">COPY UNLETTERP</text><text x="790" y="212" font-size="9.5">letters</text><text x="790" y="226" font-size="9.5">(michtavim)</text>
+    <text x="450" y="270" font-size="11" fill="#64748b">All five occupy the SAME bytes — the active overlay is chosen by the action code.</text>
+  </svg>
+  </div>
+
+  <h4>ERD (ii) — data-queue exchange &amp; the XML entities</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 920 280" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="q1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="30" y="110" width="150" height="70" rx="10" fill="#fef2f2" stroke="#b91c1c"/><text x="105" y="136" font-weight="700">UNSNDWEB</text><text x="105" y="156" font-size="10">builds / parses XML</text>
+    <rect x="260" y="40" width="180" height="46" rx="20" fill="#fef3c7" stroke="#d97706"/><text x="350" y="60" font-weight="700">outbound DTAQ</text><text x="350" y="76" font-size="10">Q10-WRITE-DTAQ</text>
+    <rect x="260" y="200" width="180" height="46" rx="20" fill="#fef3c7" stroke="#d97706"/><text x="350" y="220" font-weight="700">inbound DTAQ</text><text x="350" y="236" font-size="10">Q20-READ-DTAQ</text>
+    <rect x="520" y="110" width="170" height="70" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="605" y="136" font-weight="700">WEB tier</text><text x="605" y="154" font-size="10">WBSRDQ / WBSRVR03</text><text x="605" y="170" font-size="10">→ browser</text>
+    <rect x="740" y="30" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="54" font-size="11">&lt;screen&gt; entity</text>
+    <rect x="740" y="90" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="114" font-size="11">&lt;field&gt; entities</text>
+    <rect x="740" y="150" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="174" font-size="11">&lt;command&gt; keys</text>
+    <rect x="740" y="210" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="234" font-size="11">&lt;grid&gt; / zones</text>
+    <g stroke="#334155" fill="none" marker-end="url(#q1)">
+      <line x1="180" y1="130" x2="258" y2="70"/><text x="215" y="95" font-size="9" fill="#d97706">C50 build</text>
+      <line x1="440" y1="63" x2="518" y2="120"/>
+      <line x1="518" y1="160" x2="440" y2="220" stroke-dasharray="3 3"/>
+      <line x1="258" y1="223" x2="180" y2="165" stroke-dasharray="3 3"/><text x="215" y="205" font-size="9" fill="#d97706">B100 parse</text>
+      <line x1="690" y1="120" x2="738" y2="55"/>
+      <line x1="690" y1="130" x2="738" y2="110"/>
+      <line x1="690" y1="150" x2="738" y2="170"/>
+      <line x1="690" y1="165" x2="738" y2="225"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>Action-code dispatch (<code class="inl">000-MAIN → EVALUATE WB-KOD-PEULA</code>)</h3>
+  <p>Before the <code class="inl">EVALUATE</code>, 000-MAIN filters out stray non-screen commands (any code that is
+  <b>not</b> WRITE / SHELON / UNMAINDA / CLOSE-FROM-MENU / NOT-START-APP is coerced to
+  <code class="inl">WB-KOD-PEULA-CLOSE-FROM-WEB</code>).</p>
+  <table>
+    <tr><th>Action (WB-KOD-PEULA-*)</th><th>Handler</th><th>Behavior</th></tr>
+    <tr><td><code class="inl">WRITE</code></td><td>C00-TIPUL-WRITE</td><td>Write screen rows into the outgoing XML.</td></tr>
+    <tr><td><code class="inl">READ</code></td><td>B00-TIPUL-READ <span class="badge">loop until SW-END-READ-ON</span></td><td>Build the XML page, exchange over DTAQ, parse the reply.</td></tr>
+    <tr><td><code class="inl">FOLDER</code></td><td>G00-TIPUL-FOLDER</td><td>Folder (tab) screens: START/STOP/RESTORE/DISABLE/ENABLE/TORAN sub-codes.</td></tr>
+    <tr><td><code class="inl">SND-SHELON</code></td><td>E00-SND-SHELON <span class="badge">loop</span></td><td>Flexible questionnaire (<i>shelon</i>) screens.</td></tr>
+    <tr><td><code class="inl">END-SHELON</code></td><td>F00 / questionnaire close</td><td>End the questionnaire session.</td></tr>
+    <tr><td><code class="inl">MEMORY-FLEX</code></td><td>R180-CALL-UNSNDMEM</td><td>Build combo/list data in memory.</td></tr>
+    <tr><td><code class="inl">UNMAINDA</code></td><td>H00 / H10-TDI / H20-RTVDTAARA</td><td>Return the UNMAINDA data-area contents.</td></tr>
+    <tr><td><code class="inl">TBL-TOKEF</code></td><td>K00-TIPUL-TBL-TOKEF</td><td>Table validity dates (<i>tokef</i>): STR / END sub-codes.</td></tr>
+    <tr><td><code class="inl">CALL-DLL</code></td><td>D00 / D10…D60</td><td>Build XML for an external DLL request &amp; parse its reply.</td></tr>
+    <tr><td><code class="inl">TEXTCTL</code></td><td>T00-SND-TEXTCTL <span class="badge">loop</span></td><td>Text-entry control screens.</td></tr>
+    <tr><td><code class="inl">LETTER</code></td><td>V00-SND-LETTER <span class="badge">loop</span></td><td>Letters subsystem (calls <code class="inl">UNLETTER</code>).</td></tr>
+    <tr><td><code class="inl">ALL-OTHER</code></td><td>X00-SND-OTHER-FUNC</td><td>Other functions incl. graphs (<code class="inl">X10-SND-GRAFH</code>).</td></tr>
+    <tr><td><code class="inl">CLOSE-FROM-MENU</code></td><td>sets <code class="inl">WB900</code> / <code class="inl">WB800</code> → I199 → Z999</td><td>Controlled shutdown initiated from the menu.</td></tr>
+    <tr><td><code class="inl">NOT-START-APP</code></td><td>uses <code class="inl">WB-APL-RETCODE</code> → I199 → Z999</td><td>Application refused to start.</td></tr>
+    <tr><td><code class="inl">CLOSE-FROM-WEB</code></td><td>I199 + Z999</td><td>Shutdown initiated from the web tier.</td></tr>
+    <tr><td>(none of the above)</td><td>I199-TIPUL-ERR</td><td>Set error <code class="inl">WB011</code> and return.</td></tr>
+  </table>
+
+  <h3>Section families (170 sections, grouped)</h3>
+  <div class="grid">
+    <div class="fcard t-char"><span class="ic">📖</span><div class="code">B* (read)</div><div class="en">Read / build screen</div><div class="mn">B00 read, B17 build-XML, B100 parse-XML, B300 restore DSPF, grid/zones (~40 sections)</div></div>
+    <div class="fcard t-char"><span class="ic">✍️</span><div class="code">C* (write)</div><div class="en">Write / XML create</div><div class="mn">C00 write, C50 create-XML, C55 write-field, C57 write-cmd, C30 overlay, clear helpers</div></div>
+    <div class="fcard t-char"><span class="ic">🧩</span><div class="code">D* (DLL)</div><div class="en">DLL XML</div><div class="mn">D10 init, D20 const, D30 build, D40/D45 cmd/fld, D50 end, D60 parse</div></div>
+    <div class="fcard t-char"><span class="ic">📋</span><div class="code">E*/F* (shelon)</div><div class="en">Questionnaires</div><div class="mn">E00 send, E20 build, E60 parse, E100 save-radio, F* end</div></div>
+    <div class="fcard t-char"><span class="ic">⌨️</span><div class="code">T* (text)</div><div class="en">Text controls</div><div class="mn">T00 send, T01 init, T20 build, T24 fields, T60 parse</div></div>
+    <div class="fcard t-char"><span class="ic">✉️</span><div class="code">V* (letter)</div><div class="en">Letters</div><div class="mn">V00 send, V20 build, V23 frame, V30 call UNLETTER</div></div>
+    <div class="fcard t-money"><span class="ic">📨</span><div class="code">Q* (DTAQ)</div><div class="en">Data-queue I/O</div><div class="mn">Q00 send/recv, Q10 write, Q20 read, Q30 send-part</div></div>
+    <div class="fcard t-char"><span class="ic">🖼️</span><div class="code">M* (screen)</div><div class="en">Screen save/restore</div><div class="mn">M00 change, M01 save, M02 restore, M50 find-pgm, M80 chk-dspf</div></div>
+    <div class="fcard t-char"><span class="ic">🔀</span><div class="code">G/H/K/S/X</div><div class="en">Folders / misc</div><div class="mn">G folders, H unmainda, K tbl-tokef, S unix-screen, X other+graphs</div></div>
+    <div class="fcard t-money"><span class="ic">📞</span><div class="code">R* (calls)</div><div class="en">External programs</div><div class="mn">~40 wrappers: UNRDCOMXX, UNPART, UNFLBLD, UNCMBLD, UNLETTER, WBSRDQ…</div></div>
+    <div class="fcard t-flag"><span class="ic">🚦</span><div class="code">Z/I/L/900</div><div class="en">Init / error / stop</div><div class="mn">Z00 init, Z01 clear, I199 error, Z999 stop, L50 time, 900 hash</div></div>
+    <div class="fcard t-date"><span class="ic">🛡️</span><div class="code">R21/R22 (check)</div><div class="en">Screen authenticity</div><div class="mn">R21-SCREEN-CHECK, R22 page-reload / used-screen checks, hash</div></div>
+  </div>
+
+  <h3>Read cycle (activity — B00-TIPUL-READ)</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 940 240" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="w" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <circle cx="35" cy="60" r="12" fill="#0f172a"/>
+    <rect x="70" y="40" width="120" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="130" y="60">B300 restore</text><text x="130" y="74" font-size="9">DSPF for read</text>
+    <rect x="215" y="40" width="110" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="270" y="60">B10 init</text><text x="270" y="74" font-size="9">clear fields</text>
+    <rect x="350" y="40" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="410" y="60">B17 build XML</text><text x="410" y="74" font-size="9">fields+cmds+grid</text>
+    <rect x="495" y="40" width="130" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="560" y="60">Q00 send/recv</text><text x="560" y="74" font-size="9">via DTAQ</text>
+    <rect x="650" y="40" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="710" y="60">B100 parse XML</text><text x="710" y="74" font-size="9">read CMD/fields</text>
+    <path d="M710,160 m-70,0 l70,-28 l70,28 l-70,28 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="710" y="156">valid cmd?</text>
+    <rect x="360" y="140" width="150" height="40" rx="8" fill="#ede9fe" stroke="#7c3aed"/><text x="435" y="160">return buffer</text><text x="435" y="174" font-size="9">to WEB / app</text>
+    <circle cx="200" cy="160" r="12" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="200" cy="160" r="6" fill="#0f172a"/>
+    <g stroke="#334155" fill="none" marker-end="url(#w)">
+      <line x1="47" y1="60" x2="68" y2="60"/><line x1="190" y1="60" x2="213" y2="60"/>
+      <line x1="325" y1="60" x2="348" y2="60"/><line x1="470" y1="60" x2="493" y2="60"/>
+      <line x1="625" y1="60" x2="648" y2="60"/>
+      <line x1="710" y1="80" x2="710" y2="130"/>
+      <line x1="640" y1="160" x2="512" y2="160"/><text x="580" y="150" fill="#16a34a">yes</text>
+      <line x1="360" y1="160" x2="214" y2="160"/>
+    </g>
+    <text x="610" y="225" fill="#b91c1c" font-size="10">no / invalid → SW-END-READ-ON loops re-send</text>
+  </svg>
+  </div>
+
+  <h3>PROCEDURE DIVISION — sections</h3>
+
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 000-MAIN <span style="font-weight:400;color:#64748b">— Action dispatcher</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">program entry (WBSRVR03 / WBAPP)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">Z00-INIT</span><span class="callchip">Z01-INIT-CLALI</span><span class="callchip">R21-SCREEN-CHECK</span><span class="callchip">C00/B00/E00/D00/T00/V00/X00…</span></div>
+      <p><b>Purpose:</b> On first entry run <code class="inl">Z00-INIT</code>; coerce stray non-screen commands to CLOSE-FROM-WEB; then <code class="inl">EVALUATE</code> the action code and delegate. Loop-style actions (READ/SHELON/TEXTCTL/LETTER) are performed UNTIL <code class="inl">SW-END-READ-ON</code>.</p>
+      <pre><span class="kw">IF</span> SW-FIRST-TIME-ON  <span class="kw">PERFORM</span> Z00-INIT.
+<span class="kw">EVALUATE TRUE</span>
+  <span class="kw">WHEN</span> WB-KOD-PEULA-WRITE       <span class="kw">PERFORM</span> C00-TIPUL-WRITE
+  <span class="kw">WHEN</span> WB-KOD-PEULA-READ        <span class="kw">PERFORM</span> B00-TIPUL-READ <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-SND-SHELON  <span class="kw">PERFORM</span> E00-SND-SHELON <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-CALL-DLL    <span class="kw">PERFORM</span> D00-TIPUL-DLL
+  <span class="kw">WHEN</span> WB-KOD-PEULA-TEXTCTL     <span class="kw">PERFORM</span> T00-SND-TEXTCTL <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-LETTER      <span class="kw">PERFORM</span> V00-SND-LETTER  <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="cm">*&gt; ...folder, unmainda, tbl-tokef, memory-flex, close, other...</span>
+  <span class="kw">WHEN NOT</span> WB-KOD-PEULA-UNSNDWEB  <span class="kw">MOVE</span> 'WB011' <span class="kw">TO</span> ERR-MSG-KOD
+<span class="kw">END-EVALUATE</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B00-TIPUL-READ <span style="font-weight:400;color:#64748b">— Read / build a screen</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (READ, loop)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">B300-RESTORE-DSPF-FOR-READ</span><span class="callchip">B10-INIT-READ</span><span class="callchip">B17-BUILD-XML</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">B100-PERUK-XML</span><span class="callchip">B200-WINDOW-REST</span></div>
+      <p><b>Purpose:</b> One iteration of the read cycle — restore the display file, initialise, build XML, exchange over the DTAQ, parse the reply, and return the updated buffer. Sets <code class="inl">SW-END-READ-ON</code> to leave the loop when a valid return command arrives.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B17-BUILD-XML <span style="font-weight:400;color:#64748b">— Build the read screen XML</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">B19/B20 file-var</span><span class="callchip">B22 cmd-line</span><span class="callchip">B24 field-line</span><span class="callchip">B30 folder</span><span class="callchip">B40 grid-zones</span><span class="callchip">C50-CREATE-XML</span></div>
+      <p><b>Purpose:</b> Walk the display file's fields, command keys, folders and grid zones and emit the XML that describes the page to be shown. The largest builder in the B* family.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B100-PERUK-XML <span style="font-weight:400;color:#64748b">— Parse the reply XML</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">B110-CHECK-RETURN-CMD</span><span class="callchip">B120-TIPUL-TIME-TEST</span><span class="callchip">B130-FILL-CMD-FOR-MODAL</span><span class="callchip">R30-CALL-UNPART</span></div>
+      <p><b>Purpose:</b> Break the reply XML down (<i>peruk</i>) into command key + field values and drop them back into the screen buffer. On a bad part-return-code it moves the code to <code class="inl">ERR-MSG-KOD</code> and sets <code class="inl">SW-END-READ-ON</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B300-RESTORE-DSPF-FOR-READ <span style="font-weight:400;color:#64748b">— Restore display file</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">B310-REST-DSPF-AP</span></div>
+      <p><b>Purpose:</b> Re-establish the saved display-file image before a read. On failure moves <code class="inl">WB004</code> to <code class="inl">ERR-MSG-KOD</code> and ends the read.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> C00-TIPUL-WRITE + C50-CREATE-XML / C55 / C57 <span style="font-weight:400;color:#64748b">— Write &amp; XML build</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (WRITE)</span><span class="callchip">B17-BUILD-XML</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">C10-INIT-WRITE</span><span class="callchip">C20-OPEN-DSPF-REC</span><span class="callchip">C55-WRITE-FIELD</span><span class="callchip">C57-WRITE-CMD</span><span class="callchip">C30-OVERLAY</span><span class="callchip">C40/C70/C80 clear</span></div>
+      <p><b>Purpose:</b> Turn screen fields and command keys into XML elements one at a time (<code class="inl">C50-CREATE-XML</code>), managing overlay and clear logic. <code class="inl">C20-OPEN-DSPF-REC</code> sets <code class="inl">WB003</code> if the record can't be opened.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> Q00-SND-RCV-DTAQ / Q10-WRITE-DTAQ / Q20-READ-DTAQ <span style="font-weight:400;color:#64748b">— Data-queue transport</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">B00</span><span class="callchip">E00</span><span class="callchip">T00</span><span class="callchip">V00</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">Q10-WRITE-DTAQ</span><span class="callchip">Q20-READ-DTAQ</span><span class="callchip">R20-CALL-WBSRDQ</span><span class="callchip">R22-PAGE-RELOAD-CLR</span></div>
+      <p><b>Purpose:</b> The transport layer. <code class="inl">Q10</code> sets action <code class="inl">SND-C2P</code> and writes the XML request; <code class="inl">Q20</code> sets action <code class="inl">RCV-P2C</code> and block-reads the response — both via <code class="inl">WBSRDQ</code>. On a bad <code class="inl">SRD-RETCOD</code> it sets end-read + end-job; on a time-out it raises <code class="inl">WB900</code> (TDI) or <code class="inl">WB800</code> (WEB) and performs <code class="inl">I199</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> E00-SND-SHELON + E20-QUEST-BUILD / E60-PERUK-XML <span style="font-weight:400;color:#64748b">— Flexible questionnaire (shelon)</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (SND-SHELON, loop)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">E10-QUEST-OVERLAY</span><span class="callchip">E20-QUEST-BUILD</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">E60-PERUK-XML</span><span class="callchip">CALL UNPARTQU</span></div>
+      <p><b>Purpose:</b> Build the questionnaire XML (fields, commands, help text Hebrew/English, radio-groups), exchange it over the DTAQ, and parse the reply — the questionnaire analogue of the B* read cycle. <code class="inl">F00</code>/END-SHELON closes the session.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> D00-TIPUL-DLL (D10…D60) <span style="font-weight:400;color:#64748b">— External DLL request</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (CALL-DLL)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">D10-INIT-DLL</span><span class="callchip">D20-BUILD-XML-CONST</span><span class="callchip">D30-BUILD-XML-DLL</span><span class="callchip">D40/D45 cmd/fld</span><span class="callchip">D60-PERUK-XML-DLL</span></div>
+      <p><b>Purpose:</b> Assemble the XML that asks the browser to invoke an external DLL (constants, commands, fields), send it, and parse the response back via the <code class="inl">UNDLL-PRM</code> overlay.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> T00-SND-TEXTCTL <span style="font-weight:400;color:#64748b">— Text-entry control</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (TEXTCTL, loop)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">T01-INIT-TEXTCTL</span><span class="callchip">T20-QUEST-TEXT-BUILD</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">T60-PERUK-XML</span><span class="callchip">CALL UNPARTXT</span></div>
+      <p><b>Purpose:</b> Same build/send/parse pattern for free-text control screens; uses the <code class="inl">UNTEXTCTL-PRM</code> overlay.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> V00-SND-LETTER + V30-CALL-UNLETTER <span style="font-weight:400;color:#64748b">— Letters (michtavim)</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (LETTER, loop)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">V10-LETTER-OVERLAY</span><span class="callchip">V20-LETTER-BUILD</span><span class="callchip">V23-LETTER-MISGERET</span><span class="callchip">V30-CALL-UNLETTER</span></div>
+      <p><b>Purpose:</b> Build the letter frame (<i>misgeret</i>) and content XML, then call the external <code class="inl">UNLETTER</code> program; uses the <code class="inl">UNLETTER-PRM</code> overlay.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> H00-TIPUL-UNMAINDA <span style="font-weight:400;color:#64748b">— UNMAINDA data area</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (UNMAINDA)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">H10-TDI</span><span class="callchip">H20-RTVDTAARA-LAK-TDI</span></div>
+      <p><b>Purpose:</b> Retrieve the <code class="inl">UNMAINDA</code> data area (system/session settings) and return it in the buffer — including a TDI (terminal) path.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> K00-TIPUL-TBL-TOKEF <span style="font-weight:400;color:#64748b">— Table validity (tokef)</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (TBL-TOKEF)</span></div>
+      <p><b>Purpose:</b> Handle table validity dates — branches on the <code class="inl">TBL-TOKEF-STR</code> (start) / <code class="inl">TBL-TOKEF-END</code> (end) sub-codes.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> G00-TIPUL-FOLDER · X00-SND-OTHER-FUNC · S00-SND-UNX-SCR · M0x screens <span style="font-weight:400;color:#64748b">— Folders / graphs / unix / save-restore (grouped)</span></summary>
+    <div class="body">
+      <div class="kv"><b>G00-TIPUL-FOLDER</b> — folder/tab screens; sub-codes START/STOP/RESTORE/DISABLE/ENABLE/TORAN (+ <code class="inl">G10</code> restore).</div>
+      <div class="kv"><b>X00-SND-OTHER-FUNC / X10-SND-GRAFH</b> — miscellaneous functions incl. graph screens.</div>
+      <div class="kv"><b>S00-SND-UNX-SCR</b> — green-screen path for UNIX-only sites.</div>
+      <div class="kv"><b>M00…M80</b> — save/restore the screen image (<code class="inl">M01</code> save, <code class="inl">M02</code> restore, <code class="inl">M50</code> find/set pgm, <code class="inl">M80</code> check DSPF in UNFILExx).</div>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R*-CALL-* <span style="font-weight:400;color:#64748b">— External-program wrappers (~40, grouped)</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">the B/C/D/E/T/V/Q builders</span></div>
+      <div class="kv"><b>Calls (external pgms):</b>
+        <span class="callchip">UNRDCOMXX</span><span class="callchip">UNRDRADXX</span><span class="callchip">UNRDRAD2XX</span><span class="callchip">UNRDFILXX</span>
+        <span class="callchip">UNPART</span><span class="callchip">UNFLBLD</span><span class="callchip">UNFLCHK</span><span class="callchip">UNCMBLD</span><span class="callchip">UNCMCHK</span>
+        <span class="callchip">UNFLQUN/C/D</span><span class="callchip">UNSAVSCR</span><span class="callchip">UNLETTER</span><span class="callchip">UNSNDMEM</span>
+        <span class="callchip">UNSNDGRF</span><span class="callchip">UNSNDHLP</span><span class="callchip">UNCHKIND</span><span class="callchip">UNCHGTAG</span><span class="callchip">UNFNDORG</span>
+        <span class="callchip">UNOBLIB</span><span class="callchip">UNFLTXT</span><span class="callchip">WBSRDQ</span><span class="callchip">HASHCPTP</span></div>
+      <p><b>Purpose:</b> Thin <code class="inl">CALL</code> wrappers isolating each dependency: reading screen/command/radio/file definitions, building field/command XML, saving screens, sending letters/memos/graphs/help, and the data-queue server (<code class="inl">R20-CALL-WBSRDQ</code>). Each is 5–20 lines: set params → CALL → check return. Represented as one panel because they are structurally identical.</p>
+      <p><b>Section list:</b> R10, R11, R20 (WBSRDQ), R20-CALL-SYSYSVAL, R30, R55, R57, R58, R59, R60, R68, R70, R71, R72, R72A, R72B, R80, R85, R90, R100, R110, R120, R130, R140, R150, R160, R170, R180 (UNSNDMEM), R190, R200 (UNSNDGRF).</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R21-SCREEN-CHECK (R22 helpers) <span style="font-weight:400;color:#64748b">— Screen authenticity check</span></summary>
+    <div class="body">
+      <div class="kv"><b>Called by:</b> <span class="callchip">000-MAIN (before dispatch)</span></div>
+      <div class="kv"><b>Calls:</b> <span class="callchip">R22-SCREEN-FILE-CHK-PRC</span><span class="callchip">R22-USED-SCREEN-CHK</span><span class="callchip">900-GET-SCR-HASH</span><span class="callchip">900-CALL-HASHCPTP</span></div>
+      <p><b>Purpose:</b> Guard against a mismatched/replayed page — hashes the screen (<code class="inl">HASHCPTP</code>) and verifies it matches the expected screen file before the action is honoured. <code class="inl">R22-PAGE-RELOAD-CLR</code> clears fields on a page refresh.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> Z00-INIT / Z01-INIT-CLALI / I199-TIPUL-ERR / Z999-TIPUL-STOP-RUN <span style="font-weight:400;color:#64748b">— Control</span></summary>
+    <div class="body">
+      <div class="kv"><b>Z00-INIT</b> — first-time setup; run when <code class="inl">SW-FIRST-TIME-ON</code>.</div>
+      <div class="kv"><b>Z01-INIT-CLALI</b> — clear general-purpose (<i>klali</i>) work fields on entry.</div>
+      <div class="kv"><b>I199-TIPUL-ERR</b> — move <code class="inl">WB-KOD-PEULA</code> to <code class="inl">ERR-PARM-PEULA</code>, format and send the error (<code class="inl">ERR-MSG-KOD</code>) to the screen.</div>
+      <div class="kv"><b>Z999-TIPUL-STOP-RUN</b> — controlled shutdown / return code to the web server.</div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ SUGGESTED TESTS ============ -->
+<section id="tests">
+  <h2><span class="emoji">✅</span> Suggested tests (Cucumber / Gherkin)</h2>
+  <p class="lead">Behavioural tests keyed to the real action codes (<code class="inl">WB-KOD-PEULA-*</code>), return codes
+  (<code class="inl">WBxxx</code>, <code class="inl">SRD-RETCOD</code>) and section names. Grouped families (R* wrappers,
+  SBF01…24) are covered with a single parameterized <b>Scenario Outline</b>.</p>
+
+  <h3>UNSNDWEB.cbl</h3>
+
+  <h4>Dispatcher — 000-MAIN</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> ניתוב לפי קוד-פעולה ב-UNSNDWEB
+
+<span class="kw">תרחיש:</span> כניסה ראשונה מריצה אתחול חד-פעמי
+  <span class="kw">בהינתן</span> ש-UNSNDWEB לא נקראה בעבודה זו
+  <span class="kw">כאשר</span> היא נקראת עם WB-KOD-PEULA תקין כלשהו
+  <span class="kw">אז</span> Z00-INIT מבוצע בדיוק פעם אחת
+  <span class="kw">וגם</span>   SW-FIRST-TIME מכובה
+
+<span class="kw">תרחיש:</span> קוד פעולה לא תקין נדחה
+  <span class="kw">בהינתן</span> ש-SND-DATA נושא WB-KOD-PEULA שאינו אף אחד מהקודים המוכרים
+  <span class="kw">כאשר</span> 000-MAIN מעריך אותו
+  <span class="kw">אז</span> ERR-MSG-KOD נקבע ל-"WB011"
+  <span class="kw">וגם</span>   אף מקטע בנייה אינו מבוצע</pre>
+  <p><b>Verifies:</b> the one-time <code class="inl">Z00-INIT</code> guard and the <code class="inl">WHEN NOT WB-KOD-PEULA-UNSNDWEB</code> fall-through that sets <code class="inl">WB011</code>.</p>
+
+  <h4>Read cycle — B00 / B17 / B100</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> READ בונה XML, מחליף דרך DTAQ ומפרק את התשובה
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא WB-KOD-PEULA-READ עבור מסך קיים
+  <span class="kw">כאשר</span> B00-TIPUL-READ רץ
+  <span class="kw">אז</span> B17-BUILD-XML פולט אלמנטים של שדה, פקודה ו-grid
+  <span class="kw">וגם</span>   Q00-SND-RCV-DTAQ שולח את הבקשה ומקבל תשובה
+  <span class="kw">וגם</span>   B100-PERUK-XML ממלא את פקודת ההחזרה ואת ערכי השדות
+  <span class="kw">וגם</span>   הלולאה מסתיימת כאשר פקודת החזרה תקינה קובעת SW-END-READ-ON
+
+<span class="kw">תרחיש:</span> לא ניתן לשחזר את קובץ התצוגה
+  <span class="kw">בהינתן</span> שתמונת ה-DSPF השמורה אינה זמינה
+  <span class="kw">כאשר</span> B300-RESTORE-DSPF-FOR-READ רץ
+  <span class="kw">אז</span> ERR-MSG-KOD נקבע ל-"WB004"
+  <span class="kw">וגם</span>   SW-END-READ-ON נקבע כך שלולאת הקריאה מסתיימת</pre>
+  <p><b>Verifies:</b> the happy-path read pipeline and the <code class="inl">WB004</code> restore-failure branch that both parse and terminate correctly.</p>
+
+  <h4>Data-queue transport — Q00 / Q10 / Q20</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> שליחה/קבלה ב-DTAQ מצליחה
+  <span class="kw">בהינתן</span> ששכבת ה-web מאזינה על תור הנתונים
+  <span class="kw">כאשר</span> Q00-SND-RCV-DTAQ רץ
+  <span class="kw">אז</span> Q10 כותב עם SRD-ACTCOD-SND-C2P
+  <span class="kw">וגם</span>   Q20 קורא עם SRD-ACTCOD-RCV-P2C
+  <span class="kw">וגם</span>   SRD-RETCOD הוא OK
+
+<span class="kw">תרחיש:</span> קבלה ב-DTAQ חורגת מפסק זמן
+  <span class="kw">בהינתן</span> ששכבת ה-web אינה משיבה בתוך זמן ההמתנה
+  <span class="kw">כאשר</span> Q20-READ-DTAQ מחזיר SRD-RETCOD-TIME-OUT
+  <span class="kw">אז</span> SW-END-JOB-ON ו-SW-END-READ-ON נקבעים
+  <span class="kw">וגם</span>   ERR-MSG-KOD הוא "WB900" עבור סשן TDI, אחרת "WB800"
+  <span class="kw">וגם</span>   WB-FILE-NAME הוא "MENUCLSFM" ו-I199-TIPUL-ERR מבוצע</pre>
+  <p><b>Verifies:</b> correct action codes on each queue op and the exact time-out shutdown behaviour (WB900 vs WB800 by <code class="inl">SW-TDI</code>).</p>
+
+  <h4>Questionnaire / Text / Letter / DLL</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> בנאים מבוססי-לולאה מריצים את דפוס הבנייה/החלפה/פירוק
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> המנוע מנתב אותו
+  <span class="kw">אז</span> &lt;section&gt; מבוצע עד SW-END-READ-ON
+  <span class="kw">וגם</span>   הוא בונה XML, קורא ל-Q00-SND-RCV-DTAQ ומפרק את התשובה
+
+  <span class="kw">דוגמאות:</span>
+    | action                    | section          |
+    | WB-KOD-PEULA-SND-SHELON   | E00-SND-SHELON   |
+    | WB-KOD-PEULA-TEXTCTL      | T00-SND-TEXTCTL  |
+    | WB-KOD-PEULA-LETTER       | V00-SND-LETTER   |
+
+<span class="kw">תרחיש:</span> מסלול הלוך-ושוב של בקשת DLL
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא WB-KOD-PEULA-CALL-DLL
+  <span class="kw">כאשר</span> D00-TIPUL-DLL רץ
+  <span class="kw">אז</span> D30-BUILD-XML-DLL פולט את בקשת ה-DLL
+  <span class="kw">וגם</span>   D60-PERUK-XML-DLL מפרק את התשובה דרך שכבת ה-UNDLL-PRM</pre>
+  <p><b>Verifies:</b> the three loop-driven families share the same contract (one outline covers E00/T00/V00), plus the non-looping DLL path.</p>
+
+  <h4>Folders / UNMAINDA / TBL-TOKEF / graphs</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> מטפלים חד-פעמיים מנתבים לפי תת-קוד
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> המנוע מנתב אותו
+  <span class="kw">אז</span> &lt;section&gt; מטפל בו ללא לולאת קריאה
+
+  <span class="kw">דוגמאות:</span>
+    | action                  | section              |
+    | WB-KOD-PEULA-FOLDER     | G00-TIPUL-FOLDER     |
+    | WB-KOD-PEULA-UNMAINDA   | H00-TIPUL-UNMAINDA   |
+    | WB-KOD-PEULA-TBL-TOKEF  | K00-TIPUL-TBL-TOKEF  |
+    | WB-KOD-PEULA-ALL-OTHER  | X00-SND-OTHER-FUNC   |</pre>
+  <p><b>Verifies:</b> the folder sub-codes (START/STOP/…), data-area retrieval, table-validity STR/END and the graph/other bucket all reach their handlers.</p>
+
+  <h4>Close / shutdown paths</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> כיבוי מבוקר
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> 000-MAIN מנתב אותו
+  <span class="kw">אז</span> ERR-MSG-KOD הוא &lt;code&gt;
+  <span class="kw">וגם</span>   I199-TIPUL-ERR ולאחריו Z999-TIPUL-STOP-RUN מבוצעים
+
+  <span class="kw">דוגמאות:</span>
+    | action                          | code                |
+    | WB-KOD-PEULA-CLOSE-FROM-MENU    | WB900 or WB800      |
+    | WB-KOD-PEULA-NOT-START-APP      | WB-APL-RETCODE      |
+    | WB-KOD-PEULA-CLOSE-FROM-WEB     | (close screen)      |</pre>
+  <p><b>Verifies:</b> each close variant lands in the shared error+stop-run tail with the right code source.</p>
+
+  <h4>External-program wrappers — R* (grouped)</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> עוטף R* קורא לתוכנית החיצונית שלו ובודק את ההחזרה
+  <span class="kw">בהינתן</span> שהקורא מילא את הפרמטרים עבור &lt;program&gt;
+  <span class="kw">כאשר</span> &lt;section&gt; מבוצע
+  <span class="kw">אז</span> &lt;program&gt; נקרא (CALL) עם אותם פרמטרים
+  <span class="kw">וגם</span>   קוד החזרה שאינו OK מצוף (ERR-MSG-KOD או SW-END-READ-ON)
+
+  <span class="kw">דוגמאות:</span>
+    | section              | program    |
+    | R10-CALL-UNRDCOMXX   | UNRDCOMXX  |
+    | R20-CALL-WBSRDQ      | WBSRDQ     |
+    | R30-CALL-UNPART      | UNPART     |
+    | R180-CALL-UNSNDMEM   | UNSNDMEM   |
+    | R200-CALL-UNSNDGRF   | UNSNDGRF   |</pre>
+  <p><b>Verifies:</b> one parameterized outline stands in for all ~40 wrappers because they are structurally identical (set params → CALL → check return). The examples are representative; add rows to reach full coverage.</p>
+
+  <h4>Screen authenticity — R21-SCREEN-CHECK</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> דחיית מסך שה-hash שלו אינו תואם
+  <span class="kw">בהינתן</span> ש-hash הדף הנכנס שונה מ-hash קובץ המסך הצפוי
+  <span class="kw">כאשר</span> R21-SCREEN-CHECK רץ
+  <span class="kw">אז</span> הפעולה אינה מכובדת
+  <span class="kw">וגם</span>   מופעלת שגיאה / הצגה מחדש</pre>
+  <p><b>Verifies:</b> the anti-replay guard using <code class="inl">HASHCPTP</code> before the dispatcher acts on the buffer.</p>
+
+  <h3>M.rpg (menu)</h3>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> מנהל התפריט M
+
+<span class="kw">תרחיש:</span> בחירה מורשית מפעילה את התוכנית
+  <span class="kw">בהינתן</span> משתמש עם הרשאת MEAUT לאפשרות 5
+  <span class="kw">כאשר</span> אפשרות 5 מוזנת ולוחצים Enter
+  <span class="kw">אז</span> CHKHRS עובר
+  <span class="kw">וגם</span>   SBWLOG כותב רשומת MELOG
+  <span class="kw">וגם</span>   SBPGM קורא (CALL) לתוכנית היעד מ-MEMENU
+
+<span class="kw">תרחיש:</span> בחירה לא מורשית נחסמת
+  <span class="kw">בהינתן</span> משתמש ללא הרשאת MEAUT לאפשרות 5
+  <span class="kw">כאשר</span> אפשרות 5 מוזנת
+  <span class="kw">אז</span> CHKHRS נכשל ומוצגת הודעת שגיאה
+  <span class="kw">וגם</span>   אף תוכנית אינה נקראת (CALL) והתפריט מוצג מחדש
+
+<span class="kw">תבנית תרחיש:</span> מקשי הפונקציה מנתבים למטפל שלהם (SBF01..SBF24)
+  <span class="kw">בהינתן</span> שהתפריט מוצג
+  <span class="kw">כאשר</span> &lt;key&gt; נלחץ
+  <span class="kw">אז</span> SBFUNC מנתב אל &lt;handler&gt;
+
+  <span class="kw">דוגמאות:</span>
+    | key | handler         |
+    | F1  | SBF01 (help)    |
+    | F3  | SBF03 (exit)    |
+    | F12 | SBF12 (SBBACK)  |</pre>
+  <p><b>Verifies:</b> the authorization gate around <code class="inl">SBPGM</code> (log-then-call vs. block), and — with one outline for the repetitive <code class="inl">SBF01…SBF24</code> family — that <code class="inl">SBFUNC</code> maps each key to the right handler. Extend the Examples table for full F1–F24 coverage.</p>
+
+  <h3>UNFILE2PCC.cl</h3>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> כלי בניית DDS/קבצים UNFILE2PCC
+
+<span class="kw">תרחיש:</span> קובץ קלט חסר מחזיר שגיאה
+  <span class="kw">בהינתן</span> ש-&amp;FROMLIB/&amp;FROMFILE אינו קיים
+  <span class="kw">כאשר</span> UNFILE2PCC רץ
+  <span class="kw">אז</span> CHKOBJ מעלה CPF9801
+  <span class="kw">וגם</span>   נשלחת הודעה בעברית "הקובץ אינו קיים"
+  <span class="kw">וגם</span>   &amp;RET נקבע ל-"1"
+
+<span class="kw">תרחיש:</span> המסלול התקין בונה את כל הפריטים
+  <span class="kw">בהינתן</span> קובץ פיזי תקין
+  <span class="kw">כאשר</span> UNFILE2PCC רץ עד הסוף
+  <span class="kw">אז</span> ל-QTEMP/QDDSSRC יש חברים &lt;base&gt;A, &lt;base&gt;F, &lt;base&gt;HDR, &lt;base&gt;X
+  <span class="kw">וגם</span>   נוצרים קבצי הפלט DSPFD/DSPFFD
+  <span class="kw">וגם</span>   UNCRTHDRK נקרא וארבעת אובייקטי ה-PF נוצרים
+  <span class="kw">וגם</span>   הנתונים מועתקים לקובץ ה-F עם FMTOPT(*MAP *DROP)
+  <span class="kw">וגם</span>   UNUPDHDRK מהודר ורץ
+  <span class="kw">וגם</span>   &amp;RET ריק
+
+<span class="kw">תרחיש:</span> הרצה חוזרת היא אידמפוטנטית
+  <span class="kw">בהינתן</span> שהפריטים כבר קיימים מהרצה קודמת
+  <span class="kw">כאשר</span> UNFILE2PCC רץ שוב
+  <span class="kw">אז</span> MONMSG CPF0000 בולע את מצבי ה-"כבר קיים"
+  <span class="kw">וגם</span>   הכלי מסתיים עם &amp;RET ריק</pre>
+  <p><b>Verifies:</b> the two hard-stop error paths (source-PF create failure and missing input) plus the full artifact set and the idempotency that <code class="inl">MONMSG CPF0000</code> provides.</p>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section id="glossary">
+  <h2><span class="emoji">🔤</span> Hebrew-in-English glossary</h2>
+  <div class="two">
+    <table>
+      <tr><th>Token</th><th>Hebrew</th><th>English</th></tr>
+      <tr><td>PEULA / KOD-PEULA</td><td>פעולה</td><td>action / action code</td></tr>
+      <tr><td>TIPUL</td><td>טיפול</td><td>handling</td></tr>
+      <tr><td>SHELON</td><td>שאלון</td><td>questionnaire / flexible screen</td></tr>
+      <tr><td>PERUK (XML)</td><td>פירוק</td><td>parse / break-down</td></tr>
+      <tr><td>MISGERET</td><td>מסגרת</td><td>frame / border</td></tr>
+      <tr><td>TOKEF</td><td>תוקף</td><td>validity (date)</td></tr>
+      <tr><td>HAZAZA</td><td>הזזה</td><td>shift / scroll</td></tr>
+    </table>
+    <table>
+      <tr><th>Token</th><th>Hebrew</th><th>English</th></tr>
+      <tr><td>MASACH / MASKIM</td><td>מסך / מסכים</td><td>screen / screens</td></tr>
+      <tr><td>HARSHAOT</td><td>הרשאות</td><td>authorizations</td></tr>
+      <tr><td>KLALI</td><td>כללי</td><td>general</td></tr>
+      <tr><td>MICHTAV / MICHTAVIM</td><td>מכתב / מכתבים</td><td>letter / letters</td></tr>
+      <tr><td>SGIRA / SIYUM</td><td>סגירה / סיום</td><td>close / end</td></tr>
+      <tr><td>TDI (tad"i)</td><td>תד"י</td><td>interactive / terminal mode</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  Documentation for <b>M</b> (RPG menu) · <b>UNFILE2PCC</b> (CL DDS build) · <b>UNSNDWEB</b> (COBOL WEB engine) —
+  AS/400↔WEB portability subsystem. Sources decoded from Windows-1255 (Hebrew) &amp; ASCII. Section &amp; field names
+  verified against the source.
+</footer>
+
+</main>
+</body>
+</html>

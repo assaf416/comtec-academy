@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACM — ניהול קודי הרשאה · תיעוד מערכת</title>
+<style>
+:root{
+  --char:#3b82f6; --packed:#10b981; --zoned:#14b8a6; --binary:#8b5cf6;
+  --money:#f59e0b; --date:#ec4899; --flag:#6b7280; --group:#0f172a;
+  --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header.hero{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);color:#fff;padding:40px 32px}
+header.hero h1{margin:0 0 6px;font-size:28px}
+header.hero p{margin:4px 0;opacity:.95}
+main{max-width:1180px;margin:0 auto;padding:24px}
+/* table of contents */
+ol.toc{list-style:none;counter-reset:toc;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+ol.toc li{counter-increment:toc;margin:0}
+ol.toc a{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:inherit;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:11px 14px;transition:.15s}
+ol.toc a:hover{background:#eef2ff;border-color:#0ea5e9;box-shadow:0 1px 4px rgba(14,165,233,.15)}
+ol.toc a::before{content:counter(toc);flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#0ea5e9;color:#fff;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+ol.toc .toc-t{font-weight:700;color:#1e3a8a;font-size:14px}
+ol.toc .toc-d{color:var(--muted);font-size:12px;margin-right:6px}
+section[id]{scroll-margin-top:16px}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+h2{margin-top:0;font-size:23px;border-bottom:3px solid #0ea5e9;padding-bottom:8px;display:flex;align-items:center;gap:10px}
+h3{font-size:18px;color:#1e3a8a;margin-top:28px}
+h4{font-size:15px;color:#334155;margin:18px 0 6px}
+p.lead{font-size:16px;color:#334155}
+.emoji{font-size:22px}
+.filecard{border-left:6px solid #0ea5e9;background:#f0f9ff;border-radius:10px;padding:14px 18px;margin:10px 0}
+.filecard.rpg{border-color:#0891b2;background:#ecfeff}
+.filecard.cl{border-color:#f59e0b;background:#fffbeb}
+.filecard.cbl{border-color:#7c3aed;background:#f5f3ff}
+.filecard h4{margin:0 0 4px;font-size:16px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#f1f5f9;font-weight:600}
+tr:nth-child(even) td{background:#fafcff}
+code,pre{font-family:'Cascadia Code',Consolas,'Courier New',monospace}
+code.inl{background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#3730a3}
+pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;overflow:auto;font-size:12.5px;line-height:1.5}
+pre .cm{color:#7dd3fc}
+pre .kw{color:#f9a8d4}
+pre .st{color:#bef264}
+.gherkin{background:#052e16;color:#dcfce7;border-left:4px solid #22c55e}
+.gherkin .kw{color:#86efac;font-weight:700}
+.gherkin .cm{color:#7dd3fc}
+.testexp{font-size:13.5px;color:#334155;background:#f8fafc;border-left:3px solid #94a3b8;padding:8px 12px;border-radius:6px;margin:6px 0 18px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 12px;border-radius:20px;color:#fff;font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;background:#fff9;display:inline-block}
+.t-char{background:var(--char)} .t-packed{background:var(--packed)} .t-zoned{background:var(--zoned)}
+.t-binary{background:var(--binary)} .t-money{background:var(--money)} .t-date{background:var(--date)}
+.t-flag{background:var(--flag)} .t-group{background:var(--group)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:16px 0}
+.fcard{border-radius:10px;padding:12px 14px;color:#fff;position:relative;overflow:hidden;min-height:92px}
+.fcard .ic{position:absolute;right:10px;top:8px;font-size:26px;opacity:.35}
+.fcard .code{font-weight:700;font-size:14px;letter-spacing:.3px}
+.fcard .pic{font-family:monospace;font-size:11px;opacity:.9;background:#0003;display:inline-block;padding:1px 6px;border-radius:4px;margin-top:3px}
+.fcard .en{font-size:13px;margin-top:6px;font-weight:600}
+.fcard .mn{font-size:11.5px;opacity:.92;margin-top:2px}
+.note{background:#fffbeb;border-left:4px solid var(--money);padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+.note.blue{background:#eff6ff;border-color:#3b82f6}
+.note.green{background:#f0fdf4;border-color:#16a34a}
+.note.red{background:#fef2f2;border-color:#b91c1c}
+.proc{border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+.proc>summary{cursor:pointer;padding:13px 18px;background:#f1f5f9;font-weight:700;font-size:14.5px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.proc>summary::-webkit-details-marker{display:none}
+.proc[open]>summary{background:#e0e7ff;border-bottom:1px solid var(--line)}
+.proc .body{padding:16px 18px}
+.tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+.tag.cbl{background:#7c3aed} .tag.rpg{background:#0891b2} .tag.cl{background:#d97706}
+.callchip{display:inline-block;font-size:11px;background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:12px;margin:2px}
+.kv{font-size:13.5px;margin:4px 0}.kv b{color:#1e3a8a}
+svg{max-width:100%;height:auto;display:block;margin:10px auto}
+.diagram-wrap{overflow-x:auto;background:#fbfdff;border:1px dashed var(--line);border-radius:10px;padding:8px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+.badge{display:inline-block;background:#b91c1c;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+/* ===== RTL OVERRIDES ===== */
+body{direction:rtl;text-align:right;}
+table th,table td{text-align:right;}
+code,pre{direction:ltr;text-align:left;unicode-bidi:embed;}
+.fcard .pic{direction:ltr;}
+pre.gherkin{direction:rtl;text-align:right;unicode-bidi:plaintext;}
+svg{direction:ltr;}
+svg text{direction:ltr;unicode-bidi:plaintext;}
+.filecard{border-left:0;border-right:6px solid #0ea5e9;}
+.filecard.rpg{border-right-color:#0891b2;}
+.filecard.cl{border-right-color:#f59e0b;}
+.filecard.cbl{border-right-color:#7c3aed;}
+.note{border-left:0;border-right:4px solid var(--money);}
+.note.blue{border-right-color:#3b82f6;}
+.note.green{border-right-color:#16a34a;}
+.note.red{border-right-color:#b91c1c;}
+.testexp{border-left:0;border-right:3px solid #94a3b8;}
+.gherkin{border-left:0;border-right:4px solid #22c55e;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>ACM — מערכת ניהול קודי הרשאה</h1>
+  <p>Authorization Code Management · ספריית <code style="color:#fff">VRMOTI</code> · שרת IBM i (AS/400)</p>
+  <p>יצירה, הצפנה, אימות ובקרת תוקף של קודי הרשאה (רישיונות) עבור מערכת "התפריטים" (Menu) ומערכת ה־COLD של Comtec.</p>
+</header>
+
+<main>
+
+<!-- ============ TABLE OF CONTENTS ============ -->
+<section id="toc">
+  <h2><span class="emoji">🧭</span> תוכן העניינים</h2>
+  <ol class="toc">
+    <li><a href="#overview"><span class="toc-t">סקירה כללית</span><span class="toc-d">מה עושה המערכת ושני מסלולי העבודה</span></a></li>
+    <li><a href="#files"><span class="toc-t">קבצים ויחסים</span><span class="toc-d">טבלת הקבצים ודיאגרמת "מי מריץ את מי"</span></a></li>
+    <li><a href="#datamodel"><span class="toc-t">מודל הנתונים</span><span class="toc-d">שדות ACMACPF ותרשים ה־ERD</span></a></li>
+    <li><a href="#acmac00"><span class="toc-t">ACMAC00 · מנוע ההצפנה</span><span class="toc-d">הצפנה (E) ופענוח (D) של קוד ההרשאה</span></a></li>
+    <li><a href="#acmac02"><span class="toc-t">ACMAC02 · אימות רישיון</span><span class="toc-d">בדיקת התאמה למכונה ותוקף</span></a></li>
+    <li><a href="#acmac03"><span class="toc-t">ACMAC03 · חישוב ימים</span><span class="toc-d">מספר הימים בין שני תאריכים</span></a></li>
+    <li><a href="#mewdps"><span class="toc-t">MEWDPS · מחולל ותיק</span><span class="toc-d">מחולל הקוד הישן (RPG)</span></a></li>
+    <li><a href="#acmacmnu"><span class="toc-t">ACMACMNU · תפריט ראשי</span><span class="toc-d">בחירת פעולות 1–5 וניתוב</span></a></li>
+    <li><a href="#acmac01"><span class="toc-t">ACMAC01 · מסך הנפקה</span><span class="toc-d">קליטה, יצירת קוד ורישום ל־log</span></a></li>
+    <li><a href="#acmaclst"><span class="toc-t">ACMACLST · רשימה</span><span class="toc-d">עיון/דפדוף בסאב-פייל</span></a></li>
+    <li><a href="#acmacdtl"><span class="toc-t">ACMACDTL · מסך פרט</span><span class="toc-d">הצגת רשומה בודדת (מוגן)</span></a></li>
+    <li><a href="#acmacc"><span class="toc-t">ACMACC · אבטחת ריצה</span><span class="toc-d">אכיפת הרישיון בעליית המוצר</span></a></li>
+    <li><a href="#writers"><span class="toc-t">כותבי DB</span><span class="toc-d">ACMACWR · ACMFCWR · MOCSTUP</span></a></li>
+    <li><a href="#reports"><span class="toc-t">דוחות והתראות</span><span class="toc-d">ייצוא Excel והתראות תפוגה</span></a></li>
+    <li><a href="#shared"><span class="toc-t">שירותים משותפים</span><span class="toc-d">PRSCR01 · PRRDMSG · TBTVRD</span></a></li>
+    <li><a href="#sysutil"><span class="toc-t">כלי מערכת</span><span class="toc-d">אוספי תאריך / סידורי / LPAR / משתמש</span></a></li>
+    <li><a href="#glossary"><span class="toc-t">מילון מונחים</span><span class="toc-d">תעתיק עברי → משמעות</span></a></li>
+  </ol>
+</section>
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview">
+  <h2><span class="emoji">🗝️</span> מה עושה המערכת?</h2>
+  <p class="lead">
+    <b>ACM</b> (Authorization Code Management) היא מערכת רישוי (licensing) פנימית של Comtec.
+    היא מייצרת ל­לקוח קוד הרשאה (activation code) בן 30 תווים המקודד בתוכו את פרטי המכונה שהרישיון
+    ניתן עבורה — מספר סידורי של השרת, מספר מחיצה (LPAR), שם ספרייה, תאריך תפוגה, סוג המערכת
+    (התפריטים / COLD) וסוג ההרשאה (זמנית / קבועה). בזמן ריצה, תוכניות המוצר מפענחות את הקוד
+    ומאמתות שהוא אכן תואם למכונה הנוכחית ושהוא בתוקף — ואם לא, הן מזהירות את המשתמש או מנתקות אותו.
+  </p>
+
+  <div class="note blue">
+    <b>שתי מערכות מטרה.</b> <code class="inl">ACMCST = 'M'</code> = מערכת התפריטים (Menu),
+    <code class="inl">ACMCST = 'C'</code> = מערכת COLD, ולעיתים <code class="inl">'H'</code> (HM).
+    לקוד COLD מאולצת ספריית הנתונים <code class="inl">TFESPLOBJ</code>; קוד "כללי" למערכת התפריטים
+    משתמש בערך הספרייה <code class="inl">ALLENVALW</code>.
+  </div>
+
+  <h3>שני מסלולי עבודה עיקריים</h3>
+  <div class="two">
+    <div class="filecard cbl">
+      <h4>1 · מסלול אינטראקטיבי (הנפקה)</h4>
+      <p style="font-size:14px;margin:6px 0">מפעיל/ה מריץ/ה את <code class="inl">ACM</code> → תפריט
+      <code class="inl">ACMACMNU</code> → הנפקת קוד חדש (<code class="inl">ACMAC01</code> → הצפנה
+      ב־<code class="inl">ACMAC00</code>), עיון ברישומים (<code class="inl">ACMACLST</code> /
+      <code class="inl">ACMACDTL</code>), הפקת דוחות ל־Excel והתראות תפוגה.</p>
+    </div>
+    <div class="filecard cl">
+      <h4>2 · מסלול אבטחת ריצה (אכיפה)</h4>
+      <p style="font-size:14px;margin:6px 0">בעליית המוצר אצל הלקוח, <code class="inl">ACMACC</code>
+      קורא את קוד ההרשאה מ־<code class="inl">ACMFCPF</code>, מאמת אותו דרך
+      <code class="inl">ACMAC02</code> (המפענח ב־<code class="inl">ACMAC00</code>); אם הקוד לא תקין —
+      מפעיל תוכנית ניתוק (<code class="inl">MEE</code> לתפריטים / <code class="inl">SPSIGNOF</code>
+      ל־COLD) ומבצע <code class="inl">SIGNOFF</code>.</p>
+    </div>
+  </div>
+
+  <div class="note red">
+    <b>הערות אבטחה שראוי לשים לב אליהן (מהקוד עצמו).</b>
+    ב־<code class="inl">ACMACMNU</code> וב־<code class="inl">ACMAC01</code> קיימות סיסמאות מוטמעות
+    בקוד המקור (<code class="inl">EZ-NEW-CODE = 'com#@2021!'</code>, <code class="inl">EZ-OLD-CODE = 'Nessia'</code>).
+    ב־<code class="inl">ACMACCEDA</code> מוטמעת כתובת דוא"ל קבועה של נמען.
+    אלו נחשפו בעת התיעוד — לא נעשה בהם שינוי.
+  </div>
+</section>
+
+<!-- ============ FILES ============ -->
+<section id="files">
+  <h2><span class="emoji">📁</span> קבצים בתיקייה — מי מריץ את מי</h2>
+  <p>התיקייה מכילה 27 קובצי מקור (COBOL / CL / RPG), קובץ תצוגה (DSPF), ארבעה קובצי נתונים (DDS)
+  ושתי הגדרות שאילתה (Query/400) להפקת Excel.</p>
+
+  <table>
+    <tr><th>קובץ</th><th>סוג</th><th>שפה</th><th>תפקיד</th></tr>
+    <tr><td><b>ACM</b></td><td>מנהל (driver)</td><td>CL</td><td>מוסיף את ספריית VRMOTI ומפעיל את תפריט ACMACMNU</td></tr>
+    <tr><td><b>ACMACMNU</b></td><td>תפריט ראשי</td><td>COBOL</td><td>מסך 5250 ראשי — בחירת פעולות 1–5 (הנפקה, עיון, דוח, תפוגה)</td></tr>
+    <tr><td><b>ACMAC01</b></td><td>מסך הנפקה</td><td>COBOL</td><td>קליטת פרטי רישיון, יצירת הקוד (דרך ACMAC00) ורישום ל־log</td></tr>
+    <tr><td><b>ACMAC00</b></td><td>מנוע צופן</td><td>COBOL</td><td>הצפנה (E) ופענוח (D) של קוד ההרשאה — ליבת האלגוריתם</td></tr>
+    <tr><td><b>ACMAC02</b></td><td>אימות רישיון</td><td>COBOL</td><td>מפענח קוד ומאמת מול מספר סידורי / LPAR / ספרייה / תפוגה</td></tr>
+    <tr><td><b>ACMAC03</b></td><td>חישוב ימים</td><td>COBOL</td><td>מספר הימים בין שני תאריכים (לחישוב תוקף)</td></tr>
+    <tr><td><b>ACMACLST</b></td><td>רשימה (subfile)</td><td>COBOL</td><td>עיון/דפדוף ברשומות קודי ההרשאה, מיקוד לפי מס' לקוח</td></tr>
+    <tr><td><b>ACMACDTL</b></td><td>מסך פרט</td><td>COBOL</td><td>הצגת רשומת קוד הרשאה בודדת (מצב צפייה מוגן)</td></tr>
+    <tr><td><b>ACMACWR</b></td><td>גישת DB</td><td>COBOL</td><td>מנוע קריאה/כתיבה לקובץ ה־log ACMACLF/ACMACPF (מודל "פעולה")</td></tr>
+    <tr><td><b>ACMFCWR</b></td><td>גישת DB</td><td>COBOL</td><td>מנוע קריאה/כתיבה לקובץ הקוד הקבוע ACMFCPF</td></tr>
+    <tr><td><b>MOCSTUP</b> <span style="color:#64748b">(PGM: MCSTIO)</span></td><td>גישת DB</td><td>COBOL</td><td>רוטינת קריאה/עדכון קובץ הלקוחות MOCUST</td></tr>
+    <tr><td><b>MEWDPS</b></td><td>מחולל ותיק</td><td>RPG</td><td>מחולל הקוד הישן ("old code") — אלגוריתם ערבול + כתיבה ל־ACMACPF</td></tr>
+    <tr><td><b>ACMACC</b></td><td>אבטחת ריצה</td><td>CL</td><td>בדיקת תקינות ההרשאה בעליית המוצר; ניתוק אם לא תקין</td></tr>
+    <tr><td><b>ACMACCED</b></td><td>התראת תפוגה</td><td>CL</td><td>שולח הודעת אזהרה (עברית/אנגלית) כשנותרו ≤ 31 ימי תוקף</td></tr>
+    <tr><td><b>ACMACCEDA</b></td><td>התראת תפוגה</td><td>CL</td><td>גרסת דוא"ל — שולח מייל פעם ביום (זוכר תאריך אחרון בdata-area)</td></tr>
+    <tr><td><b>ACMACCEDC</b></td><td>דוח תפוגה</td><td>CL</td><td>אוסף קודים הפגים תוך N ימים ובונה קובץ Excel ב־IFS</td></tr>
+    <tr><td><b>ACMACR2EX</b></td><td>דוח מלא</td><td>CL</td><td>מייצא את כל קובץ הקודים ל־Excel ב־IFS</td></tr>
+    <tr><td><b>PRSCR01</b></td><td>שירות משותף</td><td>COBOL</td><td>ניהול מסכים — קלט/פלט 5250/Web בלתי-תלוי מכשיר</td></tr>
+    <tr><td><b>PRRDMSG</b></td><td>שירות משותף</td><td>COBOL</td><td>איחזור טקסט הודעות שגיאה מקובץ PRMSG (עברית/אנגלית)</td></tr>
+    <tr><td><b>TBTVRD</b></td><td>שירות משותף</td><td>COBOL</td><td>קריאת טבלאות מערכת — מנתב לגרסה צרה/רחבה (TBTVRDLF/NF)</td></tr>
+    <tr><td><b>RTVDATSYS</b></td><td>כלי מערכת</td><td>COBOL</td><td>מחזיר תאריך (YYYYMMDD) ושעת מערכת</td></tr>
+    <tr><td><b>DTSYSDMYY</b></td><td>כלי מערכת</td><td>RPG</td><td>תאריך מערכת מפוצל ליום/חודש/שנה (סדר DD/MM ישראלי)</td></tr>
+    <tr><td><b>SYRTVDYYMD</b></td><td>כלי מערכת</td><td>CL</td><td>מחזיר תאריך עבודה YYYYMMDD</td></tr>
+    <tr><td><b>SYRTVLPRN</b></td><td>כלי מערכת</td><td>CL</td><td>מחזיר מספר מחיצה (LPAR) דרך QWCRSSTS</td></tr>
+    <tr><td><b>SYRTVSRLN</b></td><td>כלי מערכת</td><td>CL</td><td>מחזיר מספר סידורי של המכונה (QSRLNBR)</td></tr>
+    <tr><td><b>SYKVZLIBH</b></td><td>כלי מערכת</td><td>CL</td><td>מאתר את הספרייה שבה נמצא קובץ נתון (RTVOBJD)</td></tr>
+    <tr><td><b>RTJOBUSR</b></td><td>כלי מערכת</td><td>CL</td><td>מחזיר את שם המשתמש ושם ה־job הנוכחי</td></tr>
+    <tr><td><b>ACMACPF / ACMACLF</b></td><td>קובץ נתונים</td><td>DDS</td><td>קובץ פיזי + לוגי (ייחודי) של רשומות קודי ההרשאה</td></tr>
+    <tr><td><b>ACMFCPF</b></td><td>קובץ נתונים</td><td>DDS</td><td>קוד הרשאה קבוע לפי סוג-מערכת + ספרייה</td></tr>
+    <tr><td><b>ACMACPFEXP / ACMACPF4EX</b></td><td>קבצי ייצוא</td><td>DDS + Query</td><td>מבני פלט להמרת התאריכים/שעות לתצוגה ולייצוא Excel</td></tr>
+    <tr><td><b>ACMACFM</b></td><td>קובץ תצוגה</td><td>DSPF</td><td>מסכי המערכת — כותרת, פקודות, הודעה, subfile רשימה, פרט</td></tr>
+  </table>
+
+  <h3>יחסים — מי מריץ את מי</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1120 560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial" font-size="12">
+    <defs>
+      <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+      </marker>
+    </defs>
+
+    <text x="20" y="24" font-weight="700" fill="#1e3a8a" font-size="14">מסלול אינטראקטיבי (הנפקה)</text>
+
+    <rect x="30" y="40" width="120" height="42" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="90" y="66" text-anchor="middle" font-weight="700">ACM (CL)</text>
+
+    <rect x="210" y="40" width="140" height="42" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="280" y="60" text-anchor="middle" font-weight="700">ACMACMNU</text>
+    <text x="280" y="75" text-anchor="middle" fill="#64748b" font-size="10">תפריט</text>
+
+    <line x1="150" y1="61" x2="208" y2="61" stroke="#475569" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="420" y="20" width="150" height="38" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="495" y="44" text-anchor="middle" font-weight="700">ACMAC01 (הנפקה)</text>
+    <rect x="420" y="70" width="150" height="38" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="495" y="94" text-anchor="middle" font-weight="700">ACMACLST (רשימה)</text>
+    <rect x="420" y="120" width="150" height="38" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="495" y="144" text-anchor="middle" font-weight="700">ACMACR2EX (דוח)</text>
+    <rect x="420" y="170" width="150" height="38" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="495" y="194" text-anchor="middle" font-weight="700">ACMACCEDC (תפוגה)</text>
+    <rect x="420" y="220" width="150" height="38" rx="8" fill="#ecfeff" stroke="#0891b2"/>
+    <text x="495" y="240" text-anchor="middle" font-weight="700">VRSAM/MEWDPS</text>
+    <text x="495" y="253" text-anchor="middle" fill="#64748b" font-size="10">קוד ישן (RPG)</text>
+
+    <line x1="350" y1="55" x2="418" y2="39" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)"/>
+    <line x1="350" y1="61" x2="418" y2="89" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)"/>
+    <line x1="350" y1="66" x2="418" y2="139" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)"/>
+    <line x1="350" y1="72" x2="418" y2="189" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)"/>
+    <line x1="350" y1="78" x2="418" y2="239" stroke="#475569" stroke-width="1.4" marker-end="url(#arr)"/>
+
+    <rect x="640" y="10" width="130" height="34" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="705" y="32" text-anchor="middle" font-weight="700">ACMAC00 (צופן)</text>
+    <rect x="640" y="52" width="130" height="34" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="705" y="74" text-anchor="middle" font-weight="700">ACMACWR (log)</text>
+    <line x1="570" y1="36" x2="638" y2="27" stroke="#475569" stroke-width="1.3" marker-end="url(#arr)"/>
+    <line x1="570" y1="42" x2="638" y2="69" stroke="#475569" stroke-width="1.3" marker-end="url(#arr)"/>
+
+    <rect x="640" y="94" width="130" height="34" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="705" y="116" text-anchor="middle" font-weight="700">ACMACDTL (פרט)</text>
+    <line x1="570" y1="89" x2="638" y2="111" stroke="#475569" stroke-width="1.3" marker-end="url(#arr)"/>
+
+    <rect x="840" y="10" width="250" height="150" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="4 3"/>
+    <text x="965" y="28" text-anchor="middle" font-weight="700" fill="#334155">שירותים משותפים</text>
+    <text x="965" y="50" text-anchor="middle">PRSCR01 · מסכים</text>
+    <text x="965" y="70" text-anchor="middle">PRRDMSG · הודעות</text>
+    <text x="965" y="90" text-anchor="middle">TBTVRD · טבלאות</text>
+    <text x="965" y="110" text-anchor="middle">RTJOBUSR · DTSYSDMYY</text>
+    <text x="965" y="130" text-anchor="middle">RTVDATSYS · MOCSTUP</text>
+    <text x="965" y="150" text-anchor="middle" fill="#64748b" font-size="10">בשימוש ACMACMNU/01/LST/DTL</text>
+    <line x1="770" y1="27" x2="838" y2="60" stroke="#94a3b8" stroke-width="1.1" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+
+    <line x1="20" y1="300" x2="1100" y2="300" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="20" y="330" font-weight="700" fill="#b91c1c" font-size="14">מסלול אבטחת ריצה (אכיפת רישיון בעליית המוצר)</text>
+
+    <rect x="30" y="350" width="140" height="42" rx="8" fill="#fee2e2" stroke="#b91c1c"/>
+    <text x="100" y="376" text-anchor="middle" font-weight="700">ACMACC (CL)</text>
+
+    <rect x="230" y="330" width="150" height="36" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="305" y="353" text-anchor="middle" font-weight="700">ACMAC02 (אימות)</text>
+    <rect x="230" y="378" width="150" height="36" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="305" y="401" text-anchor="middle" font-weight="700">ACMFCWR (קוד קבוע)</text>
+    <line x1="170" y1="366" x2="228" y2="350" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+    <line x1="170" y1="376" x2="228" y2="396" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <rect x="440" y="316" width="130" height="34" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="505" y="338" text-anchor="middle" font-weight="700">ACMAC00 (פענוח)</text>
+    <rect x="440" y="358" width="130" height="34" rx="8" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="505" y="380" text-anchor="middle" font-weight="700">SYRTVSRLN/LPRN…</text>
+    <line x1="380" y1="345" x2="438" y2="333" stroke="#475569" stroke-width="1.3" marker-end="url(#arr)"/>
+    <line x1="380" y1="351" x2="438" y2="375" stroke="#475569" stroke-width="1.3" marker-end="url(#arr)"/>
+
+    <rect x="440" y="404" width="150" height="34" rx="8" fill="#fee2e2" stroke="#b91c1c"/>
+    <text x="515" y="426" text-anchor="middle" font-weight="700">MEE / SPSIGNOF</text>
+    <line x1="100" y1="392" x2="100" y2="470" stroke="#b91c1c" stroke-width="1.3"/>
+    <line x1="100" y1="470" x2="438" y2="440" stroke="#b91c1c" stroke-width="1.3" marker-end="url(#arr)"/>
+    <text x="150" y="465" fill="#b91c1c" font-size="11">אם לא תקין → SIGNOFF</text>
+
+    <text x="640" y="360" fill="#334155" font-size="11">ACMAC02 מזמן את ACMACCED</text>
+    <text x="640" y="378" fill="#334155" font-size="11">לחישוב הימים שנותרו לתפוגה</text>
+  </svg>
+  </div>
+  <p>
+    שני גרפי קריאה נפרדים ואמיתיים (לא שרשרת אחת). למעלה — התפריט האינטראקטיבי המסתעף לפי הפעולה
+    שנבחרה. למטה — מסלול האכיפה שרץ אצל הלקוח. <b>ACMAC00</b> (הצופן) הוא הצומת המשותף לשני המסלולים:
+    הנפקה מצפינה בו, ואימות מפענח בו. השירותים המשותפים (PRSCR01, PRRDMSG, TBTVRD, RTJOBUSR ועוד)
+    נקראים כמעט מכל תוכניות ה־COBOL האינטראקטיביות.
+  </p>
+</section>
+
+<!-- ============ DATA MODEL ============ -->
+<section id="datamodel">
+  <h2><span class="emoji">🗃️</span> מודל הנתונים</h2>
+  <p>הרשומה המרכזית זהה בכל התוכניות (ACMAC00/01/02, ACMACWR, MEWDPS): פרטי הלקוח והמכונה + קוד
+  ההרשאה בן 30 התווים. להלן שדות הקובץ הפיזי <code class="inl">ACMACPF</code>.</p>
+
+  <h4>מקרא סוגי שדות</h4>
+  <div class="legend">
+    <span class="chip t-char"><span class="dot"></span>Character</span>
+    <span class="chip t-zoned"><span class="dot"></span>Zoned decimal</span>
+    <span class="chip t-packed"><span class="dot"></span>Packed / COMP-3</span>
+    <span class="chip t-date"><span class="dot"></span>תאריך / שעה</span>
+    <span class="chip t-flag"><span class="dot"></span>מתג / קוד</span>
+    <span class="chip t-money"><span class="dot"></span>קובץ / data-area</span>
+  </div>
+
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>ACMCCD</td><td>5S 0</td><td>מספר לקוח</td><td>מפתח ראשי; מזהה הלקוח</td></tr>
+    <tr><td>ACMCCN</td><td>15A</td><td>שם לקוח</td><td>שם הלקוח כפי שנקלט מקובץ הלקוחות</td></tr>
+    <tr><td>ACMCST</td><td>1A</td><td>סוג מערכת</td><td>M=תפריטים, C=COLD, H=HM</td></tr>
+    <tr><td>ACMCDD</td><td>6S 0</td><td>תאריך תצוגה (YYMMDD)</td><td>תאריך יצירת הרשומה; חלק ממפתח ה־log</td></tr>
+    <tr><td>ACMCDT</td><td>6S 0</td><td>שעת תצוגה (HHMMSS)</td><td>שעת יצירת הרשומה; חלק ממפתח ה־log</td></tr>
+    <tr><td>ACMCSN</td><td>8A</td><td>מספר סידורי</td><td>מספר סידורי של השרת (QSRLNBR) המוצפן בקוד</td></tr>
+    <tr><td>ACMCLN</td><td>2S 0</td><td>מספר LPAR</td><td>מספר המחיצה הלוגית</td></tr>
+    <tr><td>ACMCLT</td><td>1A</td><td>סוג LPAR</td><td>D=DRP, P=Production, T=Test</td></tr>
+    <tr><td>ACMCLB</td><td>10A</td><td>שם ספרייה</td><td>ספריית הנתונים המורשית (COLD→TFESPLOBJ, כללי→ALLENVALW)</td></tr>
+    <tr><td>ACMCED</td><td>8S 0</td><td>תאריך תפוגה (DDMMYYYY)</td><td>תאריך פקיעת הרישיון; ערך קבוע 99999999 = ללא תפוגה</td></tr>
+    <tr><td>ACMCAT</td><td>1A</td><td>סוג הרשאה</td><td>T=זמנית (Temporary), F=קבועה (Fixed)</td></tr>
+    <tr><td>ACMCRC</td><td>30A</td><td>קוד הרשאה</td><td>הקוד המוצפן בן 30 התווים — התוצר של ACMAC00</td></tr>
+  </table>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 1080 420" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Arial" font-size="12">
+    <defs>
+      <marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#0ea5e9"/>
+      </marker>
+    </defs>
+
+    <rect x="40" y="40" width="220" height="300" rx="8" fill="#fff" stroke="#0ea5e9" stroke-width="2"/>
+    <rect x="40" y="40" width="220" height="30" rx="8" fill="#0ea5e9"/>
+    <text x="150" y="60" text-anchor="middle" fill="#fff" font-weight="700">ACMACPF (פיזי)</text>
+    <text x="55" y="92" font-weight="700">ACMCCD · מס' לקוח [KEY]</text>
+    <text x="55" y="112" fill="#334155">ACMCCN · שם לקוח</text>
+    <text x="55" y="132" fill="#334155">ACMCST · סוג מערכת M/C</text>
+    <text x="55" y="152" fill="#334155">ACMCDD/ACMCDT · תאריך/שעה</text>
+    <text x="55" y="172" fill="#334155">ACMCSN · מס' סידורי</text>
+    <text x="55" y="192" fill="#334155">ACMCLN/ACMCLT · LPAR</text>
+    <text x="55" y="212" fill="#334155">ACMCLB · ספרייה</text>
+    <text x="55" y="232" fill="#334155">ACMCED · תפוגה</text>
+    <text x="55" y="252" fill="#334155">ACMCAT · T/F</text>
+    <text x="55" y="272" fill="#334155">ACMCRC · קוד 30 תווים</text>
+    <text x="55" y="308" fill="#64748b" font-size="10">record length: 93</text>
+
+    <rect x="360" y="60" width="200" height="120" rx="8" fill="#fff" stroke="#14b8a6" stroke-width="2"/>
+    <rect x="360" y="60" width="200" height="28" rx="8" fill="#14b8a6"/>
+    <text x="460" y="79" text-anchor="middle" fill="#fff" font-weight="700">ACMACLF (לוגי, UNIQUE)</text>
+    <text x="375" y="108" fill="#334155">key: ACMCCD +</text>
+    <text x="375" y="128" fill="#334155">ACMCDD (DESC) +</text>
+    <text x="375" y="148" fill="#334155">ACMCDT (DESC)</text>
+    <text x="375" y="170" fill="#64748b" font-size="10">מיון: אחרון-ראשון</text>
+    <line x1="360" y1="120" x2="262" y2="120" stroke="#14b8a6" stroke-width="1.6" marker-end="url(#arr2)"/>
+    <text x="272" y="112" fill="#0f766e" font-size="10">PFILE</text>
+
+    <rect x="360" y="215" width="200" height="120" rx="8" fill="#fff" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="360" y="215" width="200" height="28" rx="8" fill="#f59e0b"/>
+    <text x="460" y="234" text-anchor="middle" fill="#fff" font-weight="700">ACMFCPF (קוד קבוע)</text>
+    <text x="375" y="263" font-weight="700">ACMCST + ACMCLB [KEY]</text>
+    <text x="375" y="285" fill="#334155">ACMCRC · קוד 30 תווים</text>
+    <text x="375" y="312" fill="#64748b" font-size="10">מפתח לפי סוג-מערכת+ספרייה</text>
+
+    <rect x="650" y="60" width="220" height="120" rx="8" fill="#fff" stroke="#ec4899" stroke-width="2"/>
+    <rect x="650" y="60" width="220" height="28" rx="8" fill="#ec4899"/>
+    <text x="760" y="79" text-anchor="middle" fill="#fff" font-weight="700">ACMACPF4EX (Query)</text>
+    <text x="665" y="108" fill="#334155">ACMCDD to DSPDAT</text>
+    <text x="665" y="128" fill="#334155">ACMCDT to DSPTIM</text>
+    <text x="665" y="148" fill="#334155">ACMCED to EXPDAT</text>
+    <text x="665" y="170" fill="#64748b" font-size="10">פלט לקובץ → Excel</text>
+    <line x1="650" y1="120" x2="562" y2="120" stroke="#ec4899" stroke-width="1.6" marker-end="url(#arr2)"/>
+    <text x="567" y="112" fill="#be185d" font-size="10">ממיר</text>
+
+    <rect x="650" y="215" width="220" height="120" rx="8" fill="#0f172a"/>
+    <text x="760" y="238" text-anchor="middle" fill="#e2e8f0" font-weight="700">ACMCRC</text>
+    <text x="760" y="262" text-anchor="middle" fill="#86efac" font-size="11">30 chars · encrypted</text>
+    <text x="760" y="286" text-anchor="middle" fill="#7dd3fc" font-size="10">machine facts encoded</text>
+    <text x="760" y="308" text-anchor="middle" fill="#7dd3fc" font-size="10">by ACMAC00 (E)</text>
+    <line x1="650" y1="275" x2="562" y2="275" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arr2)"/>
+
+    <text x="900" y="120" fill="#334155" font-size="11">RUNQRY מייצא</text>
+    <text x="900" y="138" fill="#334155" font-size="11">ל־.xlsx ב־IFS</text>
+    <text x="900" y="275" fill="#334155" font-size="11">מאוחסן בשדה</text>
+    <text x="900" y="293" fill="#334155" font-size="11">ACMCRC</text>
+  </svg>
+  </div>
+  <p><b>קריאה:</b> <code class="inl">ACMACLF</code> הוא מבט לוגי ייחודי מעל <code class="inl">ACMACPF</code>
+  (מפתח לקוח + תאריך/שעה יורד, כך שהרשומה האחרונה ראשונה). <code class="inl">ACMFCPF</code> הוא קובץ
+  נפרד המחזיק את הקוד ה"קבוע" למפתח סוג-מערכת+ספרייה (זה שנקרא בזמן ריצה ע"י ACMACC). הגדרות
+  ה־Query ממירות את התאריכים/שעות המאוחסנים למחרוזות תצוגה ומייצאות לקובץ שממנו נבנה ה־Excel.</p>
+</section>
+
+<!-- ============ ACMAC00 ============ -->
+<section id="acmac00">
+  <h2><span class="tag cbl">CBL</span> ACMAC00 — מנוע ההצפנה</h2>
+  <p class="lead">ליבת האלגוריתם. פרוגרמת-משנה טהורה בזיכרון (ללא קבצים) שמקבלת פרמטר
+  <code class="inl">'E'</code> (Encrypt) או <code class="inl">'D'</code> (Decrypt): בהצפנה היא בונה
+  מחרוזת גלויה בת 30 תווים מפרטי הרישיון ומצפינה אותה לקוד ההרשאה; בפענוח היא משחזרת מהקוד את פרטי
+  הרישיון. נקראת ע"י ACMAC01 (להנפקה) וע"י ACMAC02 (לאימות).</p>
+
+  <h3>DATA DIVISION</h3>
+  <h4>פרמטרים (LINKAGE)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>LINK-PARM</td><td>X</td><td>כיוון פעולה</td><td>88 ENCRYPT='E' / DECRYPT='D'</td></tr>
+    <tr><td>LINK-SYSTEM-TYPE</td><td>X</td><td>סוג מערכת</td><td>88 MENUS='M' / COLD='C' (→ ACMCST)</td></tr>
+    <tr><td>LINK-SERIAL-NUMBER</td><td>X(8)</td><td>מספר סידורי</td><td>ACMCSN — מספר סידורי של המכונה</td></tr>
+    <tr><td>LINK-LPAR-NUMBER</td><td>99</td><td>מספר LPAR</td><td>ACMCLN</td></tr>
+    <tr><td>LINK-LIB-NAME</td><td>X(10)</td><td>שם ספרייה</td><td>ACMCLB</td></tr>
+    <tr><td>LINK-EXPIRY-DATE</td><td>9(8)</td><td>תאריך תפוגה</td><td>ACMCED, בפורמט DDMMYYYY</td></tr>
+    <tr><td>LINK-AUTH-TYPE</td><td>X</td><td>סוג הרשאה</td><td>88 TEMP='T' / FIXED='F' (ACMCAT)</td></tr>
+    <tr><td>LINK-AUTH-CODE</td><td>X(30)</td><td>קוד הרשאה</td><td>ACMCRC — פלט בהצפנה, קלט בפענוח</td></tr>
+    <tr><td>LINK-RETURN</td><td>XX</td><td>קוד חזרה</td><td>88 TAKIN(תקין)='00' / ERROR='99'</td></tr>
+  </table>
+
+  <h4>טבלאות ומשתני עבודה (WORKING-STORAGE)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>EZ-K / EZ-MOD</td><td>99 = 26 / 30</td><td>קבועי הצופן</td><td>מפתח היסט (Caesar) והיסט מודולו לצופן האותיות</td></tr>
+    <tr><td>TV-STRING-INP</td><td>X(30)</td><td>מאגר גלוי</td><td>המחרוזת בת 30 התווים לפני הצפנה; 88 מסווגים כל תו</td></tr>
+    <tr><td>TV-STRING-OUT</td><td>X(30)</td><td>מאגר מוצפן</td><td>מחרוזת התוצאה</td></tr>
+    <tr><td>TV-CRYPT-OCC(10,10)</td><td>X(10)×10</td><td>מטריצת ספרות</td><td>טבלת החלפה מסתובבת 10×10 (שורה × ספרה)</td></tr>
+    <tr><td>TV-CRYPT-STRA / -STRAS</td><td>X(26) A-Z / a-z</td><td>אלפבית גדול/קטן</td><td>טבלאות מקור צופן — הסימן (גדול/קטן) מקודד גלישה</td></tr>
+    <tr><td>TV-CRYPT-STRAH</td><td>X(26)</td><td>אלפבית עברי</td><td>קיים אך אינו בשימוש בלולאת האותיות</td></tr>
+    <tr><td>TV-CRYPT-STRSC</td><td>X(26)</td><td>תווים מיוחדים</td><td>@!#$%&amp;*()… — ממסך רווחים במחרוזת הגלויה</td></tr>
+    <tr><td>TV-CRYPT-STRN</td><td>99×26</td><td>סדר האותיות</td><td>ערכי 00..25 המשויכים לכל מיקום אלפבית</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 100-MAIN <span style="font-weight:400;color:#64748b">— בקר ראשי (E/D)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MONITOR</span></div>
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">200-CREATE-STRING</span><span class="callchip">300-ENCRYPT</span><span class="callchip">400-DECRYPT</span><span class="callchip">500-RETRIEVE-DATA</span></div>
+      <p><b>מטרה:</b> אם <code class="inl">'E'</code> — בונה את המחרוזת הגלויה ומצפין; אם <code class="inl">'D'</code> — מפענח ומשחזר את השדות.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 200-CREATE-STRING <span style="font-weight:400;color:#64748b">— פיזור השדות ל־30 תווים</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">100-MAIN</span></div>
+      <div class="kv"><b>קבוצת פסקאות:</b> <span class="callchip">200-01-SYS-TYPE</span><span class="callchip">200-02-SRL-NUM</span><span class="callchip">200-03-LPAR-NO</span><span class="callchip">200-04-LIB-NAME</span><span class="callchip">200-05-EXP-DATE</span><span class="callchip">200-06-AUT-TYPE</span><span class="callchip">200-07-BLANKS</span></div>
+      <p><b>מטרה:</b> "מפזרת" את שדות הרישיון על פני 30 העמדות לפי תמורה (permutation) קבועה —
+      סוג מערכת לעמדה 17, 8 ספרות המספר הסידורי לעמדות 3/12/5/8/24/21/2/9, שתי ספרות ה־LPAR לעמדות
+      6/15, שם הספרייה, ותאריך התפוגה (תפוגה קבועה 99999999 נכתבת כליטרל <code class="inl">'35207894'</code>).
+      לבסוף 200-07 ממלאת את הרווחים בתווים מיוחדים.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 330-ENCRYPT-STRING / 331-LOOP <span style="font-weight:400;color:#64748b">— צופן לכל תו</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">300-ENCRYPT</span></div>
+      <p><b>מטרה:</b> אות — סדר האות (0–25) מוזז ב־<code class="inl">+K−MOD</code> (26−30=−4) מודולו 26;
+      תוצאת ביניים שלילית פולטת אות קטנה, אחרת גדולה (כך מקודדים גם את גודל האות והגלישה).
+      ספרה — מוחלפת דרך המטריצה המסתובבת 10×10 לפי שורה נגזרת-עמדה.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 430-DECRYPT-STRING / 500-RETRIEVE-DATA <span style="font-weight:400;color:#64748b">— פענוח ושחזור</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">400-DECRYPT</span> · <span class="callchip">100-MAIN</span></div>
+      <div class="kv"><b>קבוצת פסקאות:</b> <span class="callchip">500-01..500-06</span> (מראה של 200-xx)</div>
+      <p><b>מטרה:</b> הצופן ההפוך — תווים מיוחדים חוזרים לרווחים; ואז השדות "מפוזרים בחזרה" (un-scatter)
+      מ־30 התווים חזרה לשדות LINK.</p>
+    </div>
+  </details>
+
+  <div class="note">
+    <b>לב האלגוריתם:</b> זהו צופן החלפה קנייני (proprietary), לא קריפטוגרפיה סטנדרטית. שלושה שלבים —
+    (1) פיזור מיקומי של השדות לפי תמורה קבועה, (2) מיסוך רווחים בתווים מיוחדים, (3) החלפת אותיות
+    בהיסט קיסר והחלפת ספרות במטריצה מסתובבת. הסנטינל <code class="inl">35207894</code> (במחרוזת הגלויה)
+    מייצג תפוגה קבועה (99999999).
+  </div>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> הצפנה ופענוח הפיכים של קוד הרשאה
+  <span class="kw">תרחיש:</span> הצפנה ואז פענוח מחזירים את אותם הנתונים
+    <span class="kw">בהינתן</span> LINK-SYSTEM-TYPE הוא "M" ו-LINK-SERIAL-NUMBER הוא "10ABCDEF"
+    <span class="kw">וגם</span> LINK-LPAR-NUMBER הוא 02 ו-LINK-LIB-NAME הוא "ALLENVALW"
+    <span class="kw">וגם</span> LINK-EXPIRY-DATE הוא 31122026 ו-LINK-AUTH-TYPE הוא "T"
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC00 עם LINK-PARM "E"
+    <span class="kw">וגם</span> אני שומר את LINK-AUTH-CODE ומריץ שוב עם LINK-PARM "D"
+    <span class="kw">אז</span> LINK-SERIAL-NUMBER הוא "10ABCDEF"
+    <span class="kw">וגם</span> LINK-EXPIRY-DATE הוא 31122026
+    <span class="kw">וגם</span> LINK-RETURN הוא "00"</pre>
+  <p class="testexp"><b>בודק:</b> את התכונה הקריטית ביותר של המנוע — שהפענוח הוא היפוך מדויק של ההצפנה
+  לכל השדות (round-trip). כשל כאן שובר גם הנפקה וגם אימות.</p>
+
+<pre class="gherkin"><span class="cm"># language: he</span>
+  <span class="kw">תרחיש:</span> הרשאה קבועה מקודדת את סנטינל התפוגה
+    <span class="kw">בהינתן</span> LINK-AUTH-TYPE הוא "F" ו-LINK-EXPIRY-DATE הוא 99999999
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC00 עם LINK-PARM "E"
+    <span class="kw">וגם</span> אני מפענח את התוצאה עם LINK-PARM "D"
+    <span class="kw">אז</span> המחרוזת הגלויה מכילה את הליטרל "35207894"
+    <span class="kw">וגם</span> LINK-EXPIRY-DATE המשוחזר הוא 99999999</pre>
+  <p class="testexp"><b>בודק:</b> שהרשאה קבועה (Fixed) ממופה לסנטינל <code class="inl">35207894</code> ובחזרה,
+  כפי ש־ACMAC02 מצפה לו בעת אכיפת רישיון קבוע.</p>
+</section>
+
+<!-- ============ ACMAC02 ============ -->
+<section id="acmac02">
+  <h2><span class="tag cbl">CBL</span> ACMAC02 — אימות רישיון</h2>
+  <p class="lead">פרוגרמת-המשנה שאוכפת את הרישיון בזמן ריצה. מקבלת קוד קיים, מפענחת אותו (דרך ACMAC00),
+  ובודקת (BDIKOT) שהמספר הסידורי, ה־LPAR, הספרייה והתפוגה המקודדים תואמים למכונה הנוכחית ועדיין
+  בתוקף. מחזירה את ספריית הנתונים ואת סטטוס התקינות.</p>
+
+  <h3>DATA DIVISION</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>LINK-CODE</td><td>X(30)</td><td>קוד קלט</td><td>LINKAGE — הקוד לאימות</td></tr>
+    <tr><td>LINK-DATA-LIB</td><td>X(10)</td><td>ספריית נתונים</td><td>LINKAGE — מוחזרת (ספרייה מפוענחת או ספרייה שגויה)</td></tr>
+    <tr><td>LINK-RETURN</td><td>XX</td><td>תוצאה</td><td>88 TAKIN='00' / ERROR='99'</td></tr>
+    <tr><td>EZ-SERIAL-NUMBER</td><td>X(8)</td><td>מס' סידורי בפועל</td><td>מ־SYRTVSRLN</td></tr>
+    <tr><td>EZ-LPAR-NUMBER</td><td>9(2)</td><td>LPAR בפועל</td><td>מ־SYRTVLPRN</td></tr>
+    <tr><td>EZ-LIB-NAME</td><td>X(10)</td><td>ספרייה בפועל</td><td>מ־SYKVZLIBH</td></tr>
+    <tr><td>EZ-UDATE-N</td><td>9(8)</td><td>תאריך היום</td><td>מ־SYRTVDYYMD, להשוואת תפוגה</td></tr>
+    <tr><td>EZ-EXP-DATE</td><td>9(8)</td><td>תפוגה (מסודר)</td><td>נבנה מחדש מ־DD/MM/YYYY המפוענח להשוואה</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 100-MAIN <span style="font-weight:400;color:#64748b">— בקר האימות</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">200-DECRYPTING</span><span class="callchip">300-RETRIEVE-DATA</span><span class="callchip">400-BDIKOT</span><span class="callchip">500-TIME-TO-EXP</span></div>
+      <p><b>מטרה:</b> מפענח → שולף נתוני מכונה בפועל → מריץ בדיקות → אם תקין, מחשב זמן שנותר לתפוגה.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 300-RETRIEVE-DATA <span style="font-weight:400;color:#64748b">— שליפת עובדות המכונה</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">SYRTVSRLN</span><span class="callchip">SYRTVLPRN</span><span class="callchip">SYKVZLIBH</span><span class="callchip">SYRTVDYYMD</span></div>
+      <p><b>מטרה:</b> שולף מספר סידורי, LPAR, ספרייה (דילוג על בדיקת ספרייה עבור ALLENVALW/TFESPLOBJ)
+      ותאריך היום.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 400-BDIKOT <span style="font-weight:400;color:#64748b">— בדיקות התאמה ותוקף</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">100-MAIN</span></div>
+      <p><b>מטרה:</b> (1) סידורי מפוענח ≠ בפועל → שגיאה; (2) LPAR מפוענח ≠ בפועל → שגיאה;
+      (3) ספרייה מפוענחת ≠ ספרייה שנפתרה → שגיאה (מחזיר את הספרייה השגויה); (4) ALLENVALW ו־TFESPLOBJ
+      עוקפים את בדיקת הספרייה; (5) הרשאה קבועה (F) חייבת תפוגה = סנטינל 35207894; (6) הרשאה זמנית (T):
+      אם היום &gt; תפוגה → פג תוקף.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 500-TIME-TO-EXP <span style="font-weight:400;color:#64748b">— חישוב תוקף שנותר</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMACCED</span></div>
+      <p><b>מטרה:</b> להרשאה זמנית, מחשב את מספר הימים שנותרו עד לתפוגה.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> אכיפת רישיון מול פרטי המכונה
+  <span class="kw">תרחיש:</span> קוד שנוצר למכונה אחרת נדחה
+    <span class="kw">בהינתן</span> המכונה בפועל היא מספר סידורי "10ABCDEF" ו-LPAR 02
+    <span class="kw">וגם</span> LINK-CODE הוצפן עבור מספר סידורי "99ZZZZZZ"
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC02
+    <span class="kw">אז</span> LINK-RETURN הוא "99"
+
+  <span class="kw">תרחיש:</span> הרשאה זמנית שפג תוקפה נדחית
+    <span class="kw">בהינתן</span> תאריך היום הוא 10/07/2026 ו-LINK-AUTH-TYPE הוא "T"
+    <span class="kw">וגם</span> תאריך התפוגה שבקוד הוא 30/06/2026
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC02
+    <span class="kw">אז</span> LINK-RETURN הוא "99"
+
+  <span class="kw">תרחיש:</span> ספריית COLD מיוחדת עוקפת את בדיקת הספרייה
+    <span class="kw">בהינתן</span> LINK-DATA-LIB המפוענח הוא "TFESPLOBJ"
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC02
+    <span class="kw">אז</span> בדיקת שם הספרייה אינה מבוצעת
+    <span class="kw">וגם</span> LINK-RETURN הוא "00"</pre>
+  <p class="testexp"><b>בודק:</b> את שלוש חוקות האכיפה המרכזיות — קשירה למכונה (סידורי/LPAR), אכיפת תפוגה
+  להרשאה זמנית, וחריגת הספריות הכלליות (ALLENVALW/TFESPLOBJ) שאמורות לעבוד בכל סביבה.</p>
+</section>
+
+<!-- ============ ACMAC03 ============ -->
+<section id="acmac03">
+  <h2><span class="tag cbl">CBL</span> ACMAC03 — חישוב מספר ימים</h2>
+  <p class="lead">כלי חשבון-תאריכים (CHISHUV-MISPAR-YAMIM): בהינתן תאריך התחלה (TCHILA) ותאריך סיום (TOM),
+  מחזיר את מספר הימים ביניהם. משמש לביטוי משך התוקף שנותר להרשאה זמנית; נקרא ממסלול התפוגה (ACMACCED).</p>
+
+  <h3>DATA DIVISION (LINKAGE)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>TAR-TCHILA (TCH-DD/MM/YY)</td><td>group</td><td>תאריך התחלה</td><td>88 REIK(ריק)='00000000'</td></tr>
+    <tr><td>TAR-TOM (TOM-DD/MM/YY)</td><td>group</td><td>תאריך סיום</td><td>88 REIK='00000000'</td></tr>
+    <tr><td>YAMIM</td><td>9(5)</td><td>תוצאה (ימים)</td><td>מספר הימים שחושב; 88 REIK='00000'</td></tr>
+    <tr><td>CI-MM</td><td>99</td><td>חודש עבודה</td><td>88 חודשי 28/29 (פבר'), 30-יום, 31-יום</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> CHISHUV-MISPAR-YAMIM / CMY-LOOP <span style="font-weight:400;color:#64748b">— לולאת ספירת הימים</span></summary>
+    <div class="body">
+      <div class="kv"><b>קבוצת פסקאות:</b> <span class="callchip">CMY-MAIN</span><span class="callchip">CMY-CHISHUV</span><span class="callchip">CMY-LOOP</span><span class="callchip">CMY-TZVIRA</span><span class="callchip">CMY-CONT</span></div>
+      <p><b>מטרה:</b> לולאה עד שהתחלה=סיום; באותה שנה+חודש מחסירה ישירות, אחרת צוברת (TZVIRA) את ימי
+      החודש הנותרים ומתגלגלת לחודש הבא (טיפול בפבר'/שנה מעוברת דרך חלוקה ב־4, וחודשי 30/31).</p>
+    </div>
+  </details>
+  <div class="note red">
+    <b>מגבלה שהתגלתה בקוד:</b> קביעת שנה מעוברת מתבצעת ב־<code class="inl">CI-TCH-YY MOD 4 = 0</code>
+    בלבד — כלל המאה (למשל 1900/2100 שאינן מעוברות) אינו מיושם.
+  </div>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> חישוב מספר הימים בין שני תאריכים
+  <span class="kw">תרחיש:</span> טווח החוצה גבול חודש כולל שנה מעוברת
+    <span class="kw">בהינתן</span> TAR-TCHILA הוא 28/02/2024 ו-TAR-TOM הוא 02/03/2024
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC03
+    <span class="kw">אז</span> YAMIM הוא 00003
+  <span class="kw">תרחיש:</span> תאריך ריק מחזיר אפס
+    <span class="kw">בהינתן</span> TAR-TCHILA הוא TAR-TCHILA-REIK
+    <span class="kw">כאשר</span> אני קורא ל-ACMAC03
+    <span class="kw">אז</span> YAMIM הוא YAMIM-REIK</pre>
+  <p class="testexp"><b>בודק:</b> חצייה נכונה של גבול חודש עם 29 בפברואר (שנה מעוברת) וטיפול בסנטינל תאריך ריק —
+  שני מקורות נפוצים לשגיאות off-by-one בחישוב ימי תוקף.</p>
+</section>
+
+<!-- ============ MEWDPS ============ -->
+<section id="mewdps">
+  <h2><span class="tag rpg">RPG</span> MEWDPS — מחולל הקוד הוותיק ("old code")</h2>
+  <p class="lead">מחולל אינטראקטיבי (RPG III עם מסך WORKSTN) מ־1992, ששודרג ב־2022–2023 לכתוב גם ל־ACMACPF.
+  קולט מספר סידורי, קוד מערכת, תאריך תפוגה, ספרייה ושם לקוח ממסך, מריץ אלגוריתם ערבול/קידוד קנייני
+  ליצירת קוד בן 30 תווים, וכותב רשומת ACMACPF. זהו מסלול "הקוד הישן" של אפשרות 1 בתפריט. כניסה
+  מוגנת בסיסמה <code class="inl">'Nessia'</code>.</p>
+
+  <h3>DATA DIVISION (שדות ומערכים נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>CHKPS</td><td>*ENTRY, 8</td><td>סיסמת כניסה</td><td>אם ≠ 'Nessia' — סיום מיידי (SETON LR)</td></tr>
+    <tr><td>VC, VC0..VC9</td><td>11 מערכי 36×1</td><td>טבלאות החלפה</td><td>אלפביתים בני 36 תווים, נטענים ב־VCTYIN</td></tr>
+    <tr><td>SRLNBR</td><td>DS 8</td><td>מספר סידורי</td><td>מספר סידורי של המכונה</td></tr>
+    <tr><td>SHITA / DIGIT</td><td>1</td><td>שיטה (סכמה)</td><td>התו הראשון של הקוד בוחר את טבלת ההחלפה</td></tr>
+    <tr><td>EXPDAT</td><td>numeric</td><td>תאריך תפוגה</td><td>סנטינל 3520789 = ללא תפוגה (אז ACMCED=99999999, סוג 'T')</td></tr>
+    <tr><td>SUM / C1 / C2</td><td>numeric</td><td>מספר ביקורת</td><td>חישוב checksum (mod 1297, mod 36)</td></tr>
+    <tr><td>LAKNAM</td><td>20</td><td>שם לקוח</td><td>LAKOACH = לקוח</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION (תת-שגרות)</h3>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> VCTYIN <span style="font-weight:400;color:#64748b">— טעינת טבלאות הצופן</span></summary>
+    <div class="body"><p><b>מטרה:</b> טוען את כל מערכי ההחלפה/תרגום VC ו־VC0..VC9 (טבלאות הצופן).</p></div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> CHKSR <span style="font-weight:400;color:#64748b">— אימות קלט</span></summary>
+    <div class="body"><p><b>מטרה:</b> בדיקות: מספר סידורי ריק (30/31), קוד מערכת תקין (32), עקביות תפוגה/סוג (33),
+    תו-שיטה בטווח 0-9/A-Z (34), שם לקוח ריק (35).</p></div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SHITAA <span style="font-weight:400;color:#64748b">— ערבול "השיטה"</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">SHITAAS</span></div>
+      <p><b>מטרה:</b> בונה רוטציה לכל עמדה מסכום ספרות המספר הסידורי, מבצע LOKUP בטבלאות VC0..VC9
+      וקורא ל־SHITAAS החיצוני, ומפיק את המחרוזת המעורבלת הסופית (RSLT).</p>
+    </div>
+  </details>
+
+  <div class="note">
+    <b>מסלול "קוד ישן" מיוחד:</b> נכתב הליטרל <code class="inl">'OLDCODE'</code> לשדה הספרייה
+    והערך <code class="inl">77777</code> למספר הלקוח. ממיר מאה: EXPMCC 1→'20', 2→'21'.
+  </div>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> יצירת קוד וותיק ורישומו
+  <span class="kw">תרחיש:</span> כניסה ללא הסיסמה נחסמת
+    <span class="kw">בהינתן</span> CHKPS אינו "Nessia"
+    <span class="kw">כאשר</span> אני מריץ את MEWDPS
+    <span class="kw">אז</span> התוכנית מסתיימת ללא כתיבת רשומת ACMACPF
+
+  <span class="kw">תרחיש:</span> סנטינל תפוגה מסמן הרשאה ללא הגבלה
+    <span class="kw">בהינתן</span> CHKPS הוא "Nessia" ו-EXPDAT הוא 3520789
+    <span class="kw">וגם</span> מספר סידורי, קוד מערכת ושם לקוח תקינים
+    <span class="kw">כאשר</span> אני מייצר את הקוד
+    <span class="kw">אז</span> נכתבת רשומת ACMACPF עם ACMCED "99999999"
+    <span class="kw">וגם</span> ACMCAT הוא "T"</pre>
+  <p class="testexp"><b>בודק:</b> את שער הסיסמה (שאסור שיאפשר יצירת קוד ללא אימות) ואת מיפוי סנטינל
+  התפוגה 3520789 → 99999999, שהוא ההסכם המשותף בין המחולל הישן למנוע ACMAC00 החדש.</p>
+</section>
+
+<!-- ============ ACMACMNU ============ -->
+<section id="acmacmnu">
+  <h2><span class="tag cbl">CBL</span> ACMACMNU — התפריט הראשי</h2>
+  <p class="lead">מסך ה־5250 הראשי (התפריט). הערת הכותרת: "תפריט ראשי — יצירת קוד הרשאה למערכת התפריטים
+  ו/או COLD". מאפשר למפעיל לבחור פעולה 1–5 ומנתב בהתאם. נקרא מ־<code class="inl">ACM</code>.</p>
+
+  <h3>DATA DIVISION (נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>SCR-OPTION</td><td>9(2)</td><td>אפשרות שנבחרה</td><td>88: 1=קוד ישן, 2=קוד חדש, 3=רשימה, 4=דוח, 5=תפוגה</td></tr>
+    <tr><td>SCR-SPECIAL-CODE</td><td>X(10)</td><td>קוד/סיסמה מיוחד</td><td>נבדק מול EZ-OLD/NEW-CODE</td></tr>
+    <tr><td>SCR-EXPIRATION-DAYS</td><td>9(2)</td><td>ימי תפוגה</td><td>פרמטר לאפשרות 5</td></tr>
+    <tr><td>EZ-NEW-CODE</td><td>X(10)='com#@2021!'</td><td>סיסמת קוד חדש</td><td>שער לאפשרויות 2 ו-4 <span class="badge">מוטמע בקוד</span></td></tr>
+    <tr><td>EZ-OLD-CODE</td><td>X(10)='Nessia'</td><td>סיסמת קוד ישן</td><td>שער לאפשרות 1 <span class="badge">מוטמע בקוד</span></td></tr>
+    <tr><td>SCR-CMD</td><td>XX</td><td>מקש/פקודה</td><td>קוד מקש-פונקציה מהמסך</td></tr>
+    <tr><td>WS-MHOZ-SHEM</td><td>X(30)</td><td>שם חברה/מחוז</td><td>נקרא דרך TBTVRD → כותרת המסך</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 100-MAIN <span style="font-weight:400;color:#64748b">— לולאת התפריט</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">110/120/130/140-HAKRANAT-*</span><span class="callchip">400-BDIKOT</span><span class="callchip">600-CALL-OPTIONS</span></div>
+      <p><b>מטרה:</b> מצייר את המסך, קורא מקשים, ומנתב: F12=צעד אחורה, F3=סיום, אחרת ולידציה+ביצוע.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 400-BDIKOT / 420-CHECK-FIELDS <span style="font-weight:400;color:#64748b">— ולידציות</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">990-CALL-PRRDMSG</span></div>
+      <p><b>מטרה:</b> בודק אפשרות/קוד/ימי תפוגה; קובע הודעות שגיאה: CP014 (אפשרות לא חוקית),
+      CP001 (שדה חובה חסר), CP018 (קוד מיוחד שגוי).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 600-CALL-OPTIONS <span style="font-weight:400;color:#64748b">— ניתוב פעולות 1–5</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">QCMDEXC→MEWDPS</span><span class="callchip">ACMAC01</span><span class="callchip">ACMACLST</span><span class="callchip">ACMACR2EX</span><span class="callchip">ACMACCEDC</span></div>
+      <p><b>קבוצת פסקאות:</b> 600-01-OCD (קוד ישן / VRSAM/MEWDPS), 600-02-REG (קוד חדש / ACMAC01),
+      600-03-LOG (רשימה / ACMACLST), 600-04-RPT (דוח / ACMACR2EX), 600-05-EXP (תפוגה / ACMACCEDC).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 010-FIELD-FOR-TITLE <span style="font-weight:400;color:#64748b">— בניית שדות הכותרת (קבוצה)</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">RTJOBUSR</span><span class="callchip">TBTVRD</span><span class="callchip">DTSYSDMYY</span></div>
+      <p><b>מטרה:</b> משיג משתמש/job (012), שם חברה מטבלה (014) ותאריך היום (016) לכותרת.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> ניתוב התפריט הראשי
+  <span class="kw">תבנית תרחיש:</span> בחירת אפשרות מפעילה את התוכנית הנכונה
+    <span class="kw">בהינתן</span> SCR-SPECIAL-CODE תקין עבור האפשרות
+    <span class="kw">כאשר</span> SCR-OPTION הוא &lt;option&gt; ואני מקיש Enter
+    <span class="kw">אז</span> נקראת התוכנית &lt;program&gt;
+
+    <span class="kw">דוגמאות:</span>
+      | option | program   |
+      | 2      | ACMAC01   |
+      | 3      | ACMACLST  |
+      | 4      | ACMACR2EX |
+      | 5      | ACMACCEDC |
+
+  <span class="kw">תרחיש:</span> אפשרות מחוץ לטווח מפיקה שגיאה
+    <span class="kw">כאשר</span> SCR-OPTION הוא 07
+    <span class="kw">אז</span> מוצגת הודעה "CP014"</pre>
+  <p class="testexp"><b>בודק:</b> את טבלת הניתוב של התפריט (כל אפשרות → התוכנית הנכונה) ואת חסימת אפשרות
+  לא-חוקית עם הודעת CP014, בעזרת תבנית תרחיש אחת המכסה את כל האפשרויות.</p>
+</section>
+
+<!-- ============ ACMAC01 ============ -->
+<section id="acmac01">
+  <h2><span class="tag cbl">CBL</span> ACMAC01 — מסך הנפקת קוד</h2>
+  <p class="lead">מסך ההוספה/יצירה האינטראקטיבי. מנהל את קובץ התצוגה ACMACFM, מאמת את פרטי הרישיון שהוזנו,
+  קורא ל־ACMAC00 להצפנה, מציג את הקוד, וכותב רשומת log דרך ACMACWR. מסורב לרוץ אם
+  <code class="inl">LINK-KEY ≠ 'com#@2021!'</code>.</p>
+
+  <h3>DATA DIVISION (נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>LINK-KEY</td><td>X(10)</td><td>סיסמת גישה</td><td>חייב = 'com#@2021!' <span class="badge">מוטמע בקוד</span></td></tr>
+    <tr><td>SCR-DETAIL</td><td>group</td><td>פרטי הזנה</td><td>שם/מס' לקוח, סידורי, LPAR#/סוג, ספרייה, תפוגה, סוג מערכת/הרשאה, קוד</td></tr>
+    <tr><td>SCR-SYS-TYPE</td><td>X</td><td>סוג מערכת</td><td>88 MENUS='M' / COLD='C'</td></tr>
+    <tr><td>SCR-AUTH-TYPE</td><td>X</td><td>סוג הרשאה</td><td>88 TEMP='T' / FIXED='F'</td></tr>
+    <tr><td>EZ-DATE</td><td>9(8)</td><td>ולידציית תאריך</td><td>88 לטווחים תקינים, פבר', חודשי 30 יום, שנה מעוברת</td></tr>
+    <tr><td>CST-* (MOCSTUP)</td><td>group</td><td>פרמטרי לקוח</td><td>פעולה/חזרה/מפתח/רשומה לקריאת קובץ הלקוחות</td></tr>
+    <tr><td>LINK-REC</td><td>group</td><td>פרמטרי ACMAC00</td><td>אותו מבנה כמו LINKAGE של ACMAC00</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 001-INIT <span style="font-weight:400;color:#64748b">— אתחול ושער סיסמה</span></summary>
+    <div class="body">
+      <p><b>מטרה:</b> אתחול; שער <code class="inl">LINK-KEY='com#@2021!'</code>; ניקוי מסך ושליפת שדות כותרת.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 420-CHECK-FIELDS <span style="font-weight:400;color:#64748b">— ולידציית שדות</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">MOCSTUP (420-01)</span><span class="callchip">990-CALL-PRRDMSG</span></div>
+      <p><b>מטרה:</b> שדות חובה, איתור לקוח, COLD→ספרייה TFESPLOBJ, FIXED→תפוגה 99999999, תקינות תאריך
+      (כולל פבר'/שנה מעוברת). שגיאות: AC001 (חובה), AC002 (תאריך), AC005 (לקוח לא נמצא), AC006 (אי-התאמה).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 600-ENCRYPTING <span style="font-weight:400;color:#64748b">— יצירת הקוד</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMAC00 (900)</span><span class="callchip">700-WRITE-ACM-LOG</span></div>
+      <p><b>מטרה:</b> טוען שדות ל־LINK, קורא ל־ACMAC00 ליצירת הקוד, מציג אותו, וכותב log. שגיאה AC003
+      (הצפנה נכשלה).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 700-WRITE-ACM-LOG / 750-CALL-ACMWRLOG <span style="font-weight:400;color:#64748b">— רישום ל־log</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">RTVDATSYS</span><span class="callchip">ACMACWR</span></div>
+      <p><b>מטרה:</b> בונה רשומת log (תאריך/שעה מ־RTVDATSYS) וכותב אותה. שגיאה AC007 (כתיבת log נכשלה).</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> הנפקת קוד הרשאה חדש
+  <span class="kw">רקע:</span>
+    <span class="kw">בהינתן</span> LINK-KEY הוא "com#@2021!"
+
+  <span class="kw">תרחיש:</span> COLD מאלץ את ספריית TFESPLOBJ
+    <span class="kw">בהינתן</span> SCR-SYS-TYPE הוא "C"
+    <span class="kw">כאשר</span> אני שומר את הרשומה
+    <span class="kw">אז</span> ACMCLB הוא "TFESPLOBJ"
+
+  <span class="kw">תרחיש:</span> הרשאה קבועה מאפסת את תאריך התפוגה לסנטינל
+    <span class="kw">בהינתן</span> SCR-AUTH-TYPE הוא "F"
+    <span class="kw">כאשר</span> אני מנפיק את הקוד
+    <span class="kw">אז</span> SCR-EXP-DATE הוא 99999999
+
+  <span class="kw">תרחיש:</span> תאריך לא תקין נדחה
+    <span class="kw">בהינתן</span> SCR-EXP-DATE הוא 31022026
+    <span class="kw">כאשר</span> אני מקיש Enter
+    <span class="kw">אז</span> מוצגת הודעה "AC002"
+
+  <span class="kw">תרחיש:</span> הנפקה מוצלחת רושמת שורת log
+    <span class="kw">בהינתן</span> כל שדות החובה תקינים
+    <span class="kw">כאשר</span> אני מנפיק את הקוד
+    <span class="kw">אז</span> נקרא ACMAC00 עם "E"
+    <span class="kw">וגם</span> נכתבת רשומה דרך ACMACWR</pre>
+  <p class="testexp"><b>בודק:</b> את חוקי העסק בהנפקה — אילוץ ספריית COLD, מיפוי הרשאה קבועה לסנטינל התפוגה,
+  דחיית תאריך לא-חוקי (31 בפברואר), ורישום ה־audit ל־log לאחר הצפנה מוצלחת.</p>
+</section>
+
+<!-- ============ ACMACLST ============ -->
+<section id="acmaclst">
+  <h2><span class="tag cbl">CBL</span> ACMACLST — רשימת קודי ההרשאה (subfile)</h2>
+  <p class="lead">תוכנית העיון/דפדוף מעל ACMACPF. מציגה 13 שורות בכל עמוד (פורמט RLISTACML), מאפשרת מיקוד
+  (position) לפי מספר לקוח, גלילה מעלה/מטה, וכניסה לצפייה ברשומה בודדת (אפשרות 5 → ACMACDTL).
+  כל גישת ה־DB דרך ACMACWR וכל גישת המסך דרך PRSCR01.</p>
+
+  <h3>DATA DIVISION (נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>SCR-MK-CUST-ID</td><td>9(5)</td><td>מיקוד למס' לקוח</td><td>שדה בקרה CNUMK; אם ≠ 0 ממקם מחדש את הרשימה</td></tr>
+    <tr><td>SCR-LIN (OCCURS 13)</td><td>group</td><td>13 שורות subfile</td><td>לכל שורה: תפוגה, LPAR, סוג הרשאה/מערכת, תאריך/שעה, שם ומס' לקוח, אפשרות</td></tr>
+    <tr><td>SCR-OPT</td><td>X</td><td>אפשרות שורה</td><td>88 DISPLAY='5' (צפייה); ריק=ללא פעולה</td></tr>
+    <tr><td>PR-PEULA / PR-RETURN</td><td>99 / X(2)</td><td>פעולה/חזרה ל־ACMACWR</td><td>קודי פעולה 0–15; חזרה 00 תקין / 02 EOF …</td></tr>
+    <tr><td>EZ-TOP-PAGE / EZ-SOF-PAGE</td><td>group</td><td>עוגני עמוד</td><td>מפתחות ראש-עמוד וסוף-עמוד לגלילה</td></tr>
+    <tr><td>SW-LAST-ROLL</td><td>9</td><td>כיוון גלילה אחרון</td><td>1=מעלה, 2=מטה</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> A00-MAIN <span style="font-weight:400;color:#64748b">— בקר המחזור</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">D00-SCR</span><span class="callchip">M00-ROLLUP</span><span class="callchip">L00-ROLLDOWN</span><span class="callchip">P00-CHK-MIKUD</span><span class="callchip">C00-CHK-AND-TIPUL-OPTION</span></div>
+      <p><b>מטרה:</b> מציג מסך, מטפל ב־F3/F12 (סיום), קובץ ריק, גלילה מעלה/מטה, מיקוד, וטיפול באפשרויות שורה.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> C00-CHK-AND-TIPUL-OPTION <span style="font-weight:400;color:#64748b">— טיפול באפשרויות (קבוצה)</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">C10-CHK-OPT</span><span class="callchip">C150-TIPUL-DETAIL</span><span class="callchip">R10-CALL-ACMACDTL</span></div>
+      <p><b>מטרה:</b> לולאה K=1..13; שורה עם אפשרות '5' → בונה מפתח (המרת תאריך DMY→YMD) וקורא ל־ACMACDTL;
+      אפשרות לא-חוקית → שגיאה AC008.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> משפחת D00 — הקרנת מסך <span style="font-weight:400;color:#64748b">— D10/D20/D30/D40</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">R95-PRSCR01</span></div>
+      <p><b>מטרה (קבוצה):</b> D10 כותרת (KOTACML), D20 שורת פקודות (CMDACML), D30 שורת הודעה (MSGER),
+      D40 כתיבה+קריאה של ה־subfile (RLISTACML).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> משפחות E00 / M00 / L00 — מילוי וגלילה <span style="font-weight:400;color:#64748b">— עמוד קדימה/מעלה/מטה</span></summary>
+    <div class="body">
+      <p><b>מטרה (קבוצות):</b> E00 ממקם וממלא עמוד קדימה (E40/E45/E48/E60); M00-ROLLUP מוצא רשומה ראשונה
+      של העמוד הבא (start-greater+read-next; גבול AC009); L00-ROLLDOWN ממלא עמוד אחורה (read-prior;
+      גבול AC010).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> עוטפי I/O — I20/I22/I50/I71/I72 + R90/R95 <span style="font-weight:400;color:#64748b">— גישת DB/מסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMACWR (R90)</span><span class="callchip">PRSCR01 (R95)</span></div>
+      <p><b>מטרה (קבוצה):</b> כל עוטף I2x/I5x/I7x קובע קוד פעולה (PR-PEULA) וקורא ל־R90-CALL-ACMACWR;
+      R95-PRSCR01 היא כל גישת המסך.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> משפחת DT2TRN — המרות תאריך <span style="font-weight:400;color:#64748b">— copybook רדום (~40 section)</span></summary>
+    <div class="body">
+      <p><b>מטרה (קבוצה):</b> ספריית המרות תאריך משותפת (DMY/MDY/YMD ב־6/7/8 ספרות). בתוכנית זו מופעל
+      בפועל רק <code class="inl">DT2TRN-YMD-6-TO-DMY-6</code> (ב־K00); השאר קוד copybook רדום שנכלל אך
+      אינו נקרא.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> עיון ברשימת קודי ההרשאה
+  <span class="kw">תרחיש:</span> אפשרות 5 על שורה פותחת את מסך הפרט
+    <span class="kw">בהינתן</span> מוצג עמוד רשומות
+    <span class="kw">כאשר</span> אני מזין "5" בשורה 3 ומקיש Enter
+    <span class="kw">אז</span> נקרא ACMACDTL עם PRM-PEULA "5" ומפתח השורה
+
+  <span class="kw">תרחיש:</span> אפשרות לא חוקית מפיקה שגיאה
+    <span class="kw">כאשר</span> אני מזין "9" בשורה כלשהי
+    <span class="kw">אז</span> מוצגת הודעה "AC008"
+
+  <span class="kw">תרחיש:</span> גלילה מעבר לסוף הקובץ נעצרת בהודעה
+    <span class="kw">בהינתן</span> מוצג העמוד האחרון
+    <span class="kw">כאשר</span> אני מקיש Roll Up
+    <span class="kw">אז</span> מוצגת הודעה "AC009"</pre>
+  <p class="testexp"><b>בודק:</b> את מנגנון הבחירה (5=צפייה מנתבת ל־ACMACDTL), אימות קוד האפשרות (AC008),
+  וגבולות הגלילה של ה־subfile (AC009 בסוף הקובץ) — הליבה ההתנהגותית של מסך העיון.</p>
+</section>
+
+<!-- ============ ACMACDTL ============ -->
+<section id="acmacdtl">
+  <h2><span class="tag cbl">CBL</span> ACMACDTL — מסך פרט הרשומה</h2>
+  <p class="lead">מציג רשומת ACMACPF בודדת. במסלול הנוכחי נקרא מ־ACMACLST כצופה בלבד
+  (<code class="inl">LINK-PEULA='5'</code>), עם כל השדות מוגנים (מצב תצוגה). קורא את הרשומה בקריאה
+  אקראית דרך ACMACWR ומציג בפורמט RDTLACML.</p>
+
+  <h3>DATA DIVISION (LINKAGE + נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>LINK-PEULA</td><td>X</td><td>פעולה מהקורא</td><td>88 DISPLAY='5' (מצב תצוגה)</td></tr>
+    <tr><td>LINK-KEY</td><td>group</td><td>מפתח רשומה</td><td>מס' לקוח + תאריך + שעה</td></tr>
+    <tr><td>LINK-BACK</td><td>X(2)</td><td>חזרה לקורא</td><td>88 TAKIN='00' / ERR='01' / CLOSE='03' / BACK='12'</td></tr>
+    <tr><td>SCR-DETAIL</td><td>group</td><td>שדות מסך הפרט</td><td>שם/מס' לקוח, תאריך/שעה, סוג מערכת, סידורי, LPAR, ספרייה, תפוגה, סוג הרשאה, קוד</td></tr>
+    <tr><td>IN-PROTECT (98)</td><td>indicator</td><td>הגנת שדות</td><td>מודלק במצב תצוגה כדי לנעול את כל השדות</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 100-MAIN <span style="font-weight:400;color:#64748b">— מחזור התצוגה</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">110/120/130/140-HAKRANAT-*</span><span class="callchip">150-PRSCR01</span></div>
+      <p><b>מטרה:</b> כותב כותרת/פקודות/הודעה/פרט; F3/F12 מסיימים; במצב תצוגה — אינטראקציה אחת ואז יציאה.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 001-INIT / 050-FROM-FILE-TO-SCREEN <span style="font-weight:400;color:#64748b">— טעינת הרשומה למסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">880-READ-FILE → ACMACWR</span></div>
+      <p><b>מטרה:</b> מעתיק LINK-KEY→PARM-KEY, קורא את הרשומה (read-random); אם לא נמצאה — סיום;
+      אחרת ממפה כל שדה ACMFD-* לשדות המסך (המרת תאריך YMD-6→DMY-6).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 020-INDICATOR-ON <span style="font-weight:400;color:#64748b">— הגנת שדות בתצוגה</span></summary>
+    <div class="body"><p><b>מטרה:</b> במצב תצוגה מדליק IN-DSP (90) ו-IN-PROTECT (98) — נועל את כל השדות לקריאה בלבד.</p></div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> הצגת רשומת קוד הרשאה בודדת
+  <span class="kw">תרחיש:</span> טעינה והצגה של רשומה קיימת במצב מוגן
+    <span class="kw">בהינתן</span> LINK-PEULA הוא "5" ו-LINK-KEY מצביע על רשומה קיימת
+    <span class="kw">כאשר</span> אני קורא ל-ACMACDTL
+    <span class="kw">אז</span> שדות המסך מוצגים מתוך הרשומה
+    <span class="kw">וגם</span> IN-PROTECT הוא "1"
+
+  <span class="kw">תרחיש:</span> מפתח לא קיים מסיים מיד
+    <span class="kw">בהינתן</span> LINK-KEY מצביע על רשומה שאינה קיימת
+    <span class="kw">כאשר</span> אני קורא ל-ACMACDTL
+    <span class="kw">אז</span> התוכנית מסתיימת ללא הצגת פרטים</pre>
+  <p class="testexp"><b>בודק:</b> שהרשומה נטענת ומוצגת מוגנת (קריאה בלבד) במצב תצוגה, ושמפתח חסר מטופל
+  בחן מבלי לקרוס — התנהגות ה־viewer שאליו ACMACLST מנתב.</p>
+</section>
+
+<!-- ============ ACMACC ============ -->
+<section id="acmacc">
+  <h2><span class="tag cl">CL</span> ACMACC — אבטחת ריצה (אכיפת רישיון)</h2>
+  <p class="lead">רץ בעליית המוצר אצל הלקוח ומוודא שקוד ההרשאה תקין; אם לא — מזהיר ומנתק. מקבל את מערכת
+  המטרה (<code class="inl">&amp;SYS</code>), את ספריית התוכניות (<code class="inl">&amp;PROGLB</code>)
+  ומחזיר קוד חזרה.</p>
+
+  <h3>DATA DIVISION (DCL נבחרים)</h3>
+  <table>
+    <tr><th>שדה</th><th>סוג</th><th>משמעות</th><th>תיאור</th></tr>
+    <tr><td>&amp;SYS</td><td>*CHAR 1</td><td>מערכת</td><td>'C'=COLD, 'M'=תפריטים</td></tr>
+    <tr><td>&amp;PROGLB</td><td>*CHAR 6</td><td>ספריית תוכניות</td><td>ספריית תוכניות/קבצי ACM (מתווספת ל־*LIBL)</td></tr>
+    <tr><td>&amp;AUTHCODE</td><td>*CHAR 30</td><td>קוד הרשאה</td><td>נשלף דרך ACMFCWR, מאומת ע"י ACMAC02</td></tr>
+    <tr><td>&amp;AUTHKEY</td><td>*CHAR 11</td><td>מפתח רשומה</td><td>&amp;SYS ‖ ספריית הנתונים</td></tr>
+    <tr><td>&amp;RET</td><td>*CHAR 2</td><td>קוד חזרה</td><td>'00'=תקין</td></tr>
+    <tr><td>&amp;NEWVER</td><td>*CHAR 1</td><td>גרסה חדשה</td><td>0=ישן (דילוג בדיקה), 1=חדש; מ־ACMACDAN</td></tr>
+  </table>
+
+  <h3>PROCEDURE DIVISION (שלבים)</h3>
+  <details class="proc">
+    <summary><span class="tag cl">CL</span> CHK_DTALIB / CHK_AUTEXT <span style="font-weight:400;color:#64748b">— איתור ספרייה ורשומת הרשאה</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMFCWR</span><span class="callchip">SYKVZLIBH</span></div>
+      <p><b>מטרה:</b> קובע את ספריית הנתונים לפי המערכת ('C'→TFESPLOBJ; 'M'→ALLENVALW+ACMFCWR), ומאתר
+      את הרשומה הרלוונטית בקובץ ההרשאות.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag cl">CL</span> CHK_SEC / SEC_ERROR <span style="font-weight:400;color:#64748b">— אימות וניתוק</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMAC02</span><span class="callchip">MEE / SPSIGNOF</span><span class="callchip">SIGNOFF</span></div>
+      <p><b>מטרה:</b> מאמת את הקוד; &amp;RET='00' → יציאה (מורשה). אחרת — מפעיל תוכנית ניתוק (MEE לתפריטים /
+      SPSIGNOF ל־COLD) ומבצע SIGNOFF.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> אכיפת רישיון בעליית המוצר
+  <span class="kw">תרחיש:</span> קוד תקין מאפשר כניסה
+    <span class="kw">בהינתן</span> &amp;SYS הוא "M" וקוד ההרשאה תקין למכונה
+    <span class="kw">כאשר</span> אני מריץ את ACMACC
+    <span class="kw">אז</span> &amp;RET הוא "00" ואין SIGNOFF
+
+  <span class="kw">תרחיש:</span> קוד לא תקין מנתק את המשתמש
+    <span class="kw">בהינתן</span> &amp;SYS הוא "C" ו-ACMAC02 החזיר "99"
+    <span class="kw">כאשר</span> אני מריץ את ACMACC
+    <span class="kw">אז</span> נקראת SPSIGNOF ומבוצע SIGNOFF</pre>
+  <p class="testexp"><b>בודק:</b> את שני מצבי האכיפה — מעבר חלק כשהקוד תקין, וניתוק (SIGNOFF דרך תוכנית
+  ההודעה המתאימה למערכת) כשהאימות נכשל.</p>
+</section>
+
+<!-- ============ WRITERS ============ -->
+<section id="writers">
+  <h2><span class="tag cbl">CBL</span> כותבי DB — ACMACWR · ACMFCWR · MOCSTUP</h2>
+  <p class="lead">שלוש רוטינות גישה לנתונים באותו רעיון עיצובי: קוד "פעולה" (PEULA) בפרמטר מניע מנתב
+  <code class="inl">GO TO … DEPENDING ON</code>, וקוד "חזרה" (RETURN) מדווח סטטוס. זהו מחולל עוטפי
+  I/O משותף לכל קבצי החנות.</p>
+
+  <h4>קודי פעולה משותפים (PR-PEULA)</h4>
+  <table>
+    <tr><th>קוד</th><th>פעולה</th><th>קוד</th><th>פעולה</th></tr>
+    <tr><td>0 / 15</td><td>סגירת קובץ</td><td>7</td><td>Start-not-less</td></tr>
+    <tr><td>1</td><td>קריאה אקראית</td><td>8</td><td>Start-greater</td></tr>
+    <tr><td>2</td><td>Start-equal + read</td><td>9</td><td>מחיקה</td></tr>
+    <tr><td>3</td><td>Start-not-less + read</td><td>10</td><td>Rewrite</td></tr>
+    <tr><td>4</td><td>קריאת הבא</td><td>11</td><td>כתיבה</td></tr>
+    <tr><td>5</td><td>קריאת הקודם</td><td>13</td><td>קריאה עם נעילה</td></tr>
+    <tr><td>6</td><td>קריאת אחרון</td><td>—</td><td>—</td></tr>
+  </table>
+  <h4>קודי חזרה (PR-RETURN)</h4>
+  <table>
+    <tr><th>קוד</th><th>משמעות</th></tr>
+    <tr><td>00 / רווח</td><td>תקין (TAKIN)</td></tr>
+    <tr><td>01</td><td>שגיאה</td></tr>
+    <tr><td>02</td><td>סוף קובץ (EOF)</td></tr>
+    <tr><td>03</td><td>תחילת קובץ</td></tr>
+    <tr><td>04</td><td>רשומה השתנתה</td></tr>
+    <tr><td>05</td><td>נעילה (file-status 9D)</td></tr>
+    <tr><td>08</td><td>פעולה לא חוקית</td></tr>
+  </table>
+
+  <div class="note blue">
+    <b>הבדלים:</b> <code class="inl">ACMACWR</code> תומך בכל מערך הפעולות מעל <code class="inl">ACMACLF</code>
+    (ה־log). <code class="inl">ACMFCWR</code> מממש רק קריאה-אקראית/rewrite/write/close מעל
+    <code class="inl">ACMFCPF</code> (הקוד הקבוע); כל השאר מחזיר '08'. <code class="inl">MOCSTUP</code>
+    (PGM: MCSTIO) פועל מעל קובץ הלקוחות <code class="inl">MOCUST</code> ומוסיף בדיקת טווח מפתח (RANGE)
+    וזיהוי שינוי רשומה (מחזיר '04' אם TVL-REC ≠ TV-REC).
+  </div>
+
+  <h3>PROCEDURE DIVISION</h3>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 100-MAIN <span style="font-weight:400;color:#64748b">— מנתב הפעולות (משותף)</span></summary>
+    <div class="body">
+      <p><b>מטרה:</b> <code class="inl">GO TO … DEPENDING ON PR-PEULA</code> לכל פסקת פעולה (101–114).
+      פעולות קריאה מטפלות ב־EOF/BOF ומציבות מחדש (113-START-SOF / 114-START-BEGIN); מחיקה/rewrite
+      בודקות נעילה '9D'→'05'.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> רוטינת גישה מונחית-פעולה
+  <span class="kw">תבנית תרחיש:</span> קוד הפעולה מבצע את פעולת הקובץ הנכונה
+    <span class="kw">בהינתן</span> הקובץ פתוח והמפתח מוגדר
+    <span class="kw">כאשר</span> אני קורא לרוטינה עם PR-PEULA &lt;peula&gt;
+    <span class="kw">אז</span> PR-RETURN הוא &lt;return&gt;
+
+    <span class="kw">דוגמאות:</span>
+      | peula | return | תיאור               |
+      | 1     | 00     | קריאה אקראית מוצלחת |
+      | 4     | 02     | קריאת הבא בסוף קובץ |
+      | 11    | 00     | כתיבה מוצלחת        |
+
+  <span class="kw">תרחיש:</span> פעולה לא נתמכת ב-ACMFCWR נדחית
+    <span class="kw">כאשר</span> אני קורא ל-ACMFCWR עם PR-PEULA 9
+    <span class="kw">אז</span> PR-RETURN הוא "08"</pre>
+  <p class="testexp"><b>בודק:</b> את מנגנון הניתוב מונחה-הפעולה (כל קוד → פעולת קובץ + קוד חזרה נכון),
+  ואת הגבלת מערך הפעולות של ACMFCWR (פעולה לא-נתמכת מחזירה '08') — כדי שקורא לא יסתמך על פעולה שאינה
+  ממומשת.</p>
+</section>
+
+<!-- ============ REPORTS ============ -->
+<section id="reports">
+  <h2><span class="tag cl">CL</span> דוחות והתראות תפוגה</h2>
+  <p class="lead">ארבע תוכניות CL להפקת דוחות Excel ולהתראות תפוגה. שלוש מהן משתפות את מחשבון הימים
+  <code class="inl">ACMAC03</code>; שתי הדוחות משתפות את מנוע ה־Excel <code class="inl">TABLEXLS</code>
+  (ספריית HSSFCGI) הכותב ל־<code class="inl">/Moti/ACM…</code> ב־IFS.</p>
+
+  <h3>ACMACR2EX — ייצוא מלא ל־Excel</h3>
+  <details class="proc">
+    <summary><span class="tag cl">CL</span> CRT_FIL4EX / CVT_2XLSX <span style="font-weight:400;color:#64748b">— בניית הקובץ וייצוא</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">ACMACMNU אפשרות 4</span></div>
+      <p><b>מטרה:</b> מריץ את שאילתת ACMACPF4EX מעל ACMACPF לקובץ פלט, ואז TABLEXLS ל־.xlsx; משדר הודעת
+      "הקובץ נוצר, נא להעביר מ־IFS". ללא סינון — כל הרשומות.</p>
+    </div>
+  </details>
+
+  <h3>ACMACCEDC — דוח תפוגה מסונן</h3>
+  <details class="proc">
+    <summary><span class="tag cl">CL</span> LOOP / CHK_DIFF / CPYREC <span style="font-weight:400;color:#64748b">— סינון לפי חלון תפוגה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">ACMACMNU אפשרות 5</span></div>
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMAC03</span><span class="callchip">TABLEXLS</span></div>
+      <p><b>מטרה:</b> עובר רשומה-רשומה, מחשב ימים-לתפוגה דרך ACMAC03, ומעתיק רק רשומות בתוך החלון
+      (<code class="inl">&amp;DAYDIFFFIX</code> ימים) ל־Excel. אם 0 — משדר "אין הרשאות שיפוגו ב־XX הימים הקרובים".</p>
+    </div>
+  </details>
+
+  <h3>ACMACCED / ACMACCEDA — התראות תפוגה</h3>
+  <details class="proc">
+    <summary><span class="tag cl">CL</span> CHK_DIFF <span style="font-weight:400;color:#64748b">— חישוב וסף התראה (≤ 31 ימים)</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">ACMAC03</span><span class="callchip">SNDMSG (CED)</span><span class="callchip">SNDJMAIL (CEDA)</span></div>
+      <p><b>מטרה:</b> מחשב ימים-לתפוגה; אם &gt; 31 — יוצא בלי התראה. <b>ACMACCED</b> שולח הודעה
+      דו-לשונית (עברית/אנגלית לפי QLANGID) ל־*REQUESTER. <b>ACMACCEDA</b> שולח דוא"ל פעם ביום (זוכר
+      תאריך אחרון ב־data-area ACMACDAD; &amp;RET='99' אם המשלוח נכשל).</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> התראות ודוחות תפוגה
+  <span class="kw">תרחיש:</span> התראה נשלחת רק בתוך סף 31 הימים
+    <span class="kw">בהינתן</span> נותרו 20 ימים עד לתפוגה
+    <span class="kw">כאשר</span> אני מריץ את ACMACCED
+    <span class="kw">אז</span> נשלחת הודעת אזהרה ל-*REQUESTER
+
+  <span class="kw">תרחיש:</span> מעל הסף אין התראה
+    <span class="kw">בהינתן</span> נותרו 45 ימים עד לתפוגה
+    <span class="kw">כאשר</span> אני מריץ את ACMACCED
+    <span class="kw">אז</span> לא נשלחת הודעה
+
+  <span class="kw">תרחיש:</span> המייל היומי נשלח פעם אחת ביום
+    <span class="kw">בהינתן</span> ACMACDAD שווה לתאריך היום
+    <span class="kw">כאשר</span> אני מריץ את ACMACCEDA
+    <span class="kw">אז</span> לא נשלח מייל נוסף
+
+  <span class="kw">תרחיש:</span> דוח מסונן ריק משדר הודעת "אין לפוג"
+    <span class="kw">בהינתן</span> אין קודים הפגים תוך 30 ימים
+    <span class="kw">כאשר</span> אני מריץ את ACMACCEDC עם 30
+    <span class="kw">אז</span> משודרת הודעה שאין הרשאות לפוג</pre>
+  <p class="testexp"><b>בודק:</b> את סף ההתראה (≤31 ימים) בשני הכיוונים, את מנגנון ה"פעם ביום" של גרסת
+  הדוא"ל (מניעת ספאם דרך ACMACDAD), ואת מקרה-הקצה של דוח מסונן ריק.</p>
+</section>
+
+<!-- ============ SHARED ============ -->
+<section id="shared">
+  <h2><span class="tag cbl">CBL</span> שירותים משותפים — PRSCR01 · PRRDMSG · TBTVRD</h2>
+  <p class="lead">שלוש פרוגרמות-משנה משותפות (לא מיינים) שנקראות בכל תוכניות ה־COBOL האינטראקטיביות.</p>
+
+  <h3>PRSCR01 — ניהול מסכים</h3>
+  <p>קלט/פלט מסך בלתי-תלוי מכשיר: לפי שם מסך, פורמט, מאגר וקוד פעולה מבצע WRITE/READ/CLOSE מול קובץ
+  תצוגה 5250 מקורי או מול חזית Web, לפי סוג ההפעלה.</p>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 002-MAIN <span style="font-weight:400;color:#64748b">— ניתוב I/O מסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">PRSCR01IO (5250)</span><span class="callchip">UNSCRWEB (Web)</span><span class="callchip">TBLHELP (F4)</span><span class="callchip">QCMDEXC→OVRDSPF</span></div>
+      <p><b>מטרה:</b> WRITE/READ/BOTH → נתיב Web או 5250; <code class="inl">SCR-CMD='04'</code> (F4)
+      מפעיל עזרת-שדה. קודי פעולה: CLOSE 'C', WRITE 'W'/'1', READ 'R'/'2', BOTH 'B'/'3'.</p>
+    </div>
+  </details>
+
+  <h3>PRRDMSG — איחזור הודעות</h3>
+  <p>בהינתן מספר הודעה, קורא את טקסט ההודעה (עברית או אנגלית לפי PR-MAIN-SAFA) מקובץ
+  <code class="inl">PRMSG</code>; אם לא נמצאה או במקרה <code class="inl">'GN999'</code> — נופל לשירות
+  משני <code class="inl">DRERROR</code>.</p>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 200-READ / 210-GET-MSG-PRMSG <span style="font-weight:400;color:#64748b">— קריאת הודעה</span></summary>
+    <div class="body">
+      <p><b>מטרה:</b> פעולות 'R'=קריאה / 'C'=סגירה; חזרה 00 תקין / 01 שגיאה / 02 לא-נמצא. בוחר חצי-טקסט
+      עברי/אנגלי לפי השפה.</p>
+    </div>
+  </details>
+
+  <h3>TBTVRD — קריאת טבלאות</h3>
+  <p>מנתב דק: קורא דגל תצורה מ־data-area ומנתב כל קריאת טבלה ל־<code class="inl">TBTVRDNF</code>
+  (טבלאות מורחבות) או ל־<code class="inl">TBTVRDLF</code> (רגילות). ה־I/O עצמו מתבצע בתת-התוכניות
+  הנקראות.</p>
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> 000-MONITOR <span style="font-weight:400;color:#64748b">— הניתוב כולו</span></summary>
+    <div class="body">
+      <div class="kv"><b>קורא ל־:</b> <span class="callchip">HFMNG2P (LDA)</span><span class="callchip">TBTVRDNF / TBTVRDLF</span></div>
+      <p><b>מטרה:</b> בקריאה ראשונה טוען את ה־LDA; אם דגל "טבלאות מרחב" דלוק → TBTVRDNF, אחרת TBTVRDLF —
+      שניהם <code class="inl">USING TBL-PARAMETER</code>.</p>
+    </div>
+  </details>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> שירותי תשתית משותפים
+  <span class="kw">תרחיש:</span> PRRDMSG מחזיר טקסט עברי לפי השפה
+    <span class="kw">בהינתן</span> PR-MAIN-SAFA היא עברית ו-PR-MSG-NBR הוא "AC002"
+    <span class="kw">כאשר</span> אני קורא ל-PRRDMSG עם פעולה "R"
+    <span class="kw">אז</span> PR-MSG-RETURN הוא "00" ו-PR-MSG-TXT מכיל את הטקסט העברי
+
+  <span class="kw">תרחיש:</span> הודעה חסרה נופלת לשירות המשני
+    <span class="kw">בהינתן</span> PR-MSG-NBR הוא "GN999"
+    <span class="kw">כאשר</span> אני קורא ל-PRRDMSG
+    <span class="kw">אז</span> נקרא DRERROR
+
+  <span class="kw">תרחיש:</span> TBTVRD מנתב לפי דגל הטבלאות המורחבות
+    <span class="kw">בהינתן</span> LDA-TAVLAOT-MRCHAV הוא "1"
+    <span class="kw">כאשר</span> אני קורא ל-TBTVRD
+    <span class="kw">אז</span> נקרא TBTVRDNF</pre>
+  <p class="testexp"><b>בודק:</b> בחירת שפה נכונה ב־PRRDMSG ומנגנון ה־fallback ל־DRERROR, ואת החלטת הניתוב
+  של TBTVRD לפי דגל התצורה — שכן שגיאה בכל אחד מאלה משפיעה על כל התוכניות שמשתמשות בהם.</p>
+</section>
+
+<!-- ============ SYSUTIL ============ -->
+<section id="sysutil">
+  <h2><span class="tag cl">CL</span> כלי מערכת — אוספי עובדות</h2>
+  <p class="lead">משפחת כלים קטנים שאוספים עובדות מהמכונה (תאריך, מספר סידורי, LPAR, משתמש, ספריית קובץ)
+  ומזינים את שדות רשומת ה־ACM. כולם עם קוד חזרה <code class="inl">00</code>=תקין /
+  <code class="inl">99</code>=שגיאה (היכן שקיים).</p>
+
+  <table>
+    <tr><th>תוכנית</th><th>שפה</th><th>מחזיר</th><th>מנגנון</th></tr>
+    <tr><td>RTVDATSYS</td><td>COBOL</td><td>תאריך (YYYYMMDD) + שעה</td><td>ACCEPT FROM DATE/TIME <span class="badge">מאה קבועה '20'</span></td></tr>
+    <tr><td>DTSYSDMYY</td><td>RPG</td><td>תאריך מפוצל D/M/YY</td><td>קורא ל־DTWCHKMD; מחליף סדר DD/MM לפי locale</td></tr>
+    <tr><td>SYRTVDYYMD</td><td>CL</td><td>תאריך עבודה YYYYMMDD</td><td>RTVJOBA CYMDDATE (מאה '20'/'19')</td></tr>
+    <tr><td>SYRTVLPRN</td><td>CL</td><td>מספר LPAR</td><td>QWCRSSTS (SSTS0200), היסט 81</td></tr>
+    <tr><td>SYRTVSRLN</td><td>CL</td><td>מספר סידורי</td><td>RTVSYSVAL QSRLNBR</td></tr>
+    <tr><td>SYKVZLIBH</td><td>CL</td><td>ספריית קובץ</td><td>RTVOBJD על ELMVLPF (נפילה ל־ELMVFLT)</td></tr>
+    <tr><td>RTJOBUSR</td><td>CL</td><td>משתמש + שם job</td><td>RTVJOBA</td></tr>
+  </table>
+
+  <div class="note red">
+    <b>מגבלת Y2K שהתגלתה:</b> <code class="inl">RTVDATSYS</code> מקדד את המאה כליטרל
+    <code class="inl">'20'</code> — לא יעבוד נכון מעבר לשנת 2099.
+  </div>
+
+  <h3>בדיקות מוצעות</h3>
+<pre class="gherkin"><span class="cm"># language: he</span>
+<span class="kw">תכונה:</span> כלי איסוף עובדות מערכת
+  <span class="kw">תרחיש:</span> SYRTVSRLN מחזיר את המספר הסידורי בהצלחה
+    <span class="kw">כאשר</span> אני קורא ל-SYRTVSRLN
+    <span class="kw">אז</span> &amp;RC הוא "00" ו-&amp;SN מכיל את המספר הסידורי
+
+  <span class="kw">תרחיש:</span> שגיאת API מחזירה קוד שגיאה
+    <span class="kw">בהינתן</span> QWCRSSTS נכשל
+    <span class="kw">כאשר</span> אני קורא ל-SYRTVLPRN
+    <span class="kw">אז</span> &amp;RC הוא "99"</pre>
+  <p class="testexp"><b>בודק:</b> את הנתיב התקין (החזרת ערך + '00') ואת נתיב הכשל (MONMSG → '99') של אוספי
+  העובדות — הערכים הללו נכנסים ישירות לקוד ההרשאה, כך שכשל שקט בהם היה מייצר קוד שגוי.</p>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section id="glossary">
+  <h2><span class="emoji">📖</span> מילון מונחים (תעתיק עברי → משמעות)</h2>
+  <p>שמות תוכניות/סעיפים/מתגים בקוד כתובים לרוב בתעתיק לטיני של עברית. הנה המפתח לנפוצים:</p>
+  <table>
+    <tr><th>אסימון</th><th>עברית</th><th>משמעות</th></tr>
+    <tr><td>PEULA</td><td>פעולה</td><td>action / operation (קוד פעולה)</td></tr>
+    <tr><td>TAKIN</td><td>תקין</td><td>valid / OK ('00')</td></tr>
+    <tr><td>TAKALA / SHGIA</td><td>תקלה / שגיאה</td><td>fault / error</td></tr>
+    <tr><td>TOCHNIT RASHIT</td><td>תוכנית ראשית</td><td>main program</td></tr>
+    <tr><td>HAKRANA</td><td>הקרנה</td><td>display / paint (of a screen)</td></tr>
+    <tr><td>KOTERET</td><td>כותרת</td><td>header / title</td></tr>
+    <tr><td>BDIKOT / BDIKA</td><td>בדיקות / בדיקה</td><td>checks / validation</td></tr>
+    <tr><td>MASACH</td><td>מסך</td><td>screen</td></tr>
+    <tr><td>METAGIM</td><td>מתגים</td><td>switches / flags</td></tr>
+    <tr><td>HARSHAOT</td><td>הרשאות</td><td>authorizations</td></tr>
+    <tr><td>TOKEF</td><td>תוקף</td><td>validity / expiry</td></tr>
+    <tr><td>MIKUD</td><td>מיקוד</td><td>position-to (in a subfile)</td></tr>
+    <tr><td>SIUM</td><td>סיום</td><td>end / completion</td></tr>
+    <tr><td>YAMIM</td><td>ימים</td><td>days</td></tr>
+    <tr><td>TCHILA / TOM</td><td>תחילה / תום</td><td>start / end (dates)</td></tr>
+    <tr><td>SHITA</td><td>שיטה</td><td>method / scheme (MEWDPS cipher)</td></tr>
+    <tr><td>KVZ (kovetz)</td><td>קובץ</td><td>file</td></tr>
+    <tr><td>LAKOACH</td><td>לקוח</td><td>customer</td></tr>
+    <tr><td>MHOZ</td><td>מחוז</td><td>district / company key</td></tr>
+    <tr><td>HEVRA</td><td>חברה</td><td>company</td></tr>
+    <tr><td>Nessia</td><td>נסיעה</td><td>journey (סיסמת MEWDPS)</td></tr>
+    <tr><td>REIK</td><td>ריק</td><td>empty (sentinel)</td></tr>
+    <tr><td>TZVIRA</td><td>צבירה</td><td>accumulate</td></tr>
+    <tr><td>PITZUL</td><td>פיצול</td><td>split</td></tr>
+  </table>
+</section>
+
+</main>
+
+<footer>
+  <p>תיעוד מערכת ACM — נוצר אוטומטית לפי סקילת <code>document-as-400</code>.</p>
+  <p>מקור: קובצי COBOL / RPG / CL מספריית VRMOTI (IBM i · SEU source listings), פוענחו ל־UTF-8.
+  מזהי קוד, שמות שדות, סוגי PIC וקודי סטטוס נשמרו בלטינית; הפרוזה בעברית.</p>
+</footer>
+
+</body>
+</html>

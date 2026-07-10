@@ -16,6 +16,7 @@
         <th><%= t("admin.projects.name") %></th>
         <th><%= t("admin.projects.slug") %></th>
         <th><%= t("admin.projects.completeness") %></th>
+        <th><%= t("admin.projects.members_count") %></th>
         <th></th>
       </tr>
     </thead>
@@ -24,7 +25,8 @@
         <tr>
           <td><%= link_to project.name, admin_project_path(project) %></td>
           <td><code dir="ltr"><%= project.slug %></code></td>
-          <td><%= project.documents.count %> / <%= Document.doc_types.size %></td>
+          <td><%= project.documents.count %> / <%= Document::AI_DOC_TYPES.size %></td>
+          <td><%= project.users.size %></td>
           <td>
             <%= link_to t("admin.projects.open"), admin_project_path(project), class: ui_class(:button, :secondary, :small) %>
             <%= button_to t("admin.projects.delete"), admin_project_path(project), method: :delete,

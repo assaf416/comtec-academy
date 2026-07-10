@@ -1,5 +1,7 @@
 class Project < ApplicationRecord
   has_many :documents, dependent: :destroy
+  has_many :project_memberships, dependent: :destroy
+  has_many :users, through: :project_memberships
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true,
@@ -21,6 +23,11 @@ class Project < ApplicationRecord
 
   private
     def ensure_slug
-      self.slug = name.to_s.parameterize if slug.blank?
+      return if slug.present?
+
+      # parameterize strips non-Latin characters (e.g. Hebrew names) to "" — fall
+      # back to a short unique slug so such projects still validate.
+      base = name.to_s.parameterize
+      self.slug = base.presence || "project-#{SecureRandom.hex(3)}"
     end
 end

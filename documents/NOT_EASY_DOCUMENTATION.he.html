@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>תיקיית Not-easy — M · UNFILE2PCC · UNSNDWEB — תיעוד</title>
+<style>
+  :root{
+    --char:#3b82f6;--packed:#10b981;--zoned:#14b8a6;--binary:#8b5cf6;
+    --money:#f59e0b;--date:#ec4899;--flag:#6b7280;--group:#0f172a;
+    --bg:#f8fafc;--card:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header.hero{background:linear-gradient(135deg,#7c2d12,#b91c1c);color:#fff;padding:40px 32px}
+  header.hero h1{margin:0 0 6px;font-size:27px}
+  header.hero p{margin:4px 0;opacity:.95}
+  nav{position:sticky;top:0;z-index:20;background:#0f172a;padding:10px 20px;display:flex;flex-wrap:wrap;gap:8px}
+  nav a{color:#cbd5e1;text-decoration:none;font-size:13px;padding:6px 12px;border-radius:6px}
+  nav a:hover{background:#1e293b;color:#fff}
+  main{max-width:1180px;margin:0 auto;padding:24px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px;margin:22px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h2{margin-top:0;font-size:23px;border-bottom:3px solid #b91c1c;padding-bottom:8px;display:flex;align-items:center;gap:10px}
+  h3{font-size:18px;color:#7c2d12;margin-top:28px}
+  h4{font-size:15px;color:#334155;margin:18px 0 6px}
+  p.lead{font-size:16px;color:#334155}
+  .emoji{font-size:22px}
+  .filecard{border-left:6px solid #b91c1c;background:#fef2f2;border-radius:10px;padding:14px 18px;margin:10px 0}
+  .filecard.rpg{border-color:#0891b2;background:#ecfeff}
+  .filecard.cl{border-color:#f59e0b;background:#fffbeb}
+  .filecard h4{margin:0 0 4px;font-size:16px}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600}
+  tr:nth-child(even) td{background:#fafcff}
+  code,pre{font-family:'Cascadia Code',Consolas,'Courier New',monospace}
+  code.inl{background:#eef2ff;padding:1px 6px;border-radius:4px;font-size:12.5px;color:#3730a3}
+  pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;overflow:auto;font-size:12.5px;line-height:1.5}
+  pre .cm{color:#7dd3fc}pre .kw{color:#f9a8d4}pre .st{color:#bef264}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+  .chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;padding:6px 12px;border-radius:20px;color:#fff;font-weight:600}
+  .dot{width:12px;height:12px;border-radius:50%;background:#fff9;display:inline-block}
+  .t-char{background:var(--char)}.t-packed{background:var(--packed)}.t-zoned{background:var(--zoned)}
+  .t-binary{background:var(--binary)}.t-money{background:var(--money)}.t-date{background:var(--date)}
+  .t-flag{background:var(--flag)}.t-group{background:var(--group)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin:16px 0}
+  .fcard{border-radius:10px;padding:12px 14px;color:#fff;position:relative;overflow:hidden;min-height:92px}
+  .fcard .ic{position:absolute;right:10px;top:8px;font-size:26px;opacity:.35}
+  .fcard .code{font-weight:700;font-size:14px;letter-spacing:.3px}
+  .fcard .pic{font-family:monospace;font-size:11px;opacity:.9;background:#0003;display:inline-block;padding:1px 6px;border-radius:4px;margin-top:3px}
+  .fcard .en{font-size:13px;margin-top:6px;font-weight:600}
+  .fcard .mn{font-size:11.5px;opacity:.92;margin-top:2px}
+  .note{background:#fffbeb;border-left:4px solid var(--money);padding:12px 16px;border-radius:6px;margin:14px 0;font-size:14px}
+  .note.blue{background:#eff6ff;border-color:#3b82f6}
+  .note.red{background:#fef2f2;border-color:#b91c1c}
+  .proc{border:1px solid var(--line);border-radius:12px;margin:16px 0;overflow:hidden}
+  .proc>summary{cursor:pointer;padding:13px 18px;background:#f1f5f9;font-weight:700;font-size:14.5px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .proc>summary::-webkit-details-marker{display:none}
+  .proc[open]>summary{background:#fee2e2;border-bottom:1px solid var(--line)}
+  .proc .body{padding:16px 18px}
+  .tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+  .tag.cbl{background:#7c3aed}.tag.rpg{background:#0891b2}.tag.cl{background:#d97706}
+  .callchip{display:inline-block;font-size:11px;background:#eef2ff;color:#3730a3;padding:2px 8px;border-radius:12px;margin:2px}
+  .kv{font-size:13.5px;margin:4px 0}.kv b{color:#7c2d12}
+  svg{max-width:100%;height:auto;display:block;margin:10px auto}
+  .diagram-wrap{overflow-x:auto;background:#fbfdff;border:1px dashed var(--line);border-radius:10px;padding:8px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:800px){.two{grid-template-columns:1fr}}
+  footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+  .badge{display:inline-block;background:#b91c1c;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+  body{direction:rtl;text-align:right;}
+  table th,table td{text-align:right;}
+  code,pre{direction:ltr;text-align:left;unicode-bidi:embed;}
+  nav{direction:rtl;}
+  .fcard .pic{direction:ltr}
+  pre.gherkin{direction:rtl;text-align:right;unicode-bidi:plaintext}
+  svg{direction:ltr}
+  svg text{direction:ltr;unicode-bidi:plaintext}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1>🧩 תיקיית "Not-easy" — <code>M</code> · <code>UNFILE2PCC</code> · <code>UNSNDWEB</code></h1>
+  <p>תת-מערכת תפריטים ל-IBM i (AS/400) ומנוע ניוד AS/400↔WEB &nbsp;•&nbsp; תיקייה <code>example/not easy</code></p>
+  <p>שלוש התוכניות הכבדות: מנהל תפריט ב-RPG, כלי בניית DDS ב-CL, ומנוע מסכי WEB ב-COBOL עם 170 סקשנים. קוד המקור נושא קוד ASCII עם הערות בעברית ב-Windows-1255 (פוענחו כאן ל-UTF-8).</p>
+</header>
+
+<nav>
+  <a href="#files">🗂️ קבצים בתיקייה זו</a>
+  <a href="#rel">🔗 מי מריץ את מי</a>
+  <a href="#legend">🎨 מקרא שדות</a>
+  <a href="#menu">📗 M.rpg (תפריט)</a>
+  <a href="#file2pcc">📙 UNFILE2PCC.cl (בניית DDS)</a>
+  <a href="#sndweb">📘 UNSNDWEB.cbl (מנוע WEB)</a>
+  <a href="#tests">✅ בדיקות מוצעות</a>
+  <a href="#glossary">🔤 מילון מונחים</a>
+</nav>
+
+<main>
+
+<!-- ============ FILES IN THIS FOLDER ============ -->
+<section id="files">
+  <h2><span class="emoji">🗂️</span> קבצים בתיקייה זו</h2>
+  <p class="lead">שלוש תוכניות שאינן קשורות בזמן ריצה אך קשורות רעיונית, מתוך תת-מערכת הניוד AS/400↔WEB. כל תוכנית תומכת ב<b>מסלול קוד כפול</b>: שורות המסומנות <code class="inl">X&amp;FLTA</code>
+  מהודרות ל-AS/400 (COBOL), ושורות המסומנות <code class="inl">X&amp;FLTU</code> מהודרות ל-UNIX.</p>
+  <table>
+    <tr><th>קובץ</th><th>סוג</th><th>שפה</th><th>מטרה</th></tr>
+    <tr>
+      <td><code class="inl">M.rpg</code></td>
+      <td>תוכנית אינטראקטיבית (WORKSTN)</td>
+      <td>RPG III / RPG 400</td>
+      <td><b>מנהל התפריט</b> הראשי של אפליקציית "ME". מציג תפריט 5250, קורא את בחירת המשתמש ומקשי הפונקציה, בודק הרשאות, מתעד פעילות, ומפעיל את התוכנית או תת-התפריט הנבחרים. 68 שגרות משנה.</td>
+    </tr>
+    <tr>
+      <td><code class="inl">UNFILE2PCC.cl</code></td>
+      <td>תוכנית שירות</td>
+      <td>CL (Control Language)</td>
+      <td><b>כלי לבניית DDS / קבצים</b>. מבצע הנדסה לאחור לקובץ פיזי (<code class="inl">DSPFD</code>/<code class="inl">DSPFFD</code>), יוצר חברי מקור DDS מסוג A/F/HDR/X, בונה אובייקטי PF, מעתיק את הנתונים, ומהדר ומריץ תוכנית header שנוצרה. עוזר בזמן בנייה עבור צינור ההמרה.</td>
+    </tr>
+    <tr>
+      <td><code class="inl">UNSNDWEB.cbl</code></td>
+      <td>תת-תוכנית נקראת</td>
+      <td>COBOL (ILE / OPM)</td>
+      <td><b>מנוע מסכי WEB</b> (הכותרת בעברית <span dir="rtl">ניהול בניית מסכי WEB</span>). פרמטר יחיד בגודל 64,412 בתים, מנתב גדול לפי קוד פעולה, בניית/פירוק XML, ותעבורת data-queue לשכבת ה-web. 170 סקשנים, כ-9,200 שורות.</td>
+    </tr>
+  </table>
+
+  <div class="note red">⚠️ <b>אזהרת שחרור משותף</b> (מתוך כותרת המקור של UNSNDWEB, פרויקט "הגדלת שדות ל-K64"):
+  יש לשחרר את UNSNDWEB <b>יחד עם</b>
+  <code class="inl">UNPARTQU</code>, <code class="inl">UNQUEST</code>, <code class="inl">UNSCRWEB</code>,
+  <code class="inl">UNSNDA2C</code>, <code class="inl">UNSNDC2X</code> ותוכניות התקשורת
+  <code class="inl">WBAPP</code>, <code class="inl">WBSRVR03</code>, <code class="inl">WBSRDQ</code>. מכיוון
+  שמבנה החוצץ המשותף השתנה, פריסה של UNSNDWEB לבדו תשבש את חילופי הפרמטרים.</div>
+</section>
+
+<!-- ============ RELATIONSHIPS ============ -->
+<section id="rel">
+  <h2><span class="emoji">🔗</span> קשרים — מי מריץ את מי</h2>
+  <p class="lead">שלושת הקבצים האלה <b>אינם שרשרת קריאה אחת</b>. הם שייכים לשכבות שונות של אותה
+  מערכת: תפריט אינטראקטיבי, כלי שירות בזמן בנייה, ומנוע בשכבת השרת.</p>
+
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 960 420" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="r" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+
+    <!-- Menu tier -->
+    <text x="150" y="24" font-weight="700" fill="#0891b2">שכבת תפריט (מסך ירוק)</text>
+    <rect x="70" y="40" width="160" height="46" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="150" y="60" font-weight="700">M (תפריט RPG)</text><text x="150" y="76" font-size="10">קורא MEMENU/MEAUT/MEUSR</text>
+    <rect x="55" y="130" width="90" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="100" y="154">תוכנית A</text>
+    <rect x="155" y="130" width="90" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="200" y="154">תוכנית B</text>
+    <rect x="105" y="190" width="90" height="34" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="150" y="211" font-size="10">…תת-תפריט</text>
+    <line x1="120" y1="86" x2="100" y2="128" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="180" y1="86" x2="200" y2="128" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="150" y1="86" x2="150" y2="188" stroke="#334155" marker-end="url(#r)" stroke-dasharray="3 3"/>
+
+    <!-- WEB tier -->
+    <text x="620" y="24" font-weight="700" fill="#b91c1c">שכבת WEB (מנוע ניוד)</text>
+    <rect x="440" y="40" width="150" height="46" rx="8" fill="#fee2e2" stroke="#b91c1c"/><text x="515" y="60" font-weight="700">WBSRVR03 / WBAPP</text><text x="515" y="76" font-size="10">שרת web + מנהל אפליקציה</text>
+    <rect x="630" y="40" width="150" height="46" rx="8" fill="#fef2f2" stroke="#b91c1c"/><text x="705" y="60" font-weight="700">UNSNDWEB</text><text x="705" y="76" font-size="10">מנוע מסכי WEB</text>
+    <line x1="590" y1="63" x2="628" y2="63" stroke="#334155" marker-end="url(#r)"/>
+    <!-- DTAQ between -->
+    <rect x="470" y="120" width="120" height="34" rx="16" fill="#fef3c7" stroke="#d97706"/><text x="530" y="141" font-size="11">DTAQ (דרך WBSRDQ)</text>
+    <line x1="700" y1="86" x2="560" y2="118" stroke="#d97706" marker-end="url(#r)"/><text x="640" y="104" font-size="9" fill="#d97706">XML יוצא</text>
+    <line x1="530" y1="118" x2="640" y2="90" stroke="#d97706" marker-end="url(#r)" stroke-dasharray="3 3"/><text x="560" y="112" font-size="9" fill="#d97706">תשובה</text>
+
+    <!-- UN* helpers -->
+    <rect x="600" y="185" width="320" height="120" rx="10" fill="#fffbeb" stroke="#f59e0b"/>
+    <text x="760" y="205" font-weight="700" fill="#b45309">כ-40 תוכניות עזר UN* / WB* (עוטפי R*-CALL-*)</text>
+    <text x="760" y="228" font-size="10">UNRDCOMXX · UNPART · UNPARTQU · UNPARTXT · UNFLBLD · UNCMBLD</text>
+    <text x="760" y="246" font-size="10">UNRDRADXX · UNSAVSCR · UNFLQUN/C/D · UNLETTER · UNSNDMEM</text>
+    <text x="760" y="264" font-size="10">UNSNDGRF · UNSNDHLP · UNCHKIND · UNCHGTAG · UNFNDORG · UNOBLIB</text>
+    <text x="760" y="282" font-size="10">UNRDFILXX · UNFLTXT · UNFLCHK · UNCMCHK · WBSRDQ · HASHCPTP …</text>
+    <line x1="705" y1="86" x2="720" y2="183" stroke="#334155" marker-end="url(#r)"/>
+
+    <!-- Build tier -->
+    <text x="230" y="270" font-weight="700" fill="#d97706">שכבת בנייה (כלי שירות)</text>
+    <rect x="70" y="285" width="160" height="46" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="150" y="305" font-weight="700">UNFILE2PCC (CL)</text><text x="150" y="321" font-size="10">בניית DDS / קבצים</text>
+    <rect x="55" y="365" width="150" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="130" y="389" font-size="11">UNCRTHDRK</text>
+    <rect x="225" y="365" width="150" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="300" y="389" font-size="11">UNUPDHDRK (נוצר)</text>
+    <line x1="130" y1="331" x2="130" y2="363" stroke="#334155" marker-end="url(#r)"/>
+    <line x1="200" y1="331" x2="290" y2="363" stroke="#334155" marker-end="url(#r)"/>
+  </svg>
+  </div>
+
+  <div class="two">
+    <div>
+      <h4>📗 שכבת תפריט — M.rpg</h4>
+      <p>M קורא את קבצי התפריט/ההרשאות/המשתמשים, ובבחירה תקינה ומורשית מבצע
+      <code class="inl">CALL</code> לתוכנית הנבחרת (או פותח תת-תפריט). הוא <b>אינו</b> קורא ישירות ל-
+      UNSNDWEB או ל-UNFILE2PCC; התוכניות שהוא מפעיל הן קטלוג האפליקציות הכללי.</p>
+    </div>
+    <div>
+      <h4>📘 שכבת WEB — UNSNDWEB.cbl</h4>
+      <p>UNSNDWEB <b>נקרא על ידי שכבת שרת ה-web</b> (<code class="inl">WBSRVR03</code>/<code class="inl">WBAPP</code>).
+      הוא מחליף XML עם ה-front-end בדפדפן דרך <b>data queue</b> (באמצעות <code class="inl">WBSRDQ</code>), ובעצמו
+      מבצע <code class="inl">CALL</code> לכ-40 תוכניות עזר <code class="inl">UN*</code> כדי לקרוא הגדרות מסך/פקודה
+      ולבנות/לפרק את ה-XML.</p>
+    </div>
+  </div>
+  <h4>📙 שכבת בנייה — UNFILE2PCC.cl</h4>
+  <p>UNFILE2PCC הוא <b>כלי שירות בזמן בנייה</b>: הוא קורא ל-<code class="inl">UNCRTHDRK</code> כדי לייצר DDS ותוכנית
+  לעדכון header, ואז מהדר ומריץ את <code class="inl">UNUPDHDRK</code> שנוצרה. הוא מופעל על ידי כלי ההמרה, ולא על
+  ידי M או UNSNDWEB בזמן ריצה.</p>
+</section>
+
+<!-- ============ LEGEND ============ -->
+<section id="legend">
+  <h2><span class="emoji">🎨</span> מקרא סוגי שדות</h2>
+  <div class="legend">
+    <span class="chip t-group"><span class="dot"></span>🗂️ קבוצה / מבנה</span>
+    <span class="chip t-char"><span class="dot"></span>🔤 תווי (Character)</span>
+    <span class="chip t-zoned"><span class="dot"></span>🔢 עשרוני אזורי (Zoned)</span>
+    <span class="chip t-packed"><span class="dot"></span>📦 דחוס (Packed)</span>
+    <span class="chip t-binary"><span class="dot"></span>🧮 בינארי (Binary)</span>
+    <span class="chip t-flag"><span class="dot"></span>🚩 דגל / מתג (רמת 88)</span>
+    <span class="chip t-money"><span class="dot"></span>🗄️ קובץ / DTAQ / data area</span>
+    <span class="chip t-date"><span class="dot"></span>⌨️ מקש פונקציה / מסך</span>
+  </div>
+</section>
+
+<!-- ============ M.rpg ============ -->
+<section id="menu">
+  <h2><span class="emoji">📗</span> M.rpg — מנהל התפריט</h2>
+
+  <h3>שם התוכנית ומשמעותו</h3>
+  <p class="lead">תוכנית <b>M</b> — התפריט האינטראקטיבי של אפליקציית "ME" (תפריט). היא מציגה תפריט בתחנת עבודה
+  5250, מאמתת את האפשרות ואת ההרשאות של המשתמש, כותבת יומן שימוש, ומעבירה
+  שליטה לתוכנית או לתת-התפריט הנבחרים. RPG III / RPG 400, 68 שגרות משנה.</p>
+
+  <h3>קבצים ומבני נתונים מרכזיים</h3>
+  <table>
+    <tr><th>שם</th><th>סוג</th><th>תרגום לעברית</th><th>תיאור</th></tr>
+    <tr><td><code class="inl">MENUFM</code></td><td>CF E WORKSTN (רשומה <code class="inl">RMENU</code>, ששמה שונה ל-<code class="inl">RMENUX</code>)</td><td>קובץ תצוגת תפריט</td><td>תפריט המסך הירוק 5250 שהמשתמש מתקשר איתו. מקשי הפונקציה ושדה האפשרות נקראים מכאן.</td></tr>
+    <tr><td><code class="inl">MEMENU</code></td><td>IF E K DISK</td><td>הגדרות תפריט</td><td>קובץ אב של רשומות/אפשרויות התפריט — טקסט, תוכנית יעד, תת-תפריט יעד.</td></tr>
+    <tr><td><code class="inl">MEAUT</code></td><td>IF E K DISK</td><td>הרשאות</td><td>מי מורשה להריץ מה (הרשאות). נקרא על ידי <code class="inl">CHKHRS</code>/<code class="inl">HARSAN</code>/<code class="inl">HARSAA</code> לפני ההפעלה.</td></tr>
+    <tr><td><code class="inl">MEUSR</code></td><td>IF E K DISK</td><td>משתמשים</td><td>קובץ אב של משתמשים — שפה, ברירות מחדל, פרטי פרופיל (<code class="inl">SRUSRO</code> טוען אותו).</td></tr>
+    <tr><td><code class="inl">MECNS</code></td><td>IF E K DISK</td><td>קבועים</td><td>קבועי מערכת / הגדרות עבור תת-מערכת התפריט.</td></tr>
+    <tr><td><code class="inl">MELOG</code></td><td>O E K DISK</td><td>יומן פעילות</td><td>פלט בלבד. רשומה אחת נכתבת לכל הפעלה על ידי <code class="inl">SBWLOG</code>.</td></tr>
+    <tr><td><code class="inl">MEKLLIL0</code></td><td>IF E K DISK</td><td>קובץ כללי</td><td>קובץ ייחוס משותף בין אפליקציות.</td></tr>
+  </table>
+
+  <h4>שדות עבודה ומחוונים מרכזיים</h4>
+  <table>
+    <tr><th>שם</th><th>סוג</th><th>תרגום לעברית</th><th>תיאור</th></tr>
+    <tr><td><code class="inl">RMENU / RMENUX</code></td><td><span class="chip t-date" style="padding:2px 8px">רשומת מסך</span></td><td>פורמט רשומת התפריט</td><td>הרשומה המוצגת; שמה שונה ב-F-spec כדי שניתן לטפל בפורמט הקלט והפלט בנפרד.</td></tr>
+    <tr><td><code class="inl">*INKx</code></td><td><span class="chip t-date" style="padding:2px 8px">מחווני מקש פונקציה</span></td><td>מחווני מקשי פקודה</td><td>נקבעים על ידי קריאת ה-WORKSTN; <code class="inl">SBFUNC</code> בודק אותם ומסתעף אל <code class="inl">SBF01…SBF24</code>.</td></tr>
+    <tr><td><code class="inl">*IN80</code></td><td><span class="chip t-flag" style="padding:2px 8px">דגל</span></td><td>מתג פורמט</td><td>בוחר בין פורמט רשומת הקלט לפורמט הפלט (<code class="inl">COMP 'RMENUX'</code>).</td></tr>
+    <tr><td><code class="inl">LR</code></td><td><span class="chip t-flag" style="padding:2px 8px">דגל</span></td><td>רשומה אחרונה</td><td>מחוון סיום התוכנית שנקבע ב-<code class="inl">SB99LR</code>.</td></tr>
+  </table>
+
+  <h4>ERD — משתמש → הרשאה → תפריט → תוכנית</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 260" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="e1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="30" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="105" y="122" font-weight="700">MEUSR</text><text x="105" y="140" font-size="10">קובץ אב משתמשים</text><text x="105" y="156" font-size="10">מפתח: מזהה משתמש</text>
+    <rect x="240" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="315" y="122" font-weight="700">MEAUT</text><text x="315" y="140" font-size="10">הרשאות</text><text x="315" y="156" font-size="10">מפתח: משתמש + אובייקט</text>
+    <rect x="450" y="100" width="150" height="70" rx="8" fill="#ecfeff" stroke="#0891b2"/><text x="525" y="122" font-weight="700">MEMENU</text><text x="525" y="140" font-size="10">רשומות תפריט</text><text x="525" y="156" font-size="10">מפתח: תפריט + אפשרות</text>
+    <rect x="660" y="40" width="200" height="56" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="760" y="62" font-weight="700">תוכנית יעד</text><text x="760" y="80" font-size="10">נקראת ע"י SBPGM</text>
+    <rect x="660" y="150" width="200" height="56" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="760" y="172" font-weight="700">תת-תפריט</text><text x="760" y="190" font-size="10">SBMEN / SBMEPG</text>
+    <rect x="240" y="200" width="150" height="46" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="315" y="222" font-weight="700">MELOG</text><text x="315" y="238" font-size="10">שורה אחת / הפעלה</text>
+    <g stroke="#334155" fill="none" marker-end="url(#e1)">
+      <line x1="180" y1="135" x2="238" y2="135"/><text x="209" y="126" font-size="10">בעל</text>
+      <line x1="390" y1="135" x2="448" y2="135"/><text x="419" y="126" font-size="10">מעניק</text>
+      <line x1="600" y1="120" x2="658" y2="80"/>
+      <line x1="600" y1="150" x2="658" y2="178"/>
+      <line x1="315" y1="170" x2="315" y2="198" stroke-dasharray="3 3"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>מפת שגרות משנה (68 בסך הכל) — מקובצות לפי התנהגות</h3>
+  <table>
+    <tr><th>קבוצה</th><th>שגרות משנה</th><th>אחריות</th></tr>
+    <tr><td>⌨️ <b>מקשי פונקציה</b></td><td><code class="inl">SBFUNC</code>, <code class="inl">SBF01…SBF24</code>, <code class="inl">SBFX</code>, <code class="inl">SBFOPR</code>, <code class="inl">SBFKPG</code>, <code class="inl">SBFKMS</code>, <code class="inl">SBFKOP</code></td><td>ניתוב כל מקש F1–F24 (עזרה, יציאה, דף, פונקציות מפעיל).</td></tr>
+    <tr><td>🚀 <b>הפעלה / ניווט</b></td><td><code class="inl">SBPGM</code>, <code class="inl">SBMEPG</code>, <code class="inl">SBMEN</code>, <code class="inl">SBOP</code>, <code class="inl">SBMODE</code>, <code class="inl">SBBACK</code>, <code class="inl">SBRM20</code>, <code class="inl">SBSMFL</code>, <code class="inl">SBSMAW</code>, <code class="inl">SBSAMN</code></td><td>קריאה לתוכנית הנבחרת, פתיחת תת-תפריט, או חזרה אחורה.</td></tr>
+    <tr><td>🔐 <b>הרשאות</b></td><td><code class="inl">CHKHRS</code>, <code class="inl">HARSAN</code>, <code class="inl">HARSAA</code>, <code class="inl">SBMVAU</code>, <code class="inl">SBRAMA</code>, <code class="inl">SBCSYS</code>, <code class="inl">BLTCTX</code></td><td>בדיקת הרשאות מול MEAUT לפני ההפעלה.</td></tr>
+    <tr><td>🖥️ <b>בניית מסך</b></td><td><code class="inl">SBRSHI</code>, <code class="inl">DDSDSP</code>, <code class="inl">SBEXF</code>, <code class="inl">SBMSWR</code>, <code class="inl">SBPGTX</code></td><td>עיצוב/כתיבה של רשומת התפריט, הודעות וטקסט.</td></tr>
+    <tr><td>🌐 <b>שפה</b></td><td><code class="inl">SRMVHB</code> (עברית), <code class="inl">SRMVEN</code> (אנגלית)</td><td>העברת תוויות בעברית / אנגלית למסך לפי שפת המשתמש.</td></tr>
+    <tr><td>🚩 <b>מחוונים</b></td><td><code class="inl">SRIND</code>, <code class="inl">SRIND0</code></td><td>קביעה / איפוס של מחווני תצוגה.</td></tr>
+    <tr><td>📝 <b>יומן ושונות</b></td><td><code class="inl">SBWLOG</code>, <code class="inl">SBPGQC</code>, <code class="inl">SBHELP</code>, <code class="inl">SBKTMN</code>, <code class="inl">SBPCDN</code>, <code class="inl">SSHRT</code>, <code class="inl">SBSTAM</code>, <code class="inl">SBEXSY</code></td><td>כתיבת MELOG, הצגת עזרה, תחזוקה.</td></tr>
+    <tr><td>⚙️ <b>מחזור חיים</b></td><td><code class="inl">SRFRST</code>, <code class="inl">SRUSRO</code>, <code class="inl">SB99RT</code>, <code class="inl">SB99LR</code></td><td>אתחול מחזור ראשון, טעינת משתמש, החזרה, רשומה אחרונה.</td></tr>
+  </table>
+
+  <h3>זרימה טיפוסית (פעילות)</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 220" font-family="Segoe UI,Arial" font-size="12" text-anchor="middle">
+    <defs><marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <circle cx="40" cy="100" r="13" fill="#0f172a"/>
+    <rect x="80" y="80" width="120" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="140" y="104">הצגת תפריט</text>
+    <rect x="230" y="80" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="290" y="100">קריאת בחירה</text><text x="290" y="114" font-size="10">+ מקש פונקציה</text>
+    <path d="M470,100 m-70,0 l70,-30 l70,30 l-70,30 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="470" y="96">מקש F?</text><text x="470" y="110" font-size="10">SBFUNC</text>
+    <path d="M660,100 m-64,0 l64,-28 l64,28 l-64,28 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="660" y="96">מורשה?</text><text x="660" y="110" font-size="10">CHKHRS</text>
+    <rect x="770" y="45" width="110" height="36" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="825" y="67">SBPGM: קריאה</text>
+    <rect x="770" y="130" width="110" height="36" rx="8" fill="#fee2e2" stroke="#b91c1c"/><text x="825" y="152">הודעת שגיאה</text>
+    <g stroke="#334155" fill="none" marker-end="url(#m)">
+      <line x1="53" y1="100" x2="78" y2="100"/>
+      <line x1="200" y1="100" x2="228" y2="100"/>
+      <line x1="350" y1="100" x2="398" y2="100"/>
+      <line x1="540" y1="100" x2="594" y2="100"/><text x="567" y="90" fill="#16a34a">לא</text>
+      <line x1="724" y1="90" x2="768" y2="70"/><text x="748" y="70" fill="#16a34a">כן</text>
+      <line x1="724" y1="112" x2="768" y2="140"/><text x="742" y="140" fill="#b91c1c">לא</text>
+    </g>
+  </svg>
+  </div>
+
+  <h3>הליכים (שגרות משנה)</h3>
+  <details class="proc" open>
+    <summary><span class="tag rpg">RPG</span> SBFUNC + SBF01…SBF24 <span style="font-weight:400;color:#64748b">— ניתוב מקשי פונקציה (מקובץ)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">קו ראשי (אחרי קריאת WORKSTN)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">SBHELP</span><span class="callchip">SBBACK</span><span class="callchip">SBPGM</span><span class="callchip">SBFKPG</span> …לפי מקש</div>
+      <p><b>מטרה:</b> <code class="inl">SBFUNC</code> בודק איזה מקש פקודה/תשומת-לב נלחץ ומבצע <code class="inl">EXSR</code> למטפל התואם <code class="inl">SBF01</code>…<code class="inl">SBF24</code>. כל <code class="inl">SBFnn</code> הוא שגרה קטנה (כ-5 שורות) הממפה מקש אחד לפעולה אחת; מקובצות כאן משום שהן חזרתיות מאוד.</p>
+      <pre><span class="kw">C           SBFUNC    BEGSR</span>
+<span class="cm">*  branch on the command-key indicator that came back on</span>
+<span class="cm">*  F1  -> SBF01 (help) ... F3 -> SBF03 (exit) ... F12 -> SBF12 (back)</span>
+<span class="kw">C           SBF12     BEGSR</span>
+<span class="kw">C                     EXSR SBBACK</span>          <span class="cm">*&gt; go back one level</span>
+<span class="kw">C                     ENDSR</span></pre>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> CHKHRS <span style="font-weight:400;color:#64748b">— בדיקת הרשאה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">SBPGM</span><span class="callchip">SBMEN</span></div>
+      <div class="kv"><b>קורא:</b> <span class="callchip">MEAUT</span><span class="callchip">דרך HARSAN / HARSAA</span></div>
+      <p><b>מטרה:</b> לוודא שהמשתמש הנוכחי מורשה (הרשאות) להריץ את התוכנית/התפריט הנבחרים לפני העברת השליטה; אחרת נקבעת הודעת שגיאה והתפריט מוצג מחדש.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBPGM <span style="font-weight:400;color:#64748b">— הפעלת תוכנית</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">SBMEPG</span><span class="callchip">קו ראשי</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">CHKHRS</span><span class="callchip">SBWLOG</span><span class="callchip">CALL &lt;תוכנית נבחרת&gt;</span></div>
+      <p><b>מטרה:</b> הפעולה המרכזית — לאחר שההרשאה מצליחה, כתיבת היומן ואז <code class="inl">CALL</code> לתוכנית הנבחרת; בחזרה, הצגת התפריט מחדש.</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBMEN / SBMEPG / SBBACK <span style="font-weight:400;color:#64748b">— ניווט</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">SBFUNC</span><span class="callchip">קו ראשי</span></div>
+      <p><b>SBMEN</b> — קריאת הגדרת תפריט מ-MEMENU והצגתה. <b>SBMEPG</b> — החלטה, עבור אפשרות נבחרת, האם היא מכוונת לתוכנית (→ <code class="inl">SBPGM</code>) או לתפריט מקונן. <b>SBBACK</b> — חזרה לרמת התפריט הקודמת (F12).</p>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SBWLOG · SBRSHI · SRMVHB / SRMVEN <span style="font-weight:400;color:#64748b">— יומן ובניית מסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>SBWLOG</b> — כתיבת רשומת פעילות אל <code class="inl">MELOG</code> (משתמש, תפריט, אפשרות, חותמת זמן).</div>
+      <div class="kv"><b>SBRSHI / DDSDSP</b> — בניית / רענון רשומת התפריט (RMENU) והנעת כתיבת התצוגה.</div>
+      <div class="kv"><b>SRMVHB / SRMVEN</b> — טעינת טקסט בעברית או באנגלית למסך בהתאם לשפת המשתמש.</div>
+    </div>
+  </details>
+  <details class="proc">
+    <summary><span class="tag rpg">RPG</span> SRFRST · SRUSRO · SB99LR <span style="font-weight:400;color:#64748b">— מחזור חיים</span></summary>
+    <div class="body">
+      <div class="kv"><b>SRFRST</b> — אתחול מחזור ראשון (רץ פעם אחת).</div>
+      <div class="kv"><b>SRUSRO</b> — טעינת רשומת המשתמש הנוכחי מ-MEUSR (שפה, ברירות מחדל).</div>
+      <div class="kv"><b>SB99LR</b> — קביעת מחוון <code class="inl">LR</code> וסיום נקי ביציאה.</div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ UNFILE2PCC ============ -->
+<section id="file2pcc">
+  <h2><span class="emoji">📙</span> UNFILE2PCC.cl — כלי לבניית DDS / קבצים</h2>
+
+  <h3>שם התוכנית ומשמעותו</h3>
+  <p class="lead">תוכנית <b>UNFILE2PCC</b> — "UN[iversal] FILE to PC[C]". בהינתן קובץ פיזי, היא מבצעת הנדסה לאחור
+  ל-DDS של הקובץ ובונה את כל הפריטים שצינור ההמרה צריך: PF מקור זמני עם ארבעה חברים
+  (A / F / HDR / X), ארבעה אובייקטי PF, עותק של הנתונים, ותוכנית header שנוצרה, מהודרה ומורצת.</p>
+
+  <h3>פרמטרים ומשתנים</h3>
+  <table>
+    <tr><th>שם</th><th>סוג</th><th>תרגום לעברית</th><th>תיאור</th></tr>
+    <tr><td><code class="inl">&amp;FROMFILE</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>קובץ מקור (קלט)</td><td>הקובץ הפיזי שיש לעבד.</td></tr>
+    <tr><td><code class="inl">&amp;FROMLIB</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>ספריית מקור (קלט)</td><td>הספרייה המכילה את הקובץ.</td></tr>
+    <tr><td><code class="inl">&amp;RET</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 1</span></td><td>דגל החזרה (פלט)</td><td>נקבע ל-<code class="inl">'1'</code> אם לא ניתן ליצור את PF המקור או שהקובץ אינו קיים.</td></tr>
+    <tr><td><code class="inl">&amp;TYPE</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 6</span></td><td>סוג אובייקט</td><td>קבוע ל-<code class="inl">'PF'</code>.</td></tr>
+    <tr><td><code class="inl">&amp;DDSFIL / &amp;DDSLIB</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>קובץ / ספריית מקור DDS</td><td><code class="inl">QDDSSRC</code> ב-<code class="inl">QTEMP</code>.</td></tr>
+    <tr><td><code class="inl">&amp;DDSMBR</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>שם חבר בסיס</td><td>5 התווים הראשונים של <code class="inl">&amp;FROMFILE</code> (<code class="inl">%SST(&amp;FROMFILE 1 5)</code>).</td></tr>
+    <tr><td><code class="inl">&amp;DDSMBRA/F/H/X</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>וריאנטים של חבר</td><td>בסיס + סיומת <code class="inl">A</code> / <code class="inl">F</code> / <code class="inl">HDR</code> / <code class="inl">X</code>.</td></tr>
+    <tr><td><code class="inl">&amp;USER</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 10</span></td><td>משתמש נוכחי</td><td>נשלף בהתחלה.</td></tr>
+    <tr><td><code class="inl">&amp;TEXT / &amp;TEXTX / &amp;MSG</code></td><td><span class="chip t-char" style="padding:2px 8px">*CHAR 50/50/70</span></td><td>עבודת טקסט / הודעה</td><td>טקסט חבר ומחרוזות הודעות שגיאה.</td></tr>
+  </table>
+
+  <h4>זרימת קבצי עבודה (QTEMP)</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 920 250" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="c1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="20" y="90" width="120" height="60" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="80" y="112" font-weight="700">&amp;FROMFILE</text><text x="80" y="130" font-size="10">PF מקור</text>
+    <rect x="180" y="30" width="150" height="44" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="255" y="50" font-weight="700">QTEMP/DSPFD</text><text x="255" y="66" font-size="10">קובץ פלט DSPFD</text>
+    <rect x="180" y="90" width="150" height="44" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="255" y="110" font-weight="700">QTEMP/DSPFFD</text><text x="255" y="126" font-size="10">קובץ פלט DSPFFD</text>
+    <rect x="180" y="160" width="150" height="60" rx="8" fill="#fffbeb" stroke="#f59e0b"/><text x="255" y="182" font-weight="700">QTEMP/QDDSSRC</text><text x="255" y="200" font-size="10">חברים A / F / HDR / X</text>
+    <rect x="400" y="90" width="150" height="60" rx="8" fill="#fef2f2" stroke="#b91c1c"/><text x="475" y="112" font-weight="700">UNCRTHDRK</text><text x="475" y="130" font-size="10">מייצר DDS + תוכנית hdr</text>
+    <rect x="600" y="30" width="140" height="44" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="670" y="50" font-weight="700">PF A/F/HDR/X</text><text x="670" y="66" font-size="10">אובייקטי CRTPF</text>
+    <rect x="600" y="100" width="140" height="44" rx="8" fill="#dcfce7" stroke="#16a34a"/><text x="670" y="120" font-weight="700">CPYF → קובץ F</text><text x="670" y="136" font-size="10">*MAP *DROP</text>
+    <rect x="600" y="170" width="140" height="50" rx="8" fill="#ede9fe" stroke="#7c3aed"/><text x="670" y="190" font-weight="700">UNUPDHDRK</text><text x="670" y="206" font-size="10">הידור + הרצה</text>
+    <g stroke="#334155" fill="none" marker-end="url(#c1)">
+      <line x1="140" y1="110" x2="178" y2="55"/>
+      <line x1="140" y1="118" x2="178" y2="112"/>
+      <line x1="330" y1="112" x2="398" y2="118"/>
+      <line x1="330" y1="185" x2="398" y2="135"/>
+      <line x1="550" y1="110" x2="598" y2="55"/>
+      <line x1="550" y1="120" x2="598" y2="120"/>
+      <line x1="550" y1="130" x2="598" y2="190"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>שלבי הצינור (תוויות)</h3>
+  <table>
+    <tr><th>תווית</th><th>מה היא עושה</th></tr>
+    <tr><td><b>START</b></td><td>שליפת המשתמש הנוכחי; אתחול משתני עבודה; קביעת <code class="inl">&amp;TYPE='PF'</code>, קובץ DDS בשם <code class="inl">QDDSSRC</code> ב-<code class="inl">QTEMP</code>, חבר = 5 התווים הראשונים של הקובץ.</td></tr>
+    <tr><td><b>CRT_SRCF</b></td><td><code class="inl">CRTSRCPF QTEMP/QDDSSRC</code>; בשגיאה קביעת <code class="inl">&amp;RET='1'</code> ויציאה.</td></tr>
+    <tr><td><b>CHK_FILE</b></td><td><code class="inl">CHKOBJ</code> על קובץ המקור; אם <code class="inl">CPF9801</code> (לא נמצא) שליחת הודעה בעברית "קובץ אינו קיים", קביעת <code class="inl">&amp;RET='1'</code>, יציאה.</td></tr>
+    <tr><td><b>(חברים A/F/HDR/X)</b></td><td>עבור כל וריאנט: <code class="inl">CHKOBJ</code> על החבר, ובהיעדרו <code class="inl">ADDPFM</code> אותו עם טקסט מתאר.</td></tr>
+    <tr><td><b>DSPFD / DSPFFD</b></td><td>שפיכת תיאור הקובץ ותיאורי השדות אל <code class="inl">QTEMP/DSPFD</code> ו-<code class="inl">QTEMP/DSPFFD</code>.</td></tr>
+    <tr><td><b>OVRDBF1 / CRTDDS</b></td><td>ביטול (override) קבצי העבודה וחברי המקור, ואז <code class="inl">CALL UNCRTHDRK</code> לייצור מקור DDS/header. <code class="inl">DLTOVR</code> לאחר מכן.</td></tr>
+    <tr><td><b>CRT_DDSA/F/H/X</b></td><td><code class="inl">DLTF</code>+<code class="inl">CRTPF</code> לכל אחד מארבעת אובייקטי ה-PF מהחברים שנוצרו (<code class="inl">SIZE(*NOMAX) LVLCHK(*NO)</code>), ואז <code class="inl">CLRPFM</code>.</td></tr>
+    <tr><td><b>CPY_F2F</b></td><td><code class="inl">CPYF</code> את הנתונים לקובץ "F" (<code class="inl">MBROPT(*REPLACE) FMTOPT(*MAP *DROP)</code>).</td></tr>
+    <tr><td><b>DSPFD2 / OVRDBF2 / CMP_HDRPGM / UPDHDR</b></td><td>תיאור קובץ ה-HDR שוב, ביטול, הידור <code class="inl">UNUPDHDRK</code> שנוצרה והרצתה.</td></tr>
+    <tr><td><b>EXIT</b></td><td>סיום התוכנית.</td></tr>
+  </table>
+  <div class="note">משתמשת ב-<code class="inl">MONMSG CPF0000</code> בשפע כדי לבלוע מצבי "כבר קיים / לא נמצא", כך שהרצה חוזרת של הכלי היא אידמפוטנטית. השגיאות היחידות שהיא מציפה הן השתיים שחוסמות התקדמות: כשל ביצירת PF המקור וקובץ קלט חסר.</div>
+</section>
+
+<!-- ============ UNSNDWEB ============ -->
+<section id="sndweb">
+  <h2><span class="emoji">📘</span> UNSNDWEB.cbl — מנוע מסכי WEB</h2>
+
+  <h3>שם התוכנית ומשמעותו</h3>
+  <p class="lead">תוכנית <b>UNSNDWEB</b> = "UN[iversal] SEND to WEB". תוכנית COBOL יחידה עם פרמטר כניסה אחד
+  (חוצץ בגודל 64,412 בתים <code class="inl">SND-DATA</code> ש-חמישה copybooks של פרמטרים מגדירים אותו מחדש) ו-
+  <code class="inl">EVALUATE</code> גדול על <b>קוד פעולה</b> <code class="inl">WB-KOD-PEULA</code>. היא בונה XML עבור
+  מסכים/שדות/פקודות/גרידים/שאלונים/מכתבים, מחליפה אותו עם שכבת הדפדפן דרך data queues, ומפרקת
+  את תשובת ה-XML חזרה לחוצץ המסך של האפליקציה.</p>
+
+  <h3>DATA DIVISION — פרמטר הכניסה וה-overlays</h3>
+  <p>התוכנית מקבלת פרמטר אחד בדיוק, <code class="inl">SND-DATA</code>, ומפרשת אותו מחדש באמצעות חמישה
+  <code class="inl">REDEFINES</code> overlays — כל אחד נתמך על ידי copybook <code class="inl">IN QWRKSRC</code>. פריסות
+  השדות המפורטות שוכנות אפוא ב-copybooks האלה; מה שהמקור עצמו מציג הוא החוצץ וחיווט ה-redefines.</p>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>תרגום לעברית</th><th>תיאור</th></tr>
+    <tr><td><code class="inl">SND-DATA</code></td><td><span class="chip t-group" style="padding:2px 8px">01 PIC X(64412)</span></td><td>חוצץ משותף (קלט/פלט)</td><td>פרמטר ה-<code class="inl">LINKAGE</code> היחיד (<code class="inl">PROCEDURE DIVISION USING SND-DATA</code>). הוגדל מ-29,900 ל-64,412 בפרויקט K64.</td></tr>
+    <tr><td><code class="inl">UNSNDWEB-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNSNDWEBP</span></td><td>פרמטרי מסך</td><td>המבט הראשי: מכיל את <code class="inl">WB-KOD-PEULA</code>, <code class="inl">WB-FILE-NAME</code>, <code class="inl">WB-RECORD-NAME</code>, <code class="inl">WB-CMD</code>, קודי החזרה וחוצצי המסך.</td></tr>
+    <tr><td><code class="inl">UNQUESTP-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNQUESTP</span></td><td>פרמטרי שאלון</td><td>מסכים גמישים (שאלון). מועברים אל <code class="inl">UNPARTQU</code>/<code class="inl">UNSNDMEM</code>.</td></tr>
+    <tr><td><code class="inl">UNTEXTCTL-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNTEXTCTL</span></td><td>פרמטרי בקרת טקסט</td><td>מסכי בקרת קלט טקסט (משפחת T*).</td></tr>
+    <tr><td><code class="inl">UNDLL-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNDLLPRM</span></td><td>פרמטרי DLL</td><td>בקשה/תגובה של DLL חיצוני (משפחת D*).</td></tr>
+    <tr><td><code class="inl">UNLETTER-PRM</code></td><td><span class="chip t-group" style="padding:2px 8px">REDEFINES · COPY UNLETTERP</span></td><td>פרמטרי מכתב</td><td>תת-מערכת המכתבים (משפחת V*, קוראת ל-<code class="inl">UNLETTER</code>).</td></tr>
+  </table>
+
+  <h4>שדה קוד הפעולה ומתגים מרכזיים (WORKING-STORAGE)</h4>
+  <table>
+    <tr><th>שדה</th><th>סוג / PIC</th><th>תרגום לעברית</th><th>תיאור</th></tr>
+    <tr><td><code class="inl">WB-KOD-PEULA</code></td><td><span class="chip t-char" style="padding:2px 8px">char (ב-UNSNDWEBP)</span></td><td>קוד פעולה</td><td>הערך שה-<code class="inl">EVALUATE</code> מסתעף עליו. שמות תנאי רמת 88 שלו מוגדרים ב-copybook — ראו טבלת הניתוב למטה.</td></tr>
+    <tr><td><code class="inl">SW-END-READ</code></td><td><span class="chip t-flag" style="padding:2px 8px">PIC 9(01) · 88 ON=1 OFF=0</span></td><td>מתג סיום קריאה</td><td>מסיים את הלולאה עבור מחזורי הקריאה READ / SHELON / TEXTCTL / LETTER.</td></tr>
+    <tr><td><code class="inl">SW-FIRST-TIME</code></td><td><span class="chip t-flag" style="padding:2px 8px">PIC 9 · 88 ON=0 OFF=1</span></td><td>מתג פעם ראשונה</td><td>מפעיל את <code class="inl">Z00-INIT</code> בכניסה הראשונה בלבד.</td></tr>
+    <tr><td><code class="inl">SW-END-JOB</code></td><td><span class="chip t-flag" style="padding:2px 8px">רמת 88</span></td><td>מתג סיום עבודה</td><td>נקבע כאשר שגיאת תעבורת data-queue מחייבת כיבוי.</td></tr>
+    <tr><td><code class="inl">SW-TDI-ON</code></td><td><span class="chip t-flag" style="padding:2px 8px">רמת 88</span></td><td>מצב טרמינל/אינטראקטיבי</td><td>מבחין בין הפעלות תד"י (מסך ירוק) ל-WEB טהור.</td></tr>
+    <tr><td><code class="inl">ERR-MSG-KOD</code></td><td><span class="chip t-char" style="padding:2px 8px">char</span></td><td>קוד הודעת שגיאה</td><td>מכיל קודים כמו <code class="inl">WB011</code> (פעולה לא חוקית), <code class="inl">WB003/WB004/WB025</code>, <code class="inl">WB800/WB900</code> (פסק זמן). נשלח על ידי <code class="inl">I199-TIPUL-ERR</code>.</td></tr>
+    <tr><td><code class="inl">SRD-RETCOD</code></td><td><span class="chip t-char" style="padding:2px 8px">char · 88 OK / TIME-OUT</span></td><td>קוד החזרה של DTAQ</td><td>תוצאת שליחה/קבלה של data-queue דרך <code class="inl">WBSRDQ</code>.</td></tr>
+    <tr><td><code class="inl">DTAQ-DQ-DATA</code></td><td><span class="chip t-money" style="padding:2px 8px">חוצץ DTAQ</span></td><td>מטען data-queue</td><td>ה-XML שנכתב אל / נקרא מ-ה-data queue.</td></tr>
+  </table>
+
+  <h4>ERD (i) — SND-DATA וחמשת ה-REDEFINES overlays שלו</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 900 300" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <rect x="330" y="20" width="240" height="70" rx="10" fill="#0f172a"/><text x="450" y="46" fill="#fff" font-weight="700">SND-DATA</text><text x="450" y="66" fill="#cbd5e1" font-size="10">01 PIC X(64412)</text><text x="450" y="82" fill="#cbd5e1" font-size="10">פרמטר ה-LINKAGE היחיד</text>
+    <g stroke="#64748b" fill="none">
+      <line x1="450" y1="90" x2="110" y2="150"/><line x1="450" y1="90" x2="280" y2="150"/>
+      <line x1="450" y1="90" x2="450" y2="150"/><line x1="450" y1="90" x2="620" y2="150"/>
+      <line x1="450" y1="90" x2="790" y2="150"/>
+    </g>
+    <rect x="30" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="105" y="172" font-weight="700">UNSNDWEB-PRM</text><text x="105" y="190" font-size="10">COPY UNSNDWEBP</text><text x="105" y="208" font-size="9.5">WB-KOD-PEULA,</text><text x="105" y="222" font-size="9.5">WB-FILE/RECORD,</text><text x="105" y="236" font-size="9.5">חוצצי מסך</text>
+    <rect x="205" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="280" y="172" font-weight="700">UNQUESTP-PRM</text><text x="280" y="190" font-size="10">COPY UNQUESTP</text><text x="280" y="212" font-size="9.5">שאלון</text><text x="280" y="226" font-size="9.5">(shelon)</text>
+    <rect x="375" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="450" y="172" font-weight="700">UNTEXTCTL-PRM</text><text x="450" y="190" font-size="10">COPY UNTEXTCTL</text><text x="450" y="212" font-size="9.5">בקרות</text><text x="450" y="226" font-size="9.5">קלט טקסט</text>
+    <rect x="545" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="620" y="172" font-weight="700">UNDLL-PRM</text><text x="620" y="190" font-size="10">COPY UNDLLPRM</text><text x="620" y="212" font-size="9.5">בקשת DLL</text><text x="620" y="226" font-size="9.5">חיצוני</text>
+    <rect x="715" y="150" width="150" height="90" rx="8" fill="#f1f5f9" stroke="#334155"/><text x="790" y="172" font-weight="700">UNLETTER-PRM</text><text x="790" y="190" font-size="10">COPY UNLETTERP</text><text x="790" y="212" font-size="9.5">מכתבים</text><text x="790" y="226" font-size="9.5">(michtavim)</text>
+    <text x="450" y="270" font-size="11" fill="#64748b">כל החמישה תופסים את אותם בתים — ה-overlay הפעיל נבחר לפי קוד הפעולה.</text>
+  </svg>
+  </div>
+
+  <h4>ERD (ii) — חילופי data-queue וישויות ה-XML</h4>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 920 280" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="q1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <rect x="30" y="110" width="150" height="70" rx="10" fill="#fef2f2" stroke="#b91c1c"/><text x="105" y="136" font-weight="700">UNSNDWEB</text><text x="105" y="156" font-size="10">בונה / מפרק XML</text>
+    <rect x="260" y="40" width="180" height="46" rx="20" fill="#fef3c7" stroke="#d97706"/><text x="350" y="60" font-weight="700">DTAQ יוצא</text><text x="350" y="76" font-size="10">Q10-WRITE-DTAQ</text>
+    <rect x="260" y="200" width="180" height="46" rx="20" fill="#fef3c7" stroke="#d97706"/><text x="350" y="220" font-weight="700">DTAQ נכנס</text><text x="350" y="236" font-size="10">Q20-READ-DTAQ</text>
+    <rect x="520" y="110" width="170" height="70" rx="10" fill="#e0f2fe" stroke="#0ea5e9"/><text x="605" y="136" font-weight="700">שכבת WEB</text><text x="605" y="154" font-size="10">WBSRDQ / WBSRVR03</text><text x="605" y="170" font-size="10">→ דפדפן</text>
+    <rect x="740" y="30" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="54" font-size="11">ישות &lt;screen&gt;</text>
+    <rect x="740" y="90" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="114" font-size="11">ישויות &lt;field&gt;</text>
+    <rect x="740" y="150" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="174" font-size="11">מקשי &lt;command&gt;</text>
+    <rect x="740" y="210" width="150" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6"/><text x="815" y="234" font-size="11">&lt;grid&gt; / אזורים</text>
+    <g stroke="#334155" fill="none" marker-end="url(#q1)">
+      <line x1="180" y1="130" x2="258" y2="70"/><text x="215" y="95" font-size="9" fill="#d97706">C50 בנייה</text>
+      <line x1="440" y1="63" x2="518" y2="120"/>
+      <line x1="518" y1="160" x2="440" y2="220" stroke-dasharray="3 3"/>
+      <line x1="258" y1="223" x2="180" y2="165" stroke-dasharray="3 3"/><text x="215" y="205" font-size="9" fill="#d97706">B100 פירוק</text>
+      <line x1="690" y1="120" x2="738" y2="55"/>
+      <line x1="690" y1="130" x2="738" y2="110"/>
+      <line x1="690" y1="150" x2="738" y2="170"/>
+      <line x1="690" y1="165" x2="738" y2="225"/>
+    </g>
+  </svg>
+  </div>
+
+  <h3>ניתוב קוד הפעולה (<code class="inl">000-MAIN → EVALUATE WB-KOD-PEULA</code>)</h3>
+  <p>לפני ה-<code class="inl">EVALUATE</code>, 000-MAIN מסנן פקודות שאינן מסך: כל קוד ש<b>אינו</b> WRITE / SHELON / UNMAINDA / CLOSE-FROM-MENU / NOT-START-APP מומר לכפייה אל
+  <code class="inl">WB-KOD-PEULA-CLOSE-FROM-WEB</code>.</p>
+  <table>
+    <tr><th>פעולה (WB-KOD-PEULA-*)</th><th>מטפל</th><th>התנהגות</th></tr>
+    <tr><td><code class="inl">WRITE</code></td><td>C00-TIPUL-WRITE</td><td>כתיבת שורות מסך אל ה-XML היוצא.</td></tr>
+    <tr><td><code class="inl">READ</code></td><td>B00-TIPUL-READ <span class="badge">לולאה עד SW-END-READ-ON</span></td><td>בניית דף ה-XML, חילופין דרך DTAQ, ופירוק התשובה.</td></tr>
+    <tr><td><code class="inl">FOLDER</code></td><td>G00-TIPUL-FOLDER</td><td>מסכי לשוניות (folder): תת-קודים START/STOP/RESTORE/DISABLE/ENABLE/TORAN.</td></tr>
+    <tr><td><code class="inl">SND-SHELON</code></td><td>E00-SND-SHELON <span class="badge">לולאה</span></td><td>מסכי שאלון גמישים (shelon).</td></tr>
+    <tr><td><code class="inl">END-SHELON</code></td><td>F00 / סגירת שאלון</td><td>סיום הפעלת השאלון.</td></tr>
+    <tr><td><code class="inl">MEMORY-FLEX</code></td><td>R180-CALL-UNSNDMEM</td><td>בניית נתוני combo/רשימה בזיכרון.</td></tr>
+    <tr><td><code class="inl">UNMAINDA</code></td><td>H00 / H10-TDI / H20-RTVDTAARA</td><td>החזרת תוכן ה-data area של UNMAINDA.</td></tr>
+    <tr><td><code class="inl">TBL-TOKEF</code></td><td>K00-TIPUL-TBL-TOKEF</td><td>תאריכי תוקף של טבלה: תת-קודים STR / END.</td></tr>
+    <tr><td><code class="inl">CALL-DLL</code></td><td>D00 / D10…D60</td><td>בניית XML לבקשת DLL חיצוני ופירוק תשובתו.</td></tr>
+    <tr><td><code class="inl">TEXTCTL</code></td><td>T00-SND-TEXTCTL <span class="badge">לולאה</span></td><td>מסכי בקרת קלט טקסט.</td></tr>
+    <tr><td><code class="inl">LETTER</code></td><td>V00-SND-LETTER <span class="badge">לולאה</span></td><td>תת-מערכת המכתבים (קוראת ל-<code class="inl">UNLETTER</code>).</td></tr>
+    <tr><td><code class="inl">ALL-OTHER</code></td><td>X00-SND-OTHER-FUNC</td><td>פונקציות אחרות כולל גרפים (<code class="inl">X10-SND-GRAFH</code>).</td></tr>
+    <tr><td><code class="inl">CLOSE-FROM-MENU</code></td><td>קובע <code class="inl">WB900</code> / <code class="inl">WB800</code> → I199 → Z999</td><td>כיבוי מבוקר שהחל מהתפריט.</td></tr>
+    <tr><td><code class="inl">NOT-START-APP</code></td><td>משתמש ב-<code class="inl">WB-APL-RETCODE</code> → I199 → Z999</td><td>האפליקציה סירבה להתחיל.</td></tr>
+    <tr><td><code class="inl">CLOSE-FROM-WEB</code></td><td>I199 + Z999</td><td>כיבוי שהחל משכבת ה-web.</td></tr>
+    <tr><td>(אף אחד מהנ"ל)</td><td>I199-TIPUL-ERR</td><td>קביעת שגיאה <code class="inl">WB011</code> וחזרה.</td></tr>
+  </table>
+
+  <h3>משפחות סקשנים (170 סקשנים, מקובצים)</h3>
+  <div class="grid">
+    <div class="fcard t-char"><span class="ic">📖</span><div class="code">B* (read)</div><div class="en">קריאה / בניית מסך</div><div class="mn">B00 read, B17 build-XML, B100 parse-XML, B300 restore DSPF, grid/zones (~40 סקשנים)</div></div>
+    <div class="fcard t-char"><span class="ic">✍️</span><div class="code">C* (write)</div><div class="en">כתיבה / יצירת XML</div><div class="mn">C00 write, C50 create-XML, C55 write-field, C57 write-cmd, C30 overlay, עוזרי clear</div></div>
+    <div class="fcard t-char"><span class="ic">🧩</span><div class="code">D* (DLL)</div><div class="en">XML של DLL</div><div class="mn">D10 init, D20 const, D30 build, D40/D45 cmd/fld, D50 end, D60 parse</div></div>
+    <div class="fcard t-char"><span class="ic">📋</span><div class="code">E*/F* (shelon)</div><div class="en">שאלונים</div><div class="mn">E00 send, E20 build, E60 parse, E100 save-radio, F* end</div></div>
+    <div class="fcard t-char"><span class="ic">⌨️</span><div class="code">T* (text)</div><div class="en">בקרות טקסט</div><div class="mn">T00 send, T01 init, T20 build, T24 fields, T60 parse</div></div>
+    <div class="fcard t-char"><span class="ic">✉️</span><div class="code">V* (letter)</div><div class="en">מכתבים</div><div class="mn">V00 send, V20 build, V23 frame, V30 call UNLETTER</div></div>
+    <div class="fcard t-money"><span class="ic">📨</span><div class="code">Q* (DTAQ)</div><div class="en">קלט/פלט data-queue</div><div class="mn">Q00 send/recv, Q10 write, Q20 read, Q30 send-part</div></div>
+    <div class="fcard t-char"><span class="ic">🖼️</span><div class="code">M* (screen)</div><div class="en">שמירה/שחזור מסך</div><div class="mn">M00 change, M01 save, M02 restore, M50 find-pgm, M80 chk-dspf</div></div>
+    <div class="fcard t-char"><span class="ic">🔀</span><div class="code">G/H/K/S/X</div><div class="en">לשוניות / שונות</div><div class="mn">G folders, H unmainda, K tbl-tokef, S unix-screen, X other+graphs</div></div>
+    <div class="fcard t-money"><span class="ic">📞</span><div class="code">R* (calls)</div><div class="en">תוכניות חיצוניות</div><div class="mn">~40 עוטפים: UNRDCOMXX, UNPART, UNFLBLD, UNCMBLD, UNLETTER, WBSRDQ…</div></div>
+    <div class="fcard t-flag"><span class="ic">🚦</span><div class="code">Z/I/L/900</div><div class="en">אתחול / שגיאה / עצירה</div><div class="mn">Z00 init, Z01 clear, I199 error, Z999 stop, L50 time, 900 hash</div></div>
+    <div class="fcard t-date"><span class="ic">🛡️</span><div class="code">R21/R22 (check)</div><div class="en">אימות מקוריות מסך</div><div class="mn">R21-SCREEN-CHECK, R22 page-reload / used-screen checks, hash</div></div>
+  </div>
+
+  <h3>מחזור הקריאה (פעילות — B00-TIPUL-READ)</h3>
+  <div class="diagram-wrap">
+  <svg viewBox="0 0 940 240" font-family="Segoe UI,Arial" font-size="11.5" text-anchor="middle">
+    <defs><marker id="w" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker></defs>
+    <circle cx="35" cy="60" r="12" fill="#0f172a"/>
+    <rect x="70" y="40" width="120" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="130" y="60">B300 שחזור</text><text x="130" y="74" font-size="9">DSPF לקריאה</text>
+    <rect x="215" y="40" width="110" height="40" rx="8" fill="#cffafe" stroke="#0891b2"/><text x="270" y="60">B10 אתחול</text><text x="270" y="74" font-size="9">ניקוי שדות</text>
+    <rect x="350" y="40" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="410" y="60">B17 בניית XML</text><text x="410" y="74" font-size="9">שדות+פקודות+grid</text>
+    <rect x="495" y="40" width="130" height="40" rx="8" fill="#fef3c7" stroke="#d97706"/><text x="560" y="60">Q00 שליחה/קבלה</text><text x="560" y="74" font-size="9">דרך DTAQ</text>
+    <rect x="650" y="40" width="120" height="40" rx="8" fill="#e0f2fe" stroke="#0ea5e9"/><text x="710" y="60">B100 פירוק XML</text><text x="710" y="74" font-size="9">קריאת CMD/שדות</text>
+    <path d="M710,160 m-70,0 l70,-28 l70,28 l-70,28 Z" fill="#fef9c3" stroke="#ca8a04"/><text x="710" y="156">פקודה תקינה?</text>
+    <rect x="360" y="140" width="150" height="40" rx="8" fill="#ede9fe" stroke="#7c3aed"/><text x="435" y="160">החזרת חוצץ</text><text x="435" y="174" font-size="9">ל-WEB / אפליקציה</text>
+    <circle cx="200" cy="160" r="12" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="200" cy="160" r="6" fill="#0f172a"/>
+    <g stroke="#334155" fill="none" marker-end="url(#w)">
+      <line x1="47" y1="60" x2="68" y2="60"/><line x1="190" y1="60" x2="213" y2="60"/>
+      <line x1="325" y1="60" x2="348" y2="60"/><line x1="470" y1="60" x2="493" y2="60"/>
+      <line x1="625" y1="60" x2="648" y2="60"/>
+      <line x1="710" y1="80" x2="710" y2="130"/>
+      <line x1="640" y1="160" x2="512" y2="160"/><text x="580" y="150" fill="#16a34a">כן</text>
+      <line x1="360" y1="160" x2="214" y2="160"/>
+    </g>
+    <text x="610" y="225" fill="#b91c1c" font-size="10">לא / לא תקין → SW-END-READ-ON, הלולאה שולחת שוב</text>
+  </svg>
+  </div>
+
+  <h3>PROCEDURE DIVISION — סקשנים</h3>
+
+  <details class="proc" open>
+    <summary><span class="tag cbl">CBL</span> 000-MAIN <span style="font-weight:400;color:#64748b">— מנתב פעולות</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">כניסת התוכנית (WBSRVR03 / WBAPP)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">Z00-INIT</span><span class="callchip">Z01-INIT-CLALI</span><span class="callchip">R21-SCREEN-CHECK</span><span class="callchip">C00/B00/E00/D00/T00/V00/X00…</span></div>
+      <p><b>מטרה:</b> בכניסה הראשונה מריץ <code class="inl">Z00-INIT</code>; כופה פקודות שאינן מסך אל CLOSE-FROM-WEB; ואז <code class="inl">EVALUATE</code> את קוד הפעולה ומאציל. פעולות מסוג לולאה (READ/SHELON/TEXTCTL/LETTER) מבוצעות עד (UNTIL) <code class="inl">SW-END-READ-ON</code>.</p>
+      <pre><span class="kw">IF</span> SW-FIRST-TIME-ON  <span class="kw">PERFORM</span> Z00-INIT.
+<span class="kw">EVALUATE TRUE</span>
+  <span class="kw">WHEN</span> WB-KOD-PEULA-WRITE       <span class="kw">PERFORM</span> C00-TIPUL-WRITE
+  <span class="kw">WHEN</span> WB-KOD-PEULA-READ        <span class="kw">PERFORM</span> B00-TIPUL-READ <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-SND-SHELON  <span class="kw">PERFORM</span> E00-SND-SHELON <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-CALL-DLL    <span class="kw">PERFORM</span> D00-TIPUL-DLL
+  <span class="kw">WHEN</span> WB-KOD-PEULA-TEXTCTL     <span class="kw">PERFORM</span> T00-SND-TEXTCTL <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="kw">WHEN</span> WB-KOD-PEULA-LETTER      <span class="kw">PERFORM</span> V00-SND-LETTER  <span class="kw">UNTIL</span> SW-END-READ-ON
+  <span class="cm">*&gt; ...folder, unmainda, tbl-tokef, memory-flex, close, other...</span>
+  <span class="kw">WHEN NOT</span> WB-KOD-PEULA-UNSNDWEB  <span class="kw">MOVE</span> 'WB011' <span class="kw">TO</span> ERR-MSG-KOD
+<span class="kw">END-EVALUATE</span>.</pre>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B00-TIPUL-READ <span style="font-weight:400;color:#64748b">— קריאה / בניית מסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (READ, לולאה)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B300-RESTORE-DSPF-FOR-READ</span><span class="callchip">B10-INIT-READ</span><span class="callchip">B17-BUILD-XML</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">B100-PERUK-XML</span><span class="callchip">B200-WINDOW-REST</span></div>
+      <p><b>מטרה:</b> איטרציה אחת של מחזור הקריאה — שחזור קובץ התצוגה, אתחול, בניית XML, חילופין דרך ה-DTAQ, פירוק התשובה, והחזרת החוצץ המעודכן. קובע <code class="inl">SW-END-READ-ON</code> כדי לצאת מהלולאה כאשר מגיעה פקודת חזרה תקינה.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B17-BUILD-XML <span style="font-weight:400;color:#64748b">— בניית ה-XML של מסך הקריאה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B19/B20 file-var</span><span class="callchip">B22 cmd-line</span><span class="callchip">B24 field-line</span><span class="callchip">B30 folder</span><span class="callchip">B40 grid-zones</span><span class="callchip">C50-CREATE-XML</span></div>
+      <p><b>מטרה:</b> מעבר על שדות קובץ התצוגה, מקשי הפקודה, הלשוניות ואזורי ה-grid, ופליטת ה-XML המתאר את הדף שיוצג. הבנאי הגדול ביותר במשפחת ה-B*.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B100-PERUK-XML <span style="font-weight:400;color:#64748b">— פירוק XML התשובה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B110-CHECK-RETURN-CMD</span><span class="callchip">B120-TIPUL-TIME-TEST</span><span class="callchip">B130-FILL-CMD-FOR-MODAL</span><span class="callchip">R30-CALL-UNPART</span></div>
+      <p><b>מטרה:</b> פירוק (peruk) של XML התשובה למקש פקודה + ערכי שדות והחזרתם לחוצץ המסך. בקוד חזרה שגוי של החלק הוא מעביר את הקוד אל <code class="inl">ERR-MSG-KOD</code> וקובע <code class="inl">SW-END-READ-ON</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> B300-RESTORE-DSPF-FOR-READ <span style="font-weight:400;color:#64748b">— שחזור קובץ תצוגה</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B00-TIPUL-READ</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">B310-REST-DSPF-AP</span></div>
+      <p><b>מטרה:</b> שחזור התמונה השמורה של קובץ התצוגה לפני קריאה. בכשל מעביר <code class="inl">WB004</code> אל <code class="inl">ERR-MSG-KOD</code> ומסיים את הקריאה.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> C00-TIPUL-WRITE + C50-CREATE-XML / C55 / C57 <span style="font-weight:400;color:#64748b">— כתיבה ובניית XML</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (WRITE)</span><span class="callchip">B17-BUILD-XML</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">C10-INIT-WRITE</span><span class="callchip">C20-OPEN-DSPF-REC</span><span class="callchip">C55-WRITE-FIELD</span><span class="callchip">C57-WRITE-CMD</span><span class="callchip">C30-OVERLAY</span><span class="callchip">C40/C70/C80 clear</span></div>
+      <p><b>מטרה:</b> המרת שדות מסך ומקשי פקודה לאלמנטי XML אחד-אחד (<code class="inl">C50-CREATE-XML</code>), תוך ניהול לוגיקת overlay ו-clear. <code class="inl">C20-OPEN-DSPF-REC</code> קובע <code class="inl">WB003</code> אם לא ניתן לפתוח את הרשומה.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> Q00-SND-RCV-DTAQ / Q10-WRITE-DTAQ / Q20-READ-DTAQ <span style="font-weight:400;color:#64748b">— תעבורת data-queue</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">B00</span><span class="callchip">E00</span><span class="callchip">T00</span><span class="callchip">V00</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">Q10-WRITE-DTAQ</span><span class="callchip">Q20-READ-DTAQ</span><span class="callchip">R20-CALL-WBSRDQ</span><span class="callchip">R22-PAGE-RELOAD-CLR</span></div>
+      <p><b>מטרה:</b> שכבת התעבורה. <code class="inl">Q10</code> קובע פעולה <code class="inl">SND-C2P</code> וכותב את בקשת ה-XML; <code class="inl">Q20</code> קובע פעולה <code class="inl">RCV-P2C</code> וקורא בחסימה את התגובה — שניהם דרך <code class="inl">WBSRDQ</code>. ב-<code class="inl">SRD-RETCOD</code> שגוי הוא קובע end-read + end-job; בפסק זמן הוא מעלה <code class="inl">WB900</code> (TDI) או <code class="inl">WB800</code> (WEB) ומבצע <code class="inl">I199</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> E00-SND-SHELON + E20-QUEST-BUILD / E60-PERUK-XML <span style="font-weight:400;color:#64748b">— שאלון גמיש (shelon)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (SND-SHELON, לולאה)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">E10-QUEST-OVERLAY</span><span class="callchip">E20-QUEST-BUILD</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">E60-PERUK-XML</span><span class="callchip">CALL UNPARTQU</span></div>
+      <p><b>מטרה:</b> בניית ה-XML של השאלון (שדות, פקודות, טקסט עזרה עברית/אנגלית, קבוצות radio), חילופו דרך ה-DTAQ, ופירוק התשובה — המקבילה של מחזור הקריאה B* עבור השאלון. <code class="inl">F00</code>/END-SHELON סוגר את ההפעלה.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> D00-TIPUL-DLL (D10…D60) <span style="font-weight:400;color:#64748b">— בקשת DLL חיצוני</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (CALL-DLL)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">D10-INIT-DLL</span><span class="callchip">D20-BUILD-XML-CONST</span><span class="callchip">D30-BUILD-XML-DLL</span><span class="callchip">D40/D45 cmd/fld</span><span class="callchip">D60-PERUK-XML-DLL</span></div>
+      <p><b>מטרה:</b> הרכבת ה-XML המבקש מהדפדפן להפעיל DLL חיצוני (קבועים, פקודות, שדות), שליחתו, ופירוק התגובה חזרה דרך ה-overlay <code class="inl">UNDLL-PRM</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> T00-SND-TEXTCTL <span style="font-weight:400;color:#64748b">— בקרת קלט טקסט</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (TEXTCTL, לולאה)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">T01-INIT-TEXTCTL</span><span class="callchip">T20-QUEST-TEXT-BUILD</span><span class="callchip">Q00-SND-RCV-DTAQ</span><span class="callchip">T60-PERUK-XML</span><span class="callchip">CALL UNPARTXT</span></div>
+      <p><b>מטרה:</b> אותה תבנית בנייה/שליחה/פירוק עבור מסכי בקרת טקסט חופשי; משתמש ב-overlay <code class="inl">UNTEXTCTL-PRM</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> V00-SND-LETTER + V30-CALL-UNLETTER <span style="font-weight:400;color:#64748b">— מכתבים (michtavim)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (LETTER, לולאה)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">V10-LETTER-OVERLAY</span><span class="callchip">V20-LETTER-BUILD</span><span class="callchip">V23-LETTER-MISGERET</span><span class="callchip">V30-CALL-UNLETTER</span></div>
+      <p><b>מטרה:</b> בניית מסגרת המכתב (misgeret) ו-XML התוכן, ואז קריאה לתוכנית החיצונית <code class="inl">UNLETTER</code>; משתמש ב-overlay <code class="inl">UNLETTER-PRM</code>.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> H00-TIPUL-UNMAINDA <span style="font-weight:400;color:#64748b">— data area של UNMAINDA</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (UNMAINDA)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">H10-TDI</span><span class="callchip">H20-RTVDTAARA-LAK-TDI</span></div>
+      <p><b>מטרה:</b> שליפת ה-data area בשם <code class="inl">UNMAINDA</code> (הגדרות מערכת/הפעלה) והחזרתו בחוצץ — כולל מסלול TDI (טרמינל).</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> K00-TIPUL-TBL-TOKEF <span style="font-weight:400;color:#64748b">— תוקף טבלה (tokef)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (TBL-TOKEF)</span></div>
+      <p><b>מטרה:</b> טיפול בתאריכי תוקף של טבלה — מסתעף לפי תת-הקודים <code class="inl">TBL-TOKEF-STR</code> (התחלה) / <code class="inl">TBL-TOKEF-END</code> (סוף).</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> G00-TIPUL-FOLDER · X00-SND-OTHER-FUNC · S00-SND-UNX-SCR · M0x screens <span style="font-weight:400;color:#64748b">— לשוניות / גרפים / unix / שמירה-שחזור (מקובץ)</span></summary>
+    <div class="body">
+      <div class="kv"><b>G00-TIPUL-FOLDER</b> — מסכי לשונית/folder; תת-קודים START/STOP/RESTORE/DISABLE/ENABLE/TORAN (+ <code class="inl">G10</code> שחזור).</div>
+      <div class="kv"><b>X00-SND-OTHER-FUNC / X10-SND-GRAFH</b> — פונקציות שונות כולל מסכי גרפים.</div>
+      <div class="kv"><b>S00-SND-UNX-SCR</b> — מסלול מסך ירוק לאתרי UNIX בלבד.</div>
+      <div class="kv"><b>M00…M80</b> — שמירה/שחזור של תמונת המסך (<code class="inl">M01</code> שמירה, <code class="inl">M02</code> שחזור, <code class="inl">M50</code> חיפוש/קביעת pgm, <code class="inl">M80</code> בדיקת DSPF ב-UNFILExx).</div>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R*-CALL-* <span style="font-weight:400;color:#64748b">— עוטפי תוכניות חיצוניות (~40, מקובץ)</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">הבנאים B/C/D/E/T/V/Q</span></div>
+      <div class="kv"><b>קורא ל (תוכניות חיצוניות):</b>
+        <span class="callchip">UNRDCOMXX</span><span class="callchip">UNRDRADXX</span><span class="callchip">UNRDRAD2XX</span><span class="callchip">UNRDFILXX</span>
+        <span class="callchip">UNPART</span><span class="callchip">UNFLBLD</span><span class="callchip">UNFLCHK</span><span class="callchip">UNCMBLD</span><span class="callchip">UNCMCHK</span>
+        <span class="callchip">UNFLQUN/C/D</span><span class="callchip">UNSAVSCR</span><span class="callchip">UNLETTER</span><span class="callchip">UNSNDMEM</span>
+        <span class="callchip">UNSNDGRF</span><span class="callchip">UNSNDHLP</span><span class="callchip">UNCHKIND</span><span class="callchip">UNCHGTAG</span><span class="callchip">UNFNDORG</span>
+        <span class="callchip">UNOBLIB</span><span class="callchip">UNFLTXT</span><span class="callchip">WBSRDQ</span><span class="callchip">HASHCPTP</span></div>
+      <p><b>מטרה:</b> עוטפי <code class="inl">CALL</code> דקים המבודדים כל תלות: קריאת הגדרות מסך/פקודה/radio/קובץ, בניית XML לשדות/פקודות, שמירת מסכים, שליחת מכתבים/מזכרים/גרפים/עזרה, ושרת ה-data-queue (<code class="inl">R20-CALL-WBSRDQ</code>). כל אחד באורך 5–20 שורות: קביעת פרמטרים → CALL → בדיקת החזרה. מיוצגים כפאנל אחד משום שהם זהים מבנית.</p>
+      <p><b>רשימת סקשנים:</b> R10, R11, R20 (WBSRDQ), R20-CALL-SYSYSVAL, R30, R55, R57, R58, R59, R60, R68, R70, R71, R72, R72A, R72B, R80, R85, R90, R100, R110, R120, R130, R140, R150, R160, R170, R180 (UNSNDMEM), R190, R200 (UNSNDGRF).</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> R21-SCREEN-CHECK (עוזרי R22) <span style="font-weight:400;color:#64748b">— בדיקת מקוריות מסך</span></summary>
+    <div class="body">
+      <div class="kv"><b>נקרא על ידי:</b> <span class="callchip">000-MAIN (לפני הניתוב)</span></div>
+      <div class="kv"><b>קורא ל:</b> <span class="callchip">R22-SCREEN-FILE-CHK-PRC</span><span class="callchip">R22-USED-SCREEN-CHK</span><span class="callchip">900-GET-SCR-HASH</span><span class="callchip">900-CALL-HASHCPTP</span></div>
+      <p><b>מטרה:</b> הגנה מפני דף שאינו תואם/שוחזר — מבצע hash למסך (<code class="inl">HASHCPTP</code>) ומאמת שהוא תואם לקובץ המסך הצפוי לפני שהפעולה מכובדת. <code class="inl">R22-PAGE-RELOAD-CLR</code> מנקה שדות ברענון דף.</p>
+    </div>
+  </details>
+
+  <details class="proc">
+    <summary><span class="tag cbl">CBL</span> Z00-INIT / Z01-INIT-CLALI / I199-TIPUL-ERR / Z999-TIPUL-STOP-RUN <span style="font-weight:400;color:#64748b">— בקרה</span></summary>
+    <div class="body">
+      <div class="kv"><b>Z00-INIT</b> — הגדרה חד-פעמית; רץ כאשר <code class="inl">SW-FIRST-TIME-ON</code>.</div>
+      <div class="kv"><b>Z01-INIT-CLALI</b> — ניקוי שדות עבודה כלליים (klali) בכניסה.</div>
+      <div class="kv"><b>I199-TIPUL-ERR</b> — העברת <code class="inl">WB-KOD-PEULA</code> אל <code class="inl">ERR-PARM-PEULA</code>, עיצוב ושליחת השגיאה (<code class="inl">ERR-MSG-KOD</code>) למסך.</div>
+      <div class="kv"><b>Z999-TIPUL-STOP-RUN</b> — כיבוי מבוקר / קוד חזרה לשרת ה-web.</div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ SUGGESTED TESTS ============ -->
+<section id="tests">
+  <h2><span class="emoji">✅</span> בדיקות מוצעות (Cucumber / Gherkin)</h2>
+  <p class="lead">בדיקות התנהגותיות המקושרות לקודי הפעולה האמיתיים (<code class="inl">WB-KOD-PEULA-*</code>), קודי החזרה
+  (<code class="inl">WBxxx</code>, <code class="inl">SRD-RETCOD</code>) ושמות הסקשנים. משפחות מקובצות (עוטפי R*,
+  SBF01…24) מכוסות ב-<b>Scenario Outline</b> פרמטרי יחיד.</p>
+
+  <h3>UNSNDWEB.cbl</h3>
+
+  <h4>מנתב — 000-MAIN</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> ניתוב לפי קוד-פעולה ב-UNSNDWEB
+
+<span class="kw">תרחיש:</span> כניסה ראשונה מריצה אתחול חד-פעמי
+  <span class="kw">בהינתן</span> ש-UNSNDWEB לא נקראה בעבודה זו
+  <span class="kw">כאשר</span> היא נקראת עם WB-KOD-PEULA תקין כלשהו
+  <span class="kw">אז</span> Z00-INIT מבוצע בדיוק פעם אחת
+  <span class="kw">וגם</span>   SW-FIRST-TIME מכובה
+
+<span class="kw">תרחיש:</span> קוד פעולה לא תקין נדחה
+  <span class="kw">בהינתן</span> ש-SND-DATA נושא WB-KOD-PEULA שאינו אף אחד מהקודים המוכרים
+  <span class="kw">כאשר</span> 000-MAIN מעריך אותו
+  <span class="kw">אז</span> ERR-MSG-KOD נקבע ל-"WB011"
+  <span class="kw">וגם</span>   אף מקטע בנייה אינו מבוצע</pre>
+  <p><b>מאמת:</b> את מנגנון ה-<code class="inl">Z00-INIT</code> החד-פעמי ואת נפילת ברירת המחדל <code class="inl">WHEN NOT WB-KOD-PEULA-UNSNDWEB</code> שקובעת <code class="inl">WB011</code>.</p>
+
+  <h4>מחזור קריאה — B00 / B17 / B100</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> READ בונה XML, מחליף דרך DTAQ ומפרק את התשובה
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא WB-KOD-PEULA-READ עבור מסך קיים
+  <span class="kw">כאשר</span> B00-TIPUL-READ רץ
+  <span class="kw">אז</span> B17-BUILD-XML פולט אלמנטים של שדה, פקודה ו-grid
+  <span class="kw">וגם</span>   Q00-SND-RCV-DTAQ שולח את הבקשה ומקבל תשובה
+  <span class="kw">וגם</span>   B100-PERUK-XML ממלא את פקודת ההחזרה ואת ערכי השדות
+  <span class="kw">וגם</span>   הלולאה מסתיימת כאשר פקודת החזרה תקינה קובעת SW-END-READ-ON
+
+<span class="kw">תרחיש:</span> לא ניתן לשחזר את קובץ התצוגה
+  <span class="kw">בהינתן</span> שתמונת ה-DSPF השמורה אינה זמינה
+  <span class="kw">כאשר</span> B300-RESTORE-DSPF-FOR-READ רץ
+  <span class="kw">אז</span> ERR-MSG-KOD נקבע ל-"WB004"
+  <span class="kw">וגם</span>   SW-END-READ-ON נקבע כך שלולאת הקריאה מסתיימת</pre>
+  <p><b>מאמת:</b> את צינור הקריאה במסלול התקין ואת ענף כשל השחזור <code class="inl">WB004</code>, ששניהם מפרקים ומסיימים כראוי.</p>
+
+  <h4>תעבורת data-queue — Q00 / Q10 / Q20</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> שליחה/קבלה ב-DTAQ מצליחה
+  <span class="kw">בהינתן</span> ששכבת ה-web מאזינה על תור הנתונים
+  <span class="kw">כאשר</span> Q00-SND-RCV-DTAQ רץ
+  <span class="kw">אז</span> Q10 כותב עם SRD-ACTCOD-SND-C2P
+  <span class="kw">וגם</span>   Q20 קורא עם SRD-ACTCOD-RCV-P2C
+  <span class="kw">וגם</span>   SRD-RETCOD הוא OK
+
+<span class="kw">תרחיש:</span> קבלה ב-DTAQ חורגת מפסק זמן
+  <span class="kw">בהינתן</span> ששכבת ה-web אינה משיבה בתוך זמן ההמתנה
+  <span class="kw">כאשר</span> Q20-READ-DTAQ מחזיר SRD-RETCOD-TIME-OUT
+  <span class="kw">אז</span> SW-END-JOB-ON ו-SW-END-READ-ON נקבעים
+  <span class="kw">וגם</span>   ERR-MSG-KOD הוא "WB900" עבור סשן TDI, אחרת "WB800"
+  <span class="kw">וגם</span>   WB-FILE-NAME הוא "MENUCLSFM" ו-I199-TIPUL-ERR מבוצע</pre>
+  <p><b>מאמת:</b> קודי פעולה נכונים בכל פעולת תור ואת התנהגות הכיבוי המדויקת בפסק זמן (WB900 מול WB800 לפי <code class="inl">SW-TDI</code>).</p>
+
+  <h4>שאלון / טקסט / מכתב / DLL</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> בנאים מבוססי-לולאה מריצים את דפוס הבנייה/החלפה/פירוק
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> המנוע מנתב אותו
+  <span class="kw">אז</span> &lt;section&gt; מבוצע עד SW-END-READ-ON
+  <span class="kw">וגם</span>   הוא בונה XML, קורא ל-Q00-SND-RCV-DTAQ ומפרק את התשובה
+
+  <span class="kw">דוגמאות:</span>
+    | action                    | section          |
+    | WB-KOD-PEULA-SND-SHELON   | E00-SND-SHELON   |
+    | WB-KOD-PEULA-TEXTCTL      | T00-SND-TEXTCTL  |
+    | WB-KOD-PEULA-LETTER       | V00-SND-LETTER   |
+
+<span class="kw">תרחיש:</span> מסלול הלוך-ושוב של בקשת DLL
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא WB-KOD-PEULA-CALL-DLL
+  <span class="kw">כאשר</span> D00-TIPUL-DLL רץ
+  <span class="kw">אז</span> D30-BUILD-XML-DLL פולט את בקשת ה-DLL
+  <span class="kw">וגם</span>   D60-PERUK-XML-DLL מפרק את התשובה דרך שכבת ה-UNDLL-PRM</pre>
+  <p><b>מאמת:</b> ששלוש המשפחות מונחות-הלולאה חולקות את אותו חוזה (outline אחד מכסה E00/T00/V00), בתוספת מסלול ה-DLL שאינו לולאתי.</p>
+
+  <h4>לשוניות / UNMAINDA / TBL-TOKEF / גרפים</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> מטפלים חד-פעמיים מנתבים לפי תת-קוד
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> המנוע מנתב אותו
+  <span class="kw">אז</span> &lt;section&gt; מטפל בו ללא לולאת קריאה
+
+  <span class="kw">דוגמאות:</span>
+    | action                  | section              |
+    | WB-KOD-PEULA-FOLDER     | G00-TIPUL-FOLDER     |
+    | WB-KOD-PEULA-UNMAINDA   | H00-TIPUL-UNMAINDA   |
+    | WB-KOD-PEULA-TBL-TOKEF  | K00-TIPUL-TBL-TOKEF  |
+    | WB-KOD-PEULA-ALL-OTHER  | X00-SND-OTHER-FUNC   |</pre>
+  <p><b>מאמת:</b> שתת-קודי הלשוניות (START/STOP/…), שליפת ה-data area, תוקף הטבלה STR/END, ודלי הגרף/אחר כולם מגיעים למטפלים שלהם.</p>
+
+  <h4>מסלולי סגירה / כיבוי</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> כיבוי מבוקר
+  <span class="kw">בהינתן</span> ש-WB-KOD-PEULA הוא &lt;action&gt;
+  <span class="kw">כאשר</span> 000-MAIN מנתב אותו
+  <span class="kw">אז</span> ERR-MSG-KOD הוא &lt;code&gt;
+  <span class="kw">וגם</span>   I199-TIPUL-ERR ולאחריו Z999-TIPUL-STOP-RUN מבוצעים
+
+  <span class="kw">דוגמאות:</span>
+    | action                          | code                |
+    | WB-KOD-PEULA-CLOSE-FROM-MENU    | WB900 or WB800      |
+    | WB-KOD-PEULA-NOT-START-APP      | WB-APL-RETCODE      |
+    | WB-KOD-PEULA-CLOSE-FROM-WEB     | (close screen)      |</pre>
+  <p><b>מאמת:</b> שכל וריאנט סגירה נוחת בזנב המשותף של שגיאה+עצירת-ריצה עם מקור הקוד הנכון.</p>
+
+  <h4>עוטפי תוכניות חיצוניות — R* (מקובץ)</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תבנית תרחיש:</span> עוטף R* קורא לתוכנית החיצונית שלו ובודק את ההחזרה
+  <span class="kw">בהינתן</span> שהקורא מילא את הפרמטרים עבור &lt;program&gt;
+  <span class="kw">כאשר</span> &lt;section&gt; מבוצע
+  <span class="kw">אז</span> &lt;program&gt; נקרא (CALL) עם אותם פרמטרים
+  <span class="kw">וגם</span>   קוד החזרה שאינו OK מצוף (ERR-MSG-KOD או SW-END-READ-ON)
+
+  <span class="kw">דוגמאות:</span>
+    | section              | program    |
+    | R10-CALL-UNRDCOMXX   | UNRDCOMXX  |
+    | R20-CALL-WBSRDQ      | WBSRDQ     |
+    | R30-CALL-UNPART      | UNPART     |
+    | R180-CALL-UNSNDMEM   | UNSNDMEM   |
+    | R200-CALL-UNSNDGRF   | UNSNDGRF   |</pre>
+  <p><b>מאמת:</b> ש-outline פרמטרי אחד עומד במקום כל כ-40 העוטפים משום שהם זהים מבנית (קביעת פרמטרים → CALL → בדיקת החזרה). הדוגמאות מייצגות; הוסיפו שורות להשגת כיסוי מלא.</p>
+
+  <h4>מקוריות מסך — R21-SCREEN-CHECK</h4>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תרחיש:</span> דחיית מסך שה-hash שלו אינו תואם
+  <span class="kw">בהינתן</span> ש-hash הדף הנכנס שונה מ-hash קובץ המסך הצפוי
+  <span class="kw">כאשר</span> R21-SCREEN-CHECK רץ
+  <span class="kw">אז</span> הפעולה אינה מכובדת
+  <span class="kw">וגם</span>   מופעלת שגיאה / הצגה מחדש</pre>
+  <p><b>מאמת:</b> את ההגנה מפני שחזור (anti-replay) באמצעות <code class="inl">HASHCPTP</code> לפני שהמנתב פועל על החוצץ.</p>
+
+  <h3>M.rpg (תפריט)</h3>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> מנהל התפריט M
+
+<span class="kw">תרחיש:</span> בחירה מורשית מפעילה את התוכנית
+  <span class="kw">בהינתן</span> משתמש עם הרשאת MEAUT לאפשרות 5
+  <span class="kw">כאשר</span> אפשרות 5 מוזנת ולוחצים Enter
+  <span class="kw">אז</span> CHKHRS עובר
+  <span class="kw">וגם</span>   SBWLOG כותב רשומת MELOG
+  <span class="kw">וגם</span>   SBPGM קורא (CALL) לתוכנית היעד מ-MEMENU
+
+<span class="kw">תרחיש:</span> בחירה לא מורשית נחסמת
+  <span class="kw">בהינתן</span> משתמש ללא הרשאת MEAUT לאפשרות 5
+  <span class="kw">כאשר</span> אפשרות 5 מוזנת
+  <span class="kw">אז</span> CHKHRS נכשל ומוצגת הודעת שגיאה
+  <span class="kw">וגם</span>   אף תוכנית אינה נקראת (CALL) והתפריט מוצג מחדש
+
+<span class="kw">תבנית תרחיש:</span> מקשי הפונקציה מנתבים למטפל שלהם (SBF01..SBF24)
+  <span class="kw">בהינתן</span> שהתפריט מוצג
+  <span class="kw">כאשר</span> &lt;key&gt; נלחץ
+  <span class="kw">אז</span> SBFUNC מנתב אל &lt;handler&gt;
+
+  <span class="kw">דוגמאות:</span>
+    | key | handler         |
+    | F1  | SBF01 (help)    |
+    | F3  | SBF03 (exit)    |
+    | F12 | SBF12 (SBBACK)  |</pre>
+  <p><b>מאמת:</b> את שער ההרשאות סביב <code class="inl">SBPGM</code> (תיעוד-ואז-קריאה מול חסימה), ו—עם outline אחד למשפחה החזרתית <code class="inl">SBF01…SBF24</code>—ש-<code class="inl">SBFUNC</code> ממפה כל מקש למטפל הנכון. הרחיבו את טבלת ה-Examples לכיסוי מלא F1–F24.</p>
+
+  <h3>UNFILE2PCC.cl</h3>
+  <pre class="gherkin"><span class="kw"># language: he</span>
+<span class="kw">תכונה:</span> כלי בניית DDS/קבצים UNFILE2PCC
+
+<span class="kw">תרחיש:</span> קובץ קלט חסר מחזיר שגיאה
+  <span class="kw">בהינתן</span> ש-&amp;FROMLIB/&amp;FROMFILE אינו קיים
+  <span class="kw">כאשר</span> UNFILE2PCC רץ
+  <span class="kw">אז</span> CHKOBJ מעלה CPF9801
+  <span class="kw">וגם</span>   נשלחת הודעה בעברית "הקובץ אינו קיים"
+  <span class="kw">וגם</span>   &amp;RET נקבע ל-"1"
+
+<span class="kw">תרחיש:</span> המסלול התקין בונה את כל הפריטים
+  <span class="kw">בהינתן</span> קובץ פיזי תקין
+  <span class="kw">כאשר</span> UNFILE2PCC רץ עד הסוף
+  <span class="kw">אז</span> ל-QTEMP/QDDSSRC יש חברים &lt;base&gt;A, &lt;base&gt;F, &lt;base&gt;HDR, &lt;base&gt;X
+  <span class="kw">וגם</span>   נוצרים קבצי הפלט DSPFD/DSPFFD
+  <span class="kw">וגם</span>   UNCRTHDRK נקרא וארבעת אובייקטי ה-PF נוצרים
+  <span class="kw">וגם</span>   הנתונים מועתקים לקובץ ה-F עם FMTOPT(*MAP *DROP)
+  <span class="kw">וגם</span>   UNUPDHDRK מהודר ורץ
+  <span class="kw">וגם</span>   &amp;RET ריק
+
+<span class="kw">תרחיש:</span> הרצה חוזרת היא אידמפוטנטית
+  <span class="kw">בהינתן</span> שהפריטים כבר קיימים מהרצה קודמת
+  <span class="kw">כאשר</span> UNFILE2PCC רץ שוב
+  <span class="kw">אז</span> MONMSG CPF0000 בולע את מצבי ה-"כבר קיים"
+  <span class="kw">וגם</span>   הכלי מסתיים עם &amp;RET ריק</pre>
+  <p><b>מאמת:</b> את שני מסלולי השגיאה החוסמים (כשל ביצירת PF מקור וקובץ קלט חסר) בתוספת מלוא סט הפריטים והאידמפוטנטיות ש-<code class="inl">MONMSG CPF0000</code> מספקת.</p>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section id="glossary">
+  <h2><span class="emoji">🔤</span> מילון עברית-באנגלית</h2>
+  <div class="two">
+    <table>
+      <tr><th>מונח</th><th>עברית</th><th>אנגלית</th></tr>
+      <tr><td>PEULA / KOD-PEULA</td><td>פעולה</td><td>action / action code</td></tr>
+      <tr><td>TIPUL</td><td>טיפול</td><td>handling</td></tr>
+      <tr><td>SHELON</td><td>שאלון</td><td>questionnaire / flexible screen</td></tr>
+      <tr><td>PERUK (XML)</td><td>פירוק</td><td>parse / break-down</td></tr>
+      <tr><td>MISGERET</td><td>מסגרת</td><td>frame / border</td></tr>
+      <tr><td>TOKEF</td><td>תוקף</td><td>validity (date)</td></tr>
+      <tr><td>HAZAZA</td><td>הזזה</td><td>shift / scroll</td></tr>
+    </table>
+    <table>
+      <tr><th>מונח</th><th>עברית</th><th>אנגלית</th></tr>
+      <tr><td>MASACH / MASKIM</td><td>מסך / מסכים</td><td>screen / screens</td></tr>
+      <tr><td>HARSHAOT</td><td>הרשאות</td><td>authorizations</td></tr>
+      <tr><td>KLALI</td><td>כללי</td><td>general</td></tr>
+      <tr><td>MICHTAV / MICHTAVIM</td><td>מכתב / מכתבים</td><td>letter / letters</td></tr>
+      <tr><td>SGIRA / SIYUM</td><td>סגירה / סיום</td><td>close / end</td></tr>
+      <tr><td>TDI (tad"i)</td><td>תד"י</td><td>interactive / terminal mode</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>
+  תיעוד עבור <b>M</b> (תפריט RPG) · <b>UNFILE2PCC</b> (בניית DDS ב-CL) · <b>UNSNDWEB</b> (מנוע WEB ב-COBOL) —
+  תת-מערכת ניוד AS/400↔WEB. קוד המקור פוענח מ-Windows-1255 (עברית) ומ-ASCII. שמות הסקשנים והשדות
+  אומתו מול המקור.
+</footer>
+
+</main>
+</body>
+</html>

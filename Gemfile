@@ -54,6 +54,10 @@ gem "rails-i18n", "~> 8.0"
 # Convert uploaded office files (LibreOffice HTML export) to markdown.
 gem "reverse_markdown", "~> 3.0"
 
+# Read .xlsx spreadsheets (the seed user import).
+gem "roo", "~> 2.10"
+gem "csv" # roo dependency; no longer a default gem on Ruby 3.4+
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

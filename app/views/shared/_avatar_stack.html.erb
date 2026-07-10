@@ -1,0 +1,10 @@
+<% users = Array(users) %>
+<% limit = local_assigns.fetch(:limit, 8) %>
+<div class="avatar-stack">
+  <% users.first(limit).each do |user| %>
+    <%= image_tag user.avatar_source, class: "avatar", alt: user.display_name, title: user.display_name, loading: "lazy" %>
+  <% end %>
+  <% if users.size > limit %>
+    <span class="avatar-more" title="<%= users.drop(limit).map(&:display_name).join(', ') %>">+<%= users.size - limit %></span>
+  <% end %>
+</div>
