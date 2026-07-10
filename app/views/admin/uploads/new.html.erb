@@ -1,5 +1,5 @@
 <% content_for :title, t("admin.uploads.new_title") %>
-<h1 class="<%= ui_class(:title) %>"><%= t("admin.uploads.new_title") %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("upload") %> <%= t("admin.uploads.new_title") %></h1>
 
 <%= form_with url: admin_uploads_path, method: :post, multipart: true do |f| %>
   <div class="<%= ui_class(:field) %>">

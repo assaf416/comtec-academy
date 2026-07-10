@@ -1,6 +1,6 @@
 <% content_for :title, t("admin.courses.title") %>
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("admin.courses.title") %></h1>
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= icon("courses") %> <%= t("admin.courses.title") %></h1>
   <%= link_to t("admin.courses.new"), new_admin_course_path, class: ui_class(:button, :primary) %>
 </div>
 

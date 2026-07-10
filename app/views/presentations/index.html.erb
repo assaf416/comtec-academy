@@ -1,5 +1,5 @@
 <% content_for :title, t("presentations.title") %>
-<h1 class="<%= ui_class(:title) %>"><%= t("presentations.title") %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("presentations") %> <%= t("presentations.title") %></h1>
 
 <% if @presentations.empty? %>
   <div class="<%= ui_class(:alert, :notice) %>"><%= t("presentations.empty") %></div>

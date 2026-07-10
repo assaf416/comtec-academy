@@ -18,5 +18,5 @@ end
 Then("I see the app sidebar") do
   expect(page).to have_css(".app-sidebar")
   expect(page).to have_css(".side-user")
-  expect(page).to have_css(".side-link svg.icon", visible: :all)
+  expect(page).to have_css(".side-link i.icon.fa-solid", visible: :all)
 end

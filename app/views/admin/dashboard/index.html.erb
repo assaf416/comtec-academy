@@ -1,6 +1,6 @@
 <% content_for :title, t("admin.dashboard.title") %>
 
-<h1 class="<%= ui_class(:title) %>"><%= t("admin.dashboard.title") %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("dashboard") %> <%= t("admin.dashboard.title") %></h1>
 
 <div class="<%= ui_class(:grid) %>">
   <% [[:total_users, @users_count], [:active_users, @active_count], [:invited_users, @invited_count]].each do |key, value| %>

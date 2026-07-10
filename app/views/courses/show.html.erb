@@ -2,7 +2,7 @@
 
 <%= link_to "→ #{t('courses.back_to_courses')}", courses_path, class: ui_class(:button, :link, :small) %>
 
-<h1 class="<%= ui_class(:title) %>"><%= @course.name %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("course") %> <%= @course.name %></h1>
 <% if @course.image.attached? %>
   <%= image_tag @course.image, class: "course-image mb-3", style: "max-height:260px" %>
 <% end %>

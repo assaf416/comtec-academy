@@ -2,7 +2,7 @@
 
 <%= link_to "→ #{t('episodes.back_to_course')}", course_path(@course), class: ui_class(:button, :link, :small) %>
 
-<h1 class="<%= ui_class(:title) %>"><%= @episode.display_title %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("episode") %> <%= @episode.display_title %></h1>
 <span class="<%= ui_class(:badge, @episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{@episode.kind}") %></span>
 
 <div class="mt-3">

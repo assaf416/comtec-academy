@@ -1,6 +1,6 @@
 <% content_for :title, @presentation.title %>
 <%= link_to "→ #{t('presentations.back')}", presentations_path, class: ui_class(:button, :link, :small) %>
-<h1 class="<%= ui_class(:title) %>"><%= @presentation.title %></h1>
+<h1 class="<%= ui_class(:title) %>"><%= icon("presentation") %> <%= @presentation.title %></h1>
 
 <div class="viewer" data-controller="presentation-viewer">
   <div class="viewer-toolbar">
