@@ -21,6 +21,6 @@ class BrandTheme < ApplicationRecord
 
   # Google Fonts family list for the <link> tag.
   def font_families
-    [heading_font, body_font].uniq.reject(&:blank?)
+    [ heading_font, body_font ].uniq.reject(&:blank?)
   end
 end

@@ -51,7 +51,7 @@ quiz = course.episodes.find_or_create_by!(name: "בדיקת ידע") do |e|
 end
 
 quiz.quiz_questions.find_or_create_by!(prompt: "מהו רכיב (component) בריאקט?") do |q|
-  q.choices = ["פונקציה שמחזירה UI", "בסיס נתונים", "שרת HTTP"]
+  q.choices = [ "פונקציה שמחזירה UI", "בסיס נתונים", "שרת HTTP" ]
   q.correct_choice = "פונקציה שמחזירה UI"
 end
 

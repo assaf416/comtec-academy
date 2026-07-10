@@ -4,7 +4,7 @@ module Media
   class CaptionBuilder
     def initialize(transcript, duration)
       @transcript = transcript.to_s.strip
-      @duration = [duration.to_f, 1.0].max
+      @duration = [ duration.to_f, 1.0 ].max
     end
 
     # Writes an .srt file and returns its path (or nil if there's no transcript).
@@ -14,7 +14,7 @@ module Media
       File.open(path, "w") do |f|
         chunks.each_with_index do |chunk, i|
           starts = i * per_chunk
-          ends = [(i + 1) * per_chunk, @duration].min
+          ends = [ (i + 1) * per_chunk, @duration ].min
           f.puts(i + 1)
           f.puts("#{ts(starts)} --> #{ts(ends)}")
           f.puts(chunk)
@@ -26,7 +26,7 @@ module Media
 
     private
       def chunks
-        @chunks ||= @transcript.scan(/\S.{0,80}\S(?=\s|\z)/m).presence || [@transcript]
+        @chunks ||= @transcript.scan(/\S.{0,80}\S(?=\s|\z)/m).presence || [ @transcript ]
       end
 
       def per_chunk

@@ -8,7 +8,7 @@ module Media
     module_function
 
     def run(*args)
-      cmd = [BIN, "-y", "-loglevel", "error", *args.map(&:to_s)]
+      cmd = [ BIN, "-y", "-loglevel", "error", *args.map(&:to_s) ]
       output, status = Open3.capture2e(*cmd)
       raise "ffmpeg failed (#{status.exitstatus}): #{output}" unless status.success?
       true

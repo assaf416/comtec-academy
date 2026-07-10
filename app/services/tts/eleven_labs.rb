@@ -21,7 +21,7 @@ module Tts
       res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) { |http| http.request(req) }
       raise "ElevenLabs error #{res.code}: #{res.body}" unless res.is_a?(Net::HTTPSuccess)
 
-      file = Tempfile.new(["podcast", ".mp3"])
+      file = Tempfile.new([ "podcast", ".mp3" ])
       file.binmode
       file.write(res.body)
       file.flush

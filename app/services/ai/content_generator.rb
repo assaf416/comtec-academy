@@ -44,7 +44,7 @@ module Ai
         body = {
           model: MODEL,
           max_tokens: 1500,
-          messages: [{ role: "user", content: prompt }]
+          messages: [ { role: "user", content: prompt } ]
         }
 
         uri = URI(API_URL)

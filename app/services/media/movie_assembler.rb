@@ -20,7 +20,7 @@ module Media
         audio = audio_path(dir)
         return false unless audio
 
-        duration = [Media::Ffmpeg.duration(audio), 1.0].max
+        duration = [ Media::Ffmpeg.duration(audio), 1.0 ].max
         srt = (@captions ? CaptionBuilder.new(@episode.transcript, duration).write_to(File.join(dir, "cap.srt")) : nil)
         music = music_path(dir, duration) if @music
         out = File.join(dir, "movie.mp4")
@@ -33,12 +33,12 @@ module Media
 
     private
       def ffmpeg_args(image:, audio:, srt:, music:, duration:, out:)
-        args = ["-loop", "1", "-t", duration.round(2), "-i", image, "-i", audio]
-        args += ["-i", music] if music
-        args += ["-filter_complex", filtergraph(srt:, music:),
+        args = [ "-loop", "1", "-t", duration.round(2), "-i", image, "-i", audio ]
+        args += [ "-i", music ] if music
+        args += [ "-filter_complex", filtergraph(srt:, music:),
                  "-map", "[v]", "-map", "[aout]", "-shortest", "-r", "25",
                  "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
-                 "-movflags", "+faststart", out]
+                 "-movflags", "+faststart", out ]
         args
       end
 

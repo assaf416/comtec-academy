@@ -9,6 +9,6 @@ class CreateDocuments < ActiveRecord::Migration[8.1]
       t.timestamps
     end
     # One current document per (project, type) — enforces upsert-by-type.
-    add_index :documents, [:project_id, :doc_type], unique: true
+    add_index :documents, [ :project_id, :doc_type ], unique: true
   end
 end

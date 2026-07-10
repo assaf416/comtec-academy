@@ -32,7 +32,7 @@ module Media
 
       def palette
         h = Digest::MD5.hexdigest(@episode.display_title.to_s + @episode.id.to_s)
-        ["0x#{h[0, 6]}", "0x#{h[6, 6]}"]
+        [ "0x#{h[0, 6]}", "0x#{h[6, 6]}" ]
       end
   end
 end

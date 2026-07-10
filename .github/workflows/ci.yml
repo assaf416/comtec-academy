@@ -65,3 +65,26 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+  test:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      CUCUMBER_PUBLISH_QUIET: "true"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install ffmpeg (video/audio assembly in the studio specs)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Prepare test database
+        run: bin/rails db:test:prepare
+
+      - name: Run Cucumber acceptance tests
+        run: bundle exec cucumber
+

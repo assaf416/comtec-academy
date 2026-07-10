@@ -16,6 +16,7 @@ module Admin
     # Invite a user by their company email; an activation email goes out.
     def create
       @user = User.new(invite_params)
+      @user.role = requested_role
       @user.status = :invited
       @user.invited_at = Time.current
 
@@ -31,6 +32,7 @@ module Admin
     end
 
     def update
+      @user.role = requested_role
       if @user.update(update_params)
         redirect_to admin_users_path, notice: t("admin.users.updated")
       else
@@ -54,11 +56,18 @@ module Admin
       end
 
       def invite_params
-        params.require(:user).permit(:email_address, :name, :role)
+        params.require(:user).permit(:email_address, :name)
       end
 
       def update_params
-        params.require(:user).permit(:name, :role)
+        params.require(:user).permit(:name)
+      end
+
+      # Role is set explicitly from an allowlist rather than mass-assigned,
+      # so it can never be escalated via unexpected params.
+      def requested_role
+        role = params.dig(:user, :role)
+        User.roles.key?(role) ? role : (@user&.role || "student")
       end
   end
 end
