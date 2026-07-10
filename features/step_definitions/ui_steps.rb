@@ -14,3 +14,8 @@ end
 Then("the page uses the {string} stylesheet") do |framework|
   expect(page).to have_css(%(link[href*="#{framework}"]), visible: :all)
 end
+
+Then("I see the app sidebar") do
+  expect(page).to have_css(".app-sidebar")
+  expect(page).to have_css(".side-user")
+end

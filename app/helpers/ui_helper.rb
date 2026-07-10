@@ -49,6 +49,22 @@ module UiHelper
     [ map[:_base], *variants.map { |v| map[v.to_sym] } ].compact.join(" ")
   end
 
+  # Slack-style sidebar link (<li> + channel-style link with active highlight).
+  def sidebar_link(label, path, glyph = "#")
+    active = nav_active?(path)
+    content_tag(:li) do
+      link_to(path, class: "side-link #{'is-active' if active}".strip) do
+        safe_join([ content_tag(:span, glyph, class: "glyph"), label ], " ")
+      end
+    end
+  end
+
+  def nav_active?(path)
+    return request.path == "/" if path == "/"
+
+    request.path == path || request.path.start_with?("#{path}/")
+  end
+
   def flash_class(level)
     ui_class(:alert, level.to_sym == :notice ? :notice : :alert)
   end

@@ -12,6 +12,44 @@
 /* Hebrew/RTL is the default; keep body text aligned to the start edge. */
 body { text-align: start; }
 
+/* ===== Slack-style shell (RTL: sidebar on the right) ===== */
+:root {
+  --slack-aubergine: #3F0E40; --slack-header: #350D36;
+  --slack-active: #1164A3; --slack-idle: #CFC3CF; --slack-content: #F8F8FA;
+}
+body { font-family: "Assistant", "Lato", system-ui, -apple-system, sans-serif; background: var(--slack-content); }
+
+.app-shell { display: flex; min-height: 100vh; }
+.app-sidebar { width: 260px; flex: none; background: var(--slack-aubergine); color: #fff; display: flex; flex-direction: column; }
+.app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.app-topbar { height: 49px; background: #fff; border-bottom: 1px solid #e2e2e2; display: flex; align-items: center; gap: 12px; padding: 0 16px; }
+.app-title { font-weight: 800; }
+.app-content { padding: 20px; flex: 1; }
+
+.side-workspace { padding: 15px 16px; background: var(--slack-header); font-weight: 800; font-size: 1.05rem; border-bottom: 1px solid rgba(0,0,0,.25); }
+.side-section { padding: 8px 0 2px; }
+.side-section-title { color: var(--slack-idle); font-size: .78rem; padding: 8px 20px 2px; opacity: .85; }
+.side-nav { list-style: none; margin: 0; padding: 0; }
+.side-link { display: flex; align-items: center; gap: 8px; color: var(--slack-idle); text-decoration: none; padding: 6px 16px; margin: 1px 8px; border-radius: 6px; font-size: .95rem; }
+.side-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+.side-link.is-active { background: var(--slack-active); color: #fff; }
+.side-link .glyph { opacity: .6; font-weight: 700; }
+
+.side-user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-top: 1px solid rgba(0,0,0,.25); }
+.side-user .avatar-wrap { position: relative; flex: none; }
+.side-user .avatar { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; display: block; }
+.side-user .presence { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: #2bac76; border: 2px solid var(--slack-aubergine); bottom: -2px; inset-inline-start: -2px; }
+.side-user .name { flex: 1; font-size: .9rem; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-user .side-signout button, .side-signout .btn, .side-signout .button { background: transparent; border: 1px solid rgba(255,255,255,.3); color: #fff; border-radius: 6px; padding: 2px 8px; }
+
+.app-hamburger { display: none; background: none; border: none; font-size: 1.4rem; cursor: pointer; line-height: 1; }
+
+@media (max-width: 768px) {
+  .app-sidebar { position: fixed; top: 0; bottom: 0; right: 0; transform: translateX(100%); transition: transform .2s ease; z-index: 1000; box-shadow: -2px 0 12px rgba(0,0,0,.3); }
+  .app-shell.is-open .app-sidebar { transform: translateX(0); }
+  .app-hamburger { display: inline-block; }
+}
+
 .hero { padding: 2rem 0; }
 .hero h1 { font-weight: 700; }
 .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }

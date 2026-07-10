@@ -7,10 +7,15 @@
   </head>
 
   <body>
-    <%= render "layouts/nav_bulma" %>
-    <main class="<%= ui_class(:container) %>">
-      <%= render "layouts/flash" %>
-      <%= yield %>
-    </main>
+    <div class="app-shell" data-controller="sidebar">
+      <%= render "layouts/sidebar" %>
+      <div class="app-main">
+        <%= render "layouts/topbar" %>
+        <main class="app-content">
+          <%= render "layouts/flash" %>
+          <%= yield %>
+        </main>
+      </div>
+    </div>
   </body>
 </html>

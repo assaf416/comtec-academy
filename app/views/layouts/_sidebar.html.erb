@@ -1,0 +1,40 @@
+<aside class="app-sidebar">
+  <div class="side-workspace"><%= t("app_name") %></div>
+
+  <% if authenticated? %>
+    <nav class="side-section">
+      <ul class="side-nav">
+        <%= sidebar_link t("nav.courses"), root_path %>
+        <%= sidebar_link t("nav.library"), library_path %>
+        <%= sidebar_link t("nav.presentations"), presentations_path %>
+      </ul>
+    </nav>
+
+    <% if current_user&.admin? %>
+      <div class="side-section-title"><%= t("nav.admin") %></div>
+      <nav class="side-section">
+        <ul class="side-nav">
+          <%= sidebar_link t("admin.dashboard.title"), admin_root_path %>
+          <%= sidebar_link t("nav.projects"), admin_projects_path %>
+          <%= sidebar_link t("nav.build_presentations"), admin_presentations_path %>
+          <%= sidebar_link t("admin.layouts.title"), admin_layouts_path %>
+          <%= sidebar_link t("admin.users.title"), admin_users_path %>
+          <%= sidebar_link t("admin.activities.title"), admin_activities_path %>
+        </ul>
+      </nav>
+    <% end %>
+
+    <div class="side-user">
+      <span class="avatar-wrap">
+        <%= image_tag current_user.avatar_source, class: "avatar", alt: current_user.display_name %>
+        <span class="presence" title="online"></span>
+      </span>
+      <span class="name"><%= current_user.display_name %></span>
+      <span class="side-signout"><%= button_to "⎋", session_path, method: :delete, title: t("nav.sign_out") %></span>
+    </div>
+  <% else %>
+    <nav class="side-section">
+      <ul class="side-nav"><%= sidebar_link t("nav.sign_in"), new_session_path %></ul>
+    </nav>
+  <% end %>
+</aside>
