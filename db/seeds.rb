@@ -76,6 +76,12 @@ end
 
 puts "Project ready: #{project.name} (#{project.documents.count} docs)"
 
+# --- Example documents from the documents/ folder (md/html/office -> Library) ---
+if Dir.exist?(Rails.root.join("documents"))
+  result = Docs::FolderImporter.import(Rails.root.join("documents"))
+  puts "Imported #{result[:imported]} example documents into the Library"
+end
+
 # --- Sample presentation (screenplay -> slides) ---
 presentation = Presentation.find_or_create_by!(title: "מבוא ל-Git") do |pr|
   pr.description = "מצגת הדגמה"
