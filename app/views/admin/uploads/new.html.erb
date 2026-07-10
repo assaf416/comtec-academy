@@ -1,0 +1,11 @@
+<% content_for :title, t("admin.uploads.new_title") %>
+<h1 class="<%= ui_class(:title) %>"><%= t("admin.uploads.new_title") %></h1>
+
+<%= form_with url: admin_uploads_path, method: :post, multipart: true do |f| %>
+  <div class="<%= ui_class(:field) %>">
+    <%= label_tag :file, t("admin.uploads.file"), class: ui_class(:label) %>
+    <%= file_field_tag :file, accept: ".doc,.docx,.xls,.xlsx,.odt,.ods", class: ui_class(:input) %>
+    <p class="text-muted"><small><%= t("admin.uploads.hint") %></small></p>
+  </div>
+  <%= submit_tag t("admin.uploads.submit"), class: ui_class(:button, :primary) %>
+<% end %>

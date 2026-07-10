@@ -51,6 +51,9 @@ gem "streamio-ffmpeg", "~> 3.0"
 # Hebrew (and other) translations for Active Record errors, dates, etc.
 gem "rails-i18n", "~> 8.0"
 
+# Convert uploaded office files (LibreOffice HTML export) to markdown.
+gem "reverse_markdown", "~> 3.0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

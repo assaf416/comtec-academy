@@ -4,6 +4,7 @@ he:
     courses: "קורסים"
     admin: "ניהול"
     projects: "פרויקטים"
+    library: "הספרייה"
     sign_out: "התנתקות"
     sign_in: "התחברות"
 
@@ -44,6 +45,25 @@ he:
     kind:
       movie: "סרטון"
       quiz: "בוחן"
+
+  library:
+    title: "הספרייה"
+    recent: "מסמכים אחרונים"
+    popular: "המסמכים הפופולריים"
+    favorites: "המועדפים שלי"
+    empty: "אין עדיין מסמכים."
+    empty_favorites: "עדיין לא סימנת מסמכים כמועדפים."
+    upload: "העלאת מסמך Office"
+    views: "%{count} צפיות"
+    standalone: "ספרייה"
+    open: "פתיחה"
+
+  document_view:
+    back_to_library: "חזרה לספרייה"
+    favorite: "הוספה למועדפים"
+    unfavorite: "הסרה מהמועדפים"
+    download_original: "הורדת הקובץ המקורי"
+    project_label: "פרויקט"
 
   documents:
     title: "מסמכים מצורפים"
@@ -200,6 +220,13 @@ he:
       updated: "המסמך עודכן."
       deleted: "המסמך נמחק."
       empty: "אין עדיין תוכן למסמך זה."
+    uploads:
+      new_title: "העלאת מסמך Office"
+      file: "בחירת קובץ (Word / Excel)"
+      hint: "הקובץ יומר אוטומטית ל-Markdown, והמקור יישמר להורדה."
+      submit: "העלאה והמרה"
+      uploaded: "הקובץ הועלה וההמרה החלה ברקע."
+      missing_file: "יש לבחור קובץ."
     brand_theme:
       title: "מיתוג המסמכים"
       primary_color: "צבע ראשי"

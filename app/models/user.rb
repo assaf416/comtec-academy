@@ -8,6 +8,8 @@ class User < ApplicationRecord
   has_many :quiz_answers, dependent: :destroy
   has_many :chat_messages, dependent: :destroy
   has_many :activities, dependent: :destroy
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_documents, through: :favorites, source: :document
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

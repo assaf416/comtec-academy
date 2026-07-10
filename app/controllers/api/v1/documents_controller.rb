@@ -34,8 +34,8 @@ module Api
 
         def validate_doc_type
           return if @project.nil? # already 404'd
-          unless Document.doc_types.key?(params[:doc_type])
-            render json: { error: "invalid_doc_type", valid: Document.doc_types.keys }, status: :unprocessable_entity
+          unless Document::AI_DOC_TYPES.include?(params[:doc_type])
+            render json: { error: "invalid_doc_type", valid: Document::AI_DOC_TYPES }, status: :unprocessable_entity
           end
         end
 

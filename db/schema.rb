@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_063606) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_074703) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -84,9 +84,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_063606) do
     t.text "content"
     t.datetime "created_at", null: false
     t.integer "doc_type", null: false
-    t.integer "project_id", null: false
+    t.integer "project_id"
+    t.integer "source", default: 0, null: false
     t.string "title"
     t.datetime "updated_at", null: false
+    t.integer "views_count", default: 0, null: false
     t.index ["project_id", "doc_type"], name: "index_documents_on_project_id_and_doc_type", unique: true
     t.index ["project_id"], name: "index_documents_on_project_id"
   end
@@ -103,6 +105,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_063606) do
     t.text "transcript"
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_episodes_on_course_id"
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "document_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["document_id"], name: "index_favorites_on_document_id"
+    t.index ["user_id", "document_id"], name: "index_favorites_on_user_id_and_document_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "markdown_docs", force: :cascade do |t|
@@ -172,6 +184,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_063606) do
   add_foreign_key "chat_messages", "users"
   add_foreign_key "documents", "projects"
   add_foreign_key "episodes", "courses"
+  add_foreign_key "favorites", "documents"
+  add_foreign_key "favorites", "users"
   add_foreign_key "markdown_docs", "episodes"
   add_foreign_key "quiz_answers", "quiz_questions"
   add_foreign_key "quiz_answers", "users"

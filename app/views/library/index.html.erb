@@ -1,0 +1,22 @@
+<% content_for :title, t("library.title") %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="<%= ui_class(:title) %> mb-0"><%= t("library.title") %></h1>
+  <% if current_user&.admin? %>
+    <%= link_to t("library.upload"), new_admin_upload_path, class: ui_class(:button, :primary) %>
+  <% end %>
+</div>
+
+<% [["recent", t("library.recent"), @recent, t("library.empty")],
+    ["popular", t("library.popular"), @popular, t("library.empty")],
+    ["favorites", t("library.favorites"), @favorites, t("library.empty_favorites")]].each do |key, heading, docs, empty| %>
+  <section class="mb-4" id="library-<%= key %>">
+    <h2 class="<%= ui_class(:subtitle) %>"><%= heading %></h2>
+    <% if docs.any? %>
+      <div class="<%= ui_class(:grid) %>">
+        <%= render partial: "library/card", collection: docs, as: :document %>
+      </div>
+    <% else %>
+      <div class="<%= ui_class(:alert, :notice) %>"><%= empty %></div>
+    <% end %>
+  </section>
+<% end %>

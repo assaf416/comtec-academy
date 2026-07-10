@@ -8,6 +8,7 @@
       <ul class="navbar-nav me-auto">
         <% if authenticated? %>
           <li class="nav-item"><%= link_to t("nav.courses"), root_path, class: "nav-link" %></li>
+          <li class="nav-item"><%= link_to t("nav.library"), library_path, class: "nav-link" %></li>
           <% if current_user&.admin? %>
             <li class="nav-item"><%= link_to t("nav.admin"), admin_root_path, class: "nav-link" %></li>
             <li class="nav-item"><%= link_to t("nav.projects"), admin_projects_path, class: "nav-link" %></li>

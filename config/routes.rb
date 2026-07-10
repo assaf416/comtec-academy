@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     resources :quiz_answers, only: %i[create]
   end
 
+  # --- Library (all signed-in users; read-only document viewing + favorites) ---
+  get "library", to: "library#index"
+  resources :documents, only: %i[show] do
+    resource :favorite, only: %i[create destroy]
+  end
+
   # --- Documents API (shared-secret, for agents) ---
   namespace :api do
     namespace :v1 do
@@ -39,6 +45,7 @@ Rails.application.routes.draw do
       resources :documents, only: %i[show new create edit update destroy]
     end
     resource :brand_theme, only: %i[edit update]
+    resources :uploads, only: %i[new create]
     resources :courses do
       resources :episodes do
         resources :markdown_docs, only: %i[create destroy]
