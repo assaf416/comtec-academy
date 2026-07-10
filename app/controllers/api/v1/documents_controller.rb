@@ -18,6 +18,7 @@ module Api
           title: params[:title].presence || I18n.t("documents.types.#{params[:doc_type]}"),
           content: params[:content].to_s
         )
+        doc.update(tag_list: params[:tags]) if params.key?(:tags) && doc.persisted?
 
         if doc.persisted? && doc.errors.empty?
           render json: document_json(doc), status: :ok
@@ -41,7 +42,7 @@ module Api
 
         def document_json(doc, rendered: false)
           json = { project: @project.slug, doc_type: doc.doc_type, title: doc.title,
-                   content: doc.content, updated_at: doc.updated_at,
+                   content: doc.content, tags: doc.tag_list, updated_at: doc.updated_at,
                    view_url: admin_project_document_url(@project, doc) }
           json[:html] = doc.to_html if rendered
           json

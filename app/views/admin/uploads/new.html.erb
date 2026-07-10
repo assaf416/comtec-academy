@@ -7,5 +7,9 @@
     <%= file_field_tag :file, accept: ".doc,.docx,.xls,.xlsx,.odt,.ods", class: ui_class(:input) %>
     <p class="text-muted"><small><%= t("admin.uploads.hint") %></small></p>
   </div>
+  <div class="<%= ui_class(:field) %>">
+    <%= label_tag :tags, t("admin.documents.tags"), class: ui_class(:label) %>
+    <%= text_field_tag :tags, nil, class: ui_class(:input), placeholder: t("admin.documents.tags_hint") %>
+  </div>
   <%= submit_tag t("admin.uploads.submit"), class: ui_class(:button, :primary) %>
 <% end %>

@@ -27,6 +27,17 @@ class Document < ApplicationRecord
   validates :doc_type, uniqueness: { scope: :project_id }, if: :generated?
   validates :title, presence: true
 
+  # Filter documents by any combination of free-text query (name + tags), project,
+  # kind (doc_type) and a single tag. Blank criteria are ignored.
+  scope :search, ->(q: nil, project_id: nil, doc_type: nil, tag: nil) {
+    rel = all
+    rel = rel.where("title LIKE :s OR tags LIKE :s", s: "%#{sanitize_sql_like(q.to_s)}%") if q.present?
+    rel = rel.where(project_id: project_id) if project_id.present?
+    rel = rel.where(doc_type: doc_type) if doc_type.present? && doc_types.key?(doc_type.to_s)
+    rel = rel.where("tags LIKE ?", "%#{sanitize_sql_like(tag.to_s)}%") if tag.present?
+    rel.order(updated_at: :desc)
+  }
+
   def to_html
     Academy::Markdown.render(content.to_s)
   end
@@ -43,5 +54,20 @@ class Document < ApplicationRecord
     return false unless user
 
     favorites.exists?(user_id: user.id)
+  end
+
+  # Freeform, comma-separated tags stored in the `tags` string column.
+  def tag_list
+    tags.to_s.split(",").map(&:strip).reject(&:blank?)
+  end
+
+  def tag_list=(value)
+    list = value.is_a?(Array) ? value : value.to_s.split(",")
+    self.tags = list.map { |t| t.to_s.strip }.reject(&:blank?).uniq.join(", ")
+  end
+
+  # Distinct tags across all documents, for the search filter dropdown.
+  def self.all_tags
+    pluck(:tags).flat_map { |t| t.to_s.split(",") }.map(&:strip).reject(&:blank?).uniq.sort
   end
 end

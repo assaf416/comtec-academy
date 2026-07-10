@@ -45,7 +45,7 @@ module Admin
       end
 
       def document_params
-        params.require(:document).permit(:doc_type, :title, :content)
+        params.require(:document).permit(:doc_type, :title, :content, :tags)
       end
   end
 end

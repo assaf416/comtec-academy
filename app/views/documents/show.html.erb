@@ -20,4 +20,12 @@
   <p class="<%= ui_class(:subtitle) %>"><%= t("document_view.project_label") %>: <%= @document.project.name %></p>
 <% end %>
 
+<% if @document.tag_list.any? %>
+  <p><%= t("document_view.tags") %>:
+    <% @document.tag_list.each do |tag| %>
+      <%= link_to tag, library_path(tag: tag), class: ui_class(:badge, :info) %>
+    <% end %>
+  </p>
+<% end %>
+
 <%= render "documents/branded", document: @document %>

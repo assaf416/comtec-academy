@@ -329,6 +329,21 @@
       "last_tested_at": "2026-07-10T07:55:56Z",
       "code_generation_seconds": null,
       "test_generation_seconds": null
+    },
+    {
+      "id": "S23",
+      "type": "story",
+      "name": "Library search & tags",
+      "description": "Search/filter documents in the Library by name, project, kind (doc_type) and freeform tags; tags editable via admin form, upload and API.",
+      "cucumber_test": "see features/library_search.feature",
+      "feature_file": "features/library_search.feature",
+      "github_issue": null,
+      "status": "completed",
+      "started_at": "2026-07-10T08:08:09Z",
+      "completed_at": "2026-07-10T08:08:09Z",
+      "last_tested_at": "2026-07-10T08:08:09Z",
+      "code_generation_seconds": null,
+      "test_generation_seconds": null
     }
   ]
 }

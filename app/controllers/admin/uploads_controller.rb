@@ -16,6 +16,7 @@ module Admin
         doc_type: :uploaded,
         title: File.basename(file.original_filename, ".*")
       )
+      @document.tag_list = params[:tags] if params[:tags].present?
       @document.original.attach(file)
 
       if @document.save

@@ -68,11 +68,12 @@ project = Project.find_or_create_by!(slug: "academy-platform") do |p|
   p.name = "פלטפורמת הלמידה"
   p.description = "מסמכי התכנון והתיעוד של אפליקציית האקדמיה."
 end
-project.upsert_document(
+design = project.upsert_document(
   doc_type: :design,
   title: "מסמך עיצוב",
   content: "# מסמך עיצוב\n\nאפליקציית **האקדמיה** לניהול קורסים.\n\n## מטרות\n\n- ניהול קורסים ופרקים\n- הזמנת משתמשים\n- אולפן עריכת וידאו\n"
 )
+design.update!(tag_list: "תיעוד, עיצוב, אקדמיה")
 # Give a couple of documents view counts so the Library "Popular" section is populated.
 project.documents.order(:doc_type).each_with_index do |doc, i|
   doc.update_column(:views_count, (project.documents.count - i) * 3)

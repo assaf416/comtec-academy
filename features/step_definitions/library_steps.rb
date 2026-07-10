@@ -15,6 +15,35 @@ Then("I see {string} under {string}") do |title, section|
   within("#library-#{section}") { expect(page).to have_content(title) }
 end
 
+# --- Library search (S23) ---
+Given("the document {string} is tagged {string}") do |title, tags|
+  Document.find_by!(title: title).update!(tag_list: tags)
+end
+
+When("I search the library for {string}") do |q|
+  visit library_path(q: q)
+end
+
+When("I filter the library by project {string}") do |slug|
+  visit library_path(project_id: @projects.fetch(slug).id)
+end
+
+When("I filter the library by kind {string}") do |kind|
+  visit library_path(doc_type: kind)
+end
+
+When("I filter the library by tag {string}") do |tag|
+  visit library_path(tag: tag)
+end
+
+Then("I see {string} in the results") do |title|
+  within("#library-results") { expect(page).to have_content(title) }
+end
+
+Then("I do not see {string} in the results") do |title|
+  within("#library-results") { expect(page).to have_no_content(title) }
+end
+
 # --- Office upload (S21) ---
 When("I upload the office file {string}") do |filename|
   visit new_admin_upload_path

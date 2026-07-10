@@ -6,17 +6,61 @@
   <% end %>
 </div>
 
-<% [["recent", t("library.recent"), @recent, t("library.empty")],
-    ["popular", t("library.popular"), @popular, t("library.empty")],
-    ["favorites", t("library.favorites"), @favorites, t("library.empty_favorites")]].each do |key, heading, docs, empty| %>
-  <section class="mb-4" id="library-<%= key %>">
-    <h2 class="<%= ui_class(:subtitle) %>"><%= heading %></h2>
-    <% if docs.any? %>
+<%# Search + filters %>
+<%= form_with url: library_path, method: :get, id: "library-search" do %>
+  <div class="<%= ui_class(:grid) %>">
+    <div class="<%= ui_class(:grid_item) %>">
+      <%= text_field_tag :q, @query[:q], class: ui_class(:input), placeholder: t("library.search_placeholder") %>
+    </div>
+    <% blank = [t("library.all"), ""] %>
+    <div class="<%= ui_class(:grid_item) %>">
+      <%= select_tag :project_id,
+            options_for_select([blank] + @projects.map { |p| [p.name, p.id] }, @query[:project_id]),
+            class: ui_class(:select) %>
+    </div>
+    <div class="<%= ui_class(:grid_item) %>">
+      <%= select_tag :doc_type,
+            options_for_select([blank] + @kinds.map { |k| [t("documents.types.#{k}"), k] }, @query[:doc_type]),
+            class: ui_class(:select) %>
+    </div>
+    <div class="<%= ui_class(:grid_item) %>">
+      <%= select_tag :tag,
+            options_for_select([blank] + @tags.map { |t| [t, t] }, @query[:tag]),
+            class: ui_class(:select) %>
+    </div>
+  </div>
+  <div class="actions">
+    <%= submit_tag t("library.search"), class: ui_class(:button, :primary) %>
+    <% if @searching %><%= link_to t("library.clear"), library_path, class: ui_class(:button, :secondary) %><% end %>
+  </div>
+<% end %>
+
+<hr>
+
+<% if @searching %>
+  <section id="library-results">
+    <h2 class="<%= ui_class(:subtitle) %>"><%= t("library.results") %> (<%= @results.size %>)</h2>
+    <% if @results.any? %>
       <div class="<%= ui_class(:grid) %>">
-        <%= render partial: "library/card", collection: docs, as: :document %>
+        <%= render partial: "library/card", collection: @results, as: :document %>
       </div>
     <% else %>
-      <div class="<%= ui_class(:alert, :notice) %>"><%= empty %></div>
+      <div class="<%= ui_class(:alert, :notice) %>"><%= t("library.no_results") %></div>
     <% end %>
   </section>
+<% else %>
+  <% [["recent", t("library.recent"), @recent, t("library.empty")],
+      ["popular", t("library.popular"), @popular, t("library.empty")],
+      ["favorites", t("library.favorites"), @favorites, t("library.empty_favorites")]].each do |key, heading, docs, empty| %>
+    <section class="mb-4" id="library-<%= key %>">
+      <h2 class="<%= ui_class(:subtitle) %>"><%= heading %></h2>
+      <% if docs.any? %>
+        <div class="<%= ui_class(:grid) %>">
+          <%= render partial: "library/card", collection: docs, as: :document %>
+        </div>
+      <% else %>
+        <div class="<%= ui_class(:alert, :notice) %>"><%= empty %></div>
+      <% end %>
+    </section>
+  <% end %>
 <% end %>

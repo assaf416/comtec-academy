@@ -57,6 +57,12 @@ he:
     views: "%{count} צפיות"
     standalone: "ספרייה"
     open: "פתיחה"
+    search_placeholder: "חיפוש לפי שם או תגית…"
+    all: "הכול"
+    search: "חיפוש"
+    clear: "ניקוי"
+    results: "תוצאות"
+    no_results: "לא נמצאו מסמכים תואמים."
 
   document_view:
     back_to_library: "חזרה לספרייה"
@@ -64,6 +70,7 @@ he:
     unfavorite: "הסרה מהמועדפים"
     download_original: "הורדת הקובץ המקורי"
     project_label: "פרויקט"
+    tags: "תגיות"
 
   documents:
     title: "מסמכים מצורפים"
@@ -212,6 +219,8 @@ he:
       edit_title: "עריכת מסמך"
       type: "סוג מסמך"
       title: "כותרת"
+      tags: "תגיות"
+      tags_hint: "תגיות מופרדות בפסיקים"
       content: "תוכן (Markdown)"
       save: "שמירה"
       delete: "מחיקה"
