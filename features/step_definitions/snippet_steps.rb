@@ -15,6 +15,19 @@ When("I visit the snippets page") do
   visit snippets_path
 end
 
+# --- Library search over snippets (S31) ---
+When("I search the library for {string} in language {string}") do |q, lang|
+  visit library_path(q: q, language: lang)
+end
+
+Then("I see the snippet {string} in the results") do |title|
+  within("#library-snippet-results") { expect(page).to have_content(title) }
+end
+
+Then("I do not see the snippet {string} in the results") do |title|
+  within("#library-snippet-results") { expect(page).to have_no_content(title) }
+end
+
 Then("the snippet {string} is listed") do |title|
   visit snippets_path
   expect(page).to have_content(title)

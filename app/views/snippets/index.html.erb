@@ -7,28 +7,5 @@
 <% if @snippets.empty? %>
   <div class="<%= ui_class(:alert, :notice) %>"><%= t("snippets.empty") %></div>
 <% else %>
-  <table class="<%= ui_class(:table) %>" data-controller="datatable">
-    <thead>
-      <tr>
-        <th><%= t("snippets.title_col") %></th>
-        <th><%= t("snippets.language_col") %></th>
-        <th><%= t("snippets.project_col") %></th>
-        <th><%= t("snippets.author_col") %></th>
-        <th class="no-sort"><%= t("shared.actions") %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @snippets.each do |snippet| %>
-        <tr>
-          <td><%= link_to snippet.title, snippet_path(snippet) %></td>
-          <td><span class="<%= ui_class(:badge, :info) %>"><%= snippet.display_language %></span></td>
-          <td><%= snippet.project&.name || t("snippets.no_project") %></td>
-          <td><%= snippet.user.display_name %></td>
-          <td class="no-sort">
-            <%= link_to t("snippets.open"), snippet_path(snippet), class: ui_class(:button, :primary, :small) %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <%= render "snippets/table", snippets: @snippets %>
 <% end %>
