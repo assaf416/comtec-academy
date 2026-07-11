@@ -473,12 +473,12 @@
       "cucumber_test": "Feature: Local LLM client\n  Scenario: Route AI requests to the local model when configured\n    Given the local LLM endpoint is configured and reachable\n    When the assistant answers a question\n    Then the request is sent to the local endpoint\n    And the local model's reply is returned to the user",
       "feature_file": "features/local_llm.feature",
       "github_issue": 25,
-      "status": "planned",
-      "started_at": null,
-      "completed_at": null,
-      "last_tested_at": null,
-      "code_generation_seconds": null,
-      "test_generation_seconds": null
+      "status": "completed",
+      "started_at": "2026-07-11T13:02:58Z",
+      "completed_at": "2026-07-11T13:06:03Z",
+      "last_tested_at": "2026-07-11T13:06:03Z",
+      "code_generation_seconds": 140,
+      "test_generation_seconds": 45
     },
     {
       "id": "S33",
