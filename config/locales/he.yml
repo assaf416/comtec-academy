@@ -77,6 +77,9 @@ he:
     clear: "ניקוי"
     results: "תוצאות"
     no_results: "לא נמצאו מסמכים תואמים."
+    all_languages: "כל השפות"
+    snippet_results: "קטעי קוד"
+    no_snippet_results: "לא נמצאו קטעי קוד תואמים."
 
   document_view:
     back_to_library: "חזרה לספרייה"

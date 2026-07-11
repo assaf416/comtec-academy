@@ -28,6 +28,11 @@
             options_for_select([blank] + @tags.map { |t| [t, t] }, @query[:tag]),
             class: ui_class(:select) %>
     </div>
+    <div class="<%= ui_class(:grid_item) %>">
+      <%= select_tag :language,
+            options_for_select([[t("library.all_languages"), ""]] + @languages.map { |l| [t("snippets.languages.#{l}", default: l.humanize), l] }, @query[:language]),
+            class: ui_class(:select) %>
+    </div>
   </div>
   <div class="actions">
     <%= submit_tag t("library.search"), class: ui_class(:button, :primary) %>
@@ -44,6 +49,15 @@
       <%= render "library/table", documents: @results %>
     <% else %>
       <div class="<%= ui_class(:alert, :notice) %>"><%= t("library.no_results") %></div>
+    <% end %>
+  </section>
+
+  <section class="mt-4" id="library-snippet-results">
+    <h2 class="<%= ui_class(:subtitle) %>"><%= t("library.snippet_results") %> (<%= @snippet_results.size %>)</h2>
+    <% if @snippet_results.any? %>
+      <%= render "snippets/table", snippets: @snippet_results %>
+    <% else %>
+      <div class="<%= ui_class(:alert, :notice) %>"><%= t("library.no_snippet_results") %></div>
     <% end %>
   </section>
 <% else %>
