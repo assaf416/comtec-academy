@@ -59,3 +59,15 @@ Then("the snippet {string} has a saved code chat conversation") do |title|
   expect(snippet.code_chat_messages.where(role: :user)).to be_present
   expect(snippet.code_chat_messages.where(role: :assistant)).to be_present
 end
+
+# --- Code-aware retrieval / RAG (S34) ---
+Then("the code chat reply cites the source {string}") do |title|
+  within("#chat-thread") do
+    expect(page).to have_content(I18n.t("code_chat.sources"))
+    expect(page).to have_content(title)
+  end
+end
+
+Then("the code chat reply cites no sources") do
+  within("#chat-thread") { expect(page).to have_no_content(I18n.t("code_chat.sources")) }
+end
