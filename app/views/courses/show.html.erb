@@ -9,12 +9,22 @@
 <p class="transcript"><%= @course.details %></p>
 
 <div class="mt-4">
-  <% @episodes.each do |episode| %>
-    <div class="<%= ui_class(:card) %> mb-2">
-      <div class="<%= ui_class(:card_body) %>">
-        <span class="<%= ui_class(:badge, episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{episode.kind}") %></span>
-        <%= link_to episode.display_title, course_episode_path(@course, episode) %>
-      </div>
-    </div>
+  <% if @episodes.any? %>
+    <table class="<%= ui_class(:table) %>" data-controller="datatable">
+      <thead>
+        <tr>
+          <th><%= t("episodes.kind_col") %></th>
+          <th><%= t("episodes.title_col") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @episodes.each do |episode| %>
+          <tr>
+            <td><span class="<%= ui_class(:badge, episode.quiz? ? :warning : :info) %>"><%= t("episodes.kind.#{episode.kind}") %></span></td>
+            <td><%= link_to episode.display_title, course_episode_path(@course, episode) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   <% end %>
 </div>
