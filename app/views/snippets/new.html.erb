@@ -1,0 +1,4 @@
+<% content_for :title, t("snippets.new") %>
+<h1 class="<%= ui_class(:title) %>"><%= icon("snippet") %> <%= t("snippets.new") %></h1>
+
+<%= render "form", snippet: @snippet %>

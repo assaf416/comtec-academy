@@ -443,12 +443,12 @@
       "cucumber_test": "Feature: Share code snippets\n  Scenario: Engineer shares a COBOL snippet\n    Given I am signed in as an engineer\n    When I create a snippet titled \"Nightly batch\" in language \"cobol\" with some code\n    Then the snippet appears in the library\n    And another engineer can view it with syntax highlighting",
       "feature_file": "features/snippets.feature",
       "github_issue": 23,
-      "status": "planned",
-      "started_at": null,
-      "completed_at": null,
-      "last_tested_at": null,
-      "code_generation_seconds": null,
-      "test_generation_seconds": null
+      "status": "completed",
+      "started_at": "2026-07-11T12:44:51Z",
+      "completed_at": "2026-07-11T12:56:22Z",
+      "last_tested_at": "2026-07-11T12:56:22Z",
+      "code_generation_seconds": 520,
+      "test_generation_seconds": 171
     },
     {
       "id": "S31",

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_102106) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_11_124451) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -222,6 +222,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_102106) do
     t.index ["presentation_id"], name: "index_slides_on_presentation_id"
   end
 
+  create_table "snippets", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "language", default: "other", null: false
+    t.integer "project_id"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.integer "visibility", default: 0, null: false
+    t.index ["language"], name: "index_snippets_on_language"
+    t.index ["project_id"], name: "index_snippets_on_project_id"
+    t.index ["user_id"], name: "index_snippets_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "activated_at"
     t.string "avatar_url"
@@ -257,4 +272,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_102106) do
   add_foreign_key "slide_answers", "users"
   add_foreign_key "slides", "layouts"
   add_foreign_key "slides", "presentations"
+  add_foreign_key "snippets", "projects"
+  add_foreign_key "snippets", "users"
 end

@@ -1,0 +1,18 @@
+<% content_for :title, @snippet.title %>
+
+<%= link_to "→ #{t('snippets.back')}", snippets_path, class: ui_class(:button, :link, :small) %>
+
+<h1 class="<%= ui_class(:title) %>"><%= icon("snippet") %> <%= @snippet.title %></h1>
+<p>
+  <span class="<%= ui_class(:badge, :info) %>"><%= @snippet.display_language %></span>
+  <% if @snippet.project %>
+    <span class="<%= ui_class(:badge, :muted) %>"><%= @snippet.project.name %></span>
+  <% end %>
+  <span class="<%= ui_class(:badge, :muted) %>"><%= @snippet.user.display_name %></span>
+</p>
+
+<% if @snippet.description.present? %>
+  <p><%= @snippet.description %></p>
+<% end %>
+
+<%= highlight_code(@snippet.body, @snippet.language) %>
