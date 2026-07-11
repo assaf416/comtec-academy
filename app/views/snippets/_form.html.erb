@@ -1,0 +1,39 @@
+<%= form_with model: snippet, url: snippets_path do |f| %>
+  <% if snippet.errors.any? %>
+    <div class="<%= ui_class(:alert, :alert) %>">
+      <ul class="mb-0">
+        <% snippet.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :title, t("snippets.title_col"), class: ui_class(:label) %>
+    <%= f.text_field :title, class: ui_class(:input) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :language, t("snippets.language_col"), class: ui_class(:label) %>
+    <%= f.select :language,
+          Snippet::LANGUAGES.map { |l| [t("snippets.languages.#{l}", default: l.humanize), l] },
+          {}, class: ui_class(:select) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :project_id, t("snippets.project_col"), class: ui_class(:label) %>
+    <%= f.collection_select :project_id, Project.order(:name), :id, :name,
+          { include_blank: t("snippets.no_project") }, class: ui_class(:select) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :description, t("snippets.description_col"), class: ui_class(:label) %>
+    <%= f.text_area :description, rows: 2, class: ui_class(:textarea) %>
+  </div>
+
+  <div class="<%= ui_class(:field) %>">
+    <%= f.label :body, t("snippets.body_col"), class: ui_class(:label) %>
+    <%= f.text_area :body, rows: 12, dir: "ltr", class: ui_class(:textarea) %>
+  </div>
+
+  <%= f.submit t("snippets.save"), class: ui_class(:button, :primary) %>
+<% end %>

@@ -16,6 +16,7 @@ module IconHelper
     branding: "palette",
     upload: "file-arrow-up",
     slide: "image", chat: "comments", favorite: "heart",
+    snippets: "code", snippet: "code",
     # sections / actions
     dashboard: "gauge-high", build: "clapperboard", settings: "gear",
     signin: "right-to-bracket", signout: "right-from-bracket",
