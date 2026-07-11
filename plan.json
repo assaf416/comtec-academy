@@ -503,12 +503,12 @@
       "cucumber_test": "Feature: Code-aware retrieval across projects\n  Scenario: Cross-project question pulls relevant code\n    Given snippets exist in COBOL, C#, and JavaScript across projects\n    And the local LLM is configured\n    When I ask a cross-project question in the code chat\n    Then relevant snippets from more than one project are retrieved as context\n    And the answer cites the sources it used",
       "feature_file": "features/code_rag.feature",
       "github_issue": 27,
-      "status": "planned",
-      "started_at": null,
-      "completed_at": null,
-      "last_tested_at": null,
-      "code_generation_seconds": null,
-      "test_generation_seconds": null
+      "status": "completed",
+      "started_at": "2026-07-11T14:15:59Z",
+      "completed_at": "2026-07-11T14:17:35Z",
+      "last_tested_at": "2026-07-11T14:17:35Z",
+      "code_generation_seconds": 66,
+      "test_generation_seconds": 30
     },
     {
       "id": "S35",

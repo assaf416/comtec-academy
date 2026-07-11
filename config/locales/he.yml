@@ -112,6 +112,7 @@ he:
     placeholder: "שאלו שאלה על הקוד…"
     send: "שליחה"
     empty: "שאלו שאלה על הקוד הזה כדי להתחיל."
+    sources: "מקורות"
 
   quiz:
     question: "שאלה"
