@@ -41,9 +41,7 @@
   <section id="library-results">
     <h2 class="<%= ui_class(:subtitle) %>"><%= t("library.results") %> (<%= @results.size %>)</h2>
     <% if @results.any? %>
-      <div class="<%= ui_class(:grid) %>">
-        <%= render partial: "library/card", collection: @results, as: :document %>
-      </div>
+      <%= render "library/table", documents: @results %>
     <% else %>
       <div class="<%= ui_class(:alert, :notice) %>"><%= t("library.no_results") %></div>
     <% end %>
@@ -55,9 +53,7 @@
     <section class="mb-4" id="library-<%= key %>">
       <h2 class="<%= ui_class(:subtitle) %>"><%= heading %></h2>
       <% if docs.any? %>
-        <div class="<%= ui_class(:grid) %>">
-          <%= render partial: "library/card", collection: docs, as: :document %>
-        </div>
+        <%= render "library/table", documents: docs %>
       <% else %>
         <div class="<%= ui_class(:alert, :notice) %>"><%= empty %></div>
       <% end %>

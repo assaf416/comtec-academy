@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl -d ubuntu -- bash -lc \"pgrep -af 'rails server|puma' || echo 'no rails process'; curl -s -o /dev/null -w 'port 3000: %{http_code}\\\\n' http://localhost:3000/ || echo down\")"
+    ]
+  }
+}

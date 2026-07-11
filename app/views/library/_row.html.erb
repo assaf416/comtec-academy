@@ -1,0 +1,26 @@
+<tr>
+  <td>
+    <% if document.html_original? %>
+      <%= link_to document.display_title, raw_document_path(document), target: "_blank", rel: "noopener" %>
+    <% else %>
+      <%= link_to document.display_title, document_path(document) %>
+    <% end %>
+  </td>
+  <td>
+    <% if document.project %>
+      <span class="<%= ui_class(:badge, :info) %>"><%= document.project.name %></span>
+    <% else %>
+      <span class="<%= ui_class(:badge, :muted) %>"><%= t("library.standalone") %></span>
+    <% end %>
+  </td>
+  <td><%= document.views_count %></td>
+  <td class="no-sort">
+    <% if document.favorited_by?(current_user) %>
+      <%= button_to "♥ #{t('document_view.unfavorite')}", document_favorite_path(document),
+            method: :delete, class: ui_class(:button, :secondary, :small) %>
+    <% else %>
+      <%= button_to "♡ #{t('document_view.favorite')}", document_favorite_path(document),
+            method: :post, class: ui_class(:button, :secondary, :small) %>
+    <% end %>
+  </td>
+</tr>

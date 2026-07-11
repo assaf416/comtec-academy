@@ -1,0 +1,15 @@
+<%# Renders a collection of documents as a DataTables-enabled table.
+    Locals: documents (an enumerable of Document). %>
+<table class="<%= ui_class(:table) %>" data-controller="datatable">
+  <thead>
+    <tr>
+      <th><%= t("library.document_col") %></th>
+      <th><%= t("library.project_col") %></th>
+      <th><%= t("library.views_col") %></th>
+      <th class="no-sort"><%= t("shared.actions") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: "library/row", collection: documents, as: :document %>
+  </tbody>
+</table>

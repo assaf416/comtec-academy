@@ -4,18 +4,26 @@
 <% if @presentations.empty? %>
   <div class="<%= ui_class(:alert, :notice) %>"><%= t("presentations.empty") %></div>
 <% else %>
-  <div class="<%= ui_class(:grid) %>">
-    <% @presentations.each do |presentation| %>
-      <div class="<%= ui_class(:grid_item) %>">
-        <div class="<%= ui_class(:card) %>">
-          <div class="<%= ui_class(:card_body) %>">
-            <h3 class="<%= ui_class(:card_title) %>"><%= link_to presentation.title, presentation_path(presentation) %></h3>
-            <% if presentation.description.present? %><p><%= presentation.description %></p><% end %>
-            <p><span class="<%= ui_class(:badge, :muted) %>"><%= t("presentations.slides_count", count: presentation.slides.size) %></span></p>
-            <%= link_to t("presentations.watch"), presentation_path(presentation), class: ui_class(:button, :primary) %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
+  <table class="<%= ui_class(:table) %>" data-controller="datatable">
+    <thead>
+      <tr>
+        <th><%= t("presentations.name") %></th>
+        <th><%= t("presentations.description") %></th>
+        <th><%= t("presentations.slides") %></th>
+        <th class="no-sort"><%= t("shared.actions") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @presentations.each do |presentation| %>
+        <tr>
+          <td><%= link_to presentation.title, presentation_path(presentation) %></td>
+          <td><%= presentation.description %></td>
+          <td><%= presentation.slides.size %></td>
+          <td class="no-sort">
+            <%= link_to t("presentations.watch"), presentation_path(presentation), class: ui_class(:button, :primary, :small) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% end %>
