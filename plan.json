@@ -488,12 +488,12 @@
       "cucumber_test": "Feature: AI code-investigation chat\n  Scenario: Ask about a C# snippet\n    Given a C# snippet exists and the local LLM is configured\n    And I am signed in as an engineer\n    When I open the snippet and ask \"what does this method do?\"\n    Then I receive an assistant reply grounded in the snippet's code\n    And the conversation is saved",
       "feature_file": "features/code_chat.feature",
       "github_issue": 26,
-      "status": "planned",
-      "started_at": null,
-      "completed_at": null,
-      "last_tested_at": null,
-      "code_generation_seconds": null,
-      "test_generation_seconds": null
+      "status": "completed",
+      "started_at": "2026-07-11T13:27:48Z",
+      "completed_at": "2026-07-11T14:00:39Z",
+      "last_tested_at": "2026-07-11T14:00:39Z",
+      "code_generation_seconds": 1600,
+      "test_generation_seconds": 371
     },
     {
       "id": "S34",
