@@ -16,3 +16,5 @@
 <% end %>
 
 <%= highlight_code(@snippet.body, @snippet.language) %>
+
+<%= render "snippets/chat", snippet: @snippet, messages: @snippet.code_chat_messages.chronological %>

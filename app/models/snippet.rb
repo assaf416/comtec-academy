@@ -1,6 +1,7 @@
 class Snippet < ApplicationRecord
   belongs_to :user
   belongs_to :project, optional: true
+  has_many :code_chat_messages, as: :subject, dependent: :destroy
 
   # Languages engineers share code in — Comtec's stacks plus common web/db ones.
   # Kept as a plain string (not an enum) so Rouge lexer keys map directly.

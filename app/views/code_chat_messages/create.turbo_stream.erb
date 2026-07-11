@@ -1,0 +1,5 @@
+<%= turbo_stream.remove "chat-empty" %>
+<%= turbo_stream.append "chat-thread" do %>
+  <%= render partial: "chat_messages/message", locals: { message: @message } %>
+  <%= render partial: "chat_messages/message", locals: { message: @reply } %>
+<% end %>

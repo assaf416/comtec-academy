@@ -23,7 +23,9 @@ Rails.application.routes.draw do
   end
 
   # --- Code snippets (all signed-in users share and browse) ---
-  resources :snippets, only: %i[index show new create]
+  resources :snippets, only: %i[index show new create] do
+    resources :code_chat_messages, only: %i[create]
+  end
 
   # --- Library (all signed-in users; read-only document viewing + favorites) ---
   get "library", to: "library#index"

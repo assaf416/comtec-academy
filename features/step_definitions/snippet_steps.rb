@@ -39,3 +39,23 @@ Then("I can view the snippet {string} with highlighted code") do |title|
   expect(page).to have_content(title)
   expect(page).to have_css("pre.code code")
 end
+
+# --- Code-investigation chat (S33) ---
+When("I open the snippet {string}") do |title|
+  visit snippet_path(Snippet.find_by!(title: title))
+end
+
+When("I post the code chat message {string}") do |body|
+  fill_in "body", with: body
+  click_button I18n.t("code_chat.send")
+end
+
+Then("the code chat thread contains {string}") do |body|
+  expect(page).to have_css("#chat-thread", text: body)
+end
+
+Then("the snippet {string} has a saved code chat conversation") do |title|
+  snippet = Snippet.find_by!(title: title)
+  expect(snippet.code_chat_messages.where(role: :user)).to be_present
+  expect(snippet.code_chat_messages.where(role: :assistant)).to be_present
+end

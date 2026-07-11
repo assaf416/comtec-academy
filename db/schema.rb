@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_11_124451) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_11_132748) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -70,6 +70,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_11_124451) do
     t.integer "user_id", null: false
     t.index ["episode_id"], name: "index_chat_messages_on_episode_id"
     t.index ["user_id"], name: "index_chat_messages_on_user_id"
+  end
+
+  create_table "code_chat_messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.integer "role", default: 0, null: false
+    t.integer "subject_id", null: false
+    t.string "subject_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["subject_type", "subject_id"], name: "index_code_chat_messages_on_subject"
+    t.index ["user_id"], name: "index_code_chat_messages_on_user_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -257,6 +269,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_11_124451) do
   add_foreign_key "activities", "users"
   add_foreign_key "chat_messages", "episodes"
   add_foreign_key "chat_messages", "users"
+  add_foreign_key "code_chat_messages", "users"
   add_foreign_key "documents", "projects"
   add_foreign_key "episodes", "courses"
   add_foreign_key "favorites", "documents"
