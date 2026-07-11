@@ -59,7 +59,7 @@ gem "roo", "~> 2.10"
 gem "csv" # roo dependency; no longer a default gem on Ruby 3.4+
 
 # Server-side syntax highlighting for presentation code slides.
-gem "rouge", "~> 4.2"
+gem "rouge", "~> 5.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
