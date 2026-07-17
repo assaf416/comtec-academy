@@ -40,7 +40,7 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 2.0"
 # ImageMagick backend for image_processing (this host has no libvips)
-gem "mini_magick", "~> 5.0"
+gem "mini_magick", "~> 5.3"
 
 # Render episode markdown documents to HTML
 gem "redcarpet", "~> 3.6"
